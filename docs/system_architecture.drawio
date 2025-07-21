@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.6">
+  <diagram name="Microservice Architecture" id="Q0QblbiRSq5v3RpzvNlE">
+    <mxGraphModel dx="1426" dy="831" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gateway" value="API Gateway (NestJS)" style="shape=hexagon;fillColor=#ffe599;strokeColor=#333333;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="20" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="auth" value="Auth Service&#xa;(JWT, PostgreSQL)" style="rounded=1;fillColor=#c9daf8;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="100" y="120" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user" value="User Service&#xa;(PostgreSQL)" style="rounded=1;fillColor=#c9daf8;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="300" y="120" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="kyc" target="db2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kyc" value="KYC Service&#xa;(MongoDB + S3)" style="rounded=1;fillColor=#d9ead3;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="500" y="120" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="loan" value="Loan Service&#xa;(Scoring, PostgreSQL)" style="rounded=1;fillColor=#fce5cd;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="700" y="120" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="investment" value="Investment Service&#xa;(PostgreSQL)" style="rounded=1;fillColor=#fce5cd;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="60" y="350" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="repayment" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="repayment" value="Repayment Service&#xa;(Scheduler, PostgreSQL)" style="rounded=1;fillColor=#fce5cd;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="360" y="420" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="notification" target="db2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="notification" value="Notification Service&#xa;(MongoDB + RabbitMQ)" style="rounded=1;fillColor=#f4cccc;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="540" y="320" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="analytics" target="db1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="analytics" value="Analytics Service&#xa;(PostgreSQL + React)" style="rounded=1;fillColor=#d9d2e9;strokeColor=#333333;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry y="240" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rabbitmq" value="RabbitMQ" style="shape=cylinder;fillColor=#fff2cc;strokeColor=#333333;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="580" y="590" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;" parent="1" source="gateway" target="auth" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;" parent="1" source="gateway" target="user" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;" parent="1" source="gateway" target="kyc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;" parent="1" source="gateway" target="loan" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;dashed=1;" parent="1" source="notification" target="rabbitmq" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;dashed=1;" parent="1" source="loan" target="rabbitmq" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;dashed=1;" parent="1" source="repayment" target="rabbitmq" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db1" value="PostgreSQL" style="shape=cylinder;fillColor=#b6d7a8;strokeColor=#333333;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="280" y="250" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="db2" value="MongoDB" style="shape=cylinder;fillColor=#b6d7a8;strokeColor=#333333;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="210" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.358;entryY=0.05;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="auth" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.442;entryY=1.033;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="investment" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YwXXeJ2EYsJPlngd_nA0-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.733;entryY=0.1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="user" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
