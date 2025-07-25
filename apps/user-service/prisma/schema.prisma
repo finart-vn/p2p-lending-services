@@ -41,10 +41,28 @@ model User {
   // assignedRoles UserRole[] @relation("AssignedBy")
   // verifiedKyc   Kyc[]      @relation("VerifiedBy")
 
+  tokenKeys TokenKey[]
+
   @@index([email])
   // @@index([status])
   @@index([createdAt])
   @@map("users")
+}
+
+model TokenKey {
+  id           BigInt   @id @default(autoincrement())
+  userId       BigInt   @map("user_id")
+  publicKey    String   @map("public_key")
+  refreshToken String   @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("token_keys")
 }
 
 // model Role {
