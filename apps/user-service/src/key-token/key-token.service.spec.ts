@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { PrismaService } from '../prisma/prisma.service';
 import { KeyTokenService } from './key-token.service';
 
 describe('KeyTokenService', () => {
@@ -6,7 +8,7 @@ describe('KeyTokenService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [KeyTokenService],
+      providers: [KeyTokenService, PrismaService],
     }).compile();
 
     service = module.get<KeyTokenService>(KeyTokenService);

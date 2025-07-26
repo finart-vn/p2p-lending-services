@@ -1,0 +1,58 @@
+{
+  // Default formatter
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Format on save
+  "editor.formatOnSave": false,
+
+  // Format on paste
+  "editor.formatOnPaste": false,
+
+  // Format on type
+  "editor.formatOnType": false,
+
+  // ESLint configuration
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // Auto fix ESLint issues on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+
+  // File associations
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Prettier configuration
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": false,
+
+  // ESLint working directories
+  "eslint.workingDirectories": ["."],
+
+  // Disable conflicting formatters
+  "typescript.format.enable": false,
+  "javascript.format.enable": false
+}

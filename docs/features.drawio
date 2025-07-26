@@ -1,0 +1,63 @@
+<mxfile host="65bd71144e">
+    <diagram name="P2P Lending Features" id="p2pLending1234">
+        <mxGraphModel dx="1099" dy="809" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Borrower Features" style="swimlane;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="240" height="300" as="geometry">
+                        <mxRectangle x="40" y="40" width="150" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="3" value="Loan Origination" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="40" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Loan Calculator" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="80" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Credit Score" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="120" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Document Scanner" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="160" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Auto-Payment" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="200" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Dashboard" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#FFCCCC;fillColor=#FF6666;" parent="2" vertex="1">
+                    <mxGeometry x="10" y="240" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Lender Features" style="swimlane;strokeColor=#9999FF;fillColor=#9999FF;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="40" width="240" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Loan Portfolio Management" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9999FF;fillColor=#9999FF;" parent="9" vertex="1">
+                    <mxGeometry x="10" y="40" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Loans Search" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9999FF;fillColor=#9999FF;" parent="9" vertex="1">
+                    <mxGeometry x="10" y="80" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Semi-Automated Investment" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9999FF;fillColor=#9999FF;" parent="9" vertex="1">
+                    <mxGeometry x="10" y="120" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Admin Features" style="swimlane" parent="1" vertex="1">
+                    <mxGeometry x="660" y="40" width="240" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="User Management" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="10" y="40" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="CRM" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="10" y="80" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Loan Management" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="10" y="120" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Finance Management" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="10" y="160" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Platform Analytics" style="rounded=1;whiteSpace=wrap;html=1;" parent="13" vertex="1">
+                    <mxGeometry x="10" y="200" width="220" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
