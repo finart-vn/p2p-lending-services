@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
-import { KeyTokenService } from './key-token/key-token.service';
+
 import { User } from '../generated/prisma';
+import { KeyTokenService } from './key-token/key-token.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AppService {

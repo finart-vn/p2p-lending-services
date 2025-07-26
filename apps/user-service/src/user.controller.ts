@@ -1,6 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './user.service';
+import { MessagePattern } from '@nestjs/microservices';
+
 import { User } from '../generated/prisma';
+import { AppService } from './user.service';
 
 @Controller()
 export class AppController {
@@ -9,5 +11,10 @@ export class AppController {
   @Get()
   async getHello(): Promise<User | null> {
     return await this.appService.getHello();
+  }
+
+  @MessagePattern('create-user')
+  createUser(data: any) {
+    console.log('create-user', data);
   }
 }

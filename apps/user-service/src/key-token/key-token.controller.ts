@@ -1,5 +1,6 @@
 import { Body, Controller, Get } from '@nestjs/common';
-import CreateKeyTokenDto from 'libs/DTOs/key-token/create.key-token.dto';
+import CreateKeyTokenDto from '@p2p-lending/common/DTOs/key-token/create.key-token.dto';
+
 import { KeyTokenService } from './key-token.service';
 
 @Controller('key-token')
