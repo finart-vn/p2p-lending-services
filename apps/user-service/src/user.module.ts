@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ClientsModule } from '@nestjs/microservices';
+import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
+import { getRmqOptions } from '@p2p-lending/config/rmq.config';
+
+import { KeyTokenModule } from './key-token/key-token.module';
+import { PrismaService } from './prisma/prisma.service';
 import { AppController } from './user.controller';
 import { AppService } from './user.service';
-import { PrismaService } from './prisma/prisma.service';
-import { ConfigModule } from '@nestjs/config';
-import { KeyTokenModule } from './key-token/key-token.module';
-import { ClientsModule } from '@nestjs/microservices';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
-import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
 
 @Module({
   imports: [
