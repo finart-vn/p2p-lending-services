@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth.module';
+import { RBMQ_QUEUES } from '@p2p-lending/constants';
 import { MicroserviceOptions } from '@nestjs/microservices';
-import { getRmqOptions } from 'config/src/rmq.config';
-
+import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule);
-  app.connectMicroservice<MicroserviceOptions>(getRmqOptions('auth_queue'));
-  await app.listen(process.env.port ?? 3005);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AuthModule,
+    getRmqOptions(RBMQ_QUEUES.AUTH),
+  );
+  await app.listen();
 }
 bootstrap();

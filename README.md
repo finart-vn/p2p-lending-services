@@ -1,36 +1,46 @@
 # p2p-lending-services
+
 To develop the **core features** of your **P2P Lending Platform** step by step, here's a **developer-oriented roadmap** broken down by key modules.
+
+---
+
+## System architecture
+
+![System architecture](./docs/system-architecture.png)
 
 ---
 
 ## 🧱 **Phase 1: Project Foundation**
 
-### ✅ Tasks:
+### ✅ Tasks
 
-* **Tech Stack Setup**:
+* **Tech Stack Setup**
 
-  * Frontend: React / Vue / Next.js
-  * Backend: Node.js (Express/NestJS) or Laravel / .NET Core
-  * Database: PostgreSQL / MySQL
-* **Auth & Roles**:
-
+  * Frontend: React, Next.js
+  * Backend: NestJS, Prisma
+  * Database: PostgreSQL, MongoDB, Redis
+  * Messaging: RabbitMQ
+  * Monitoring:  Grafana
+  * CI/CD: GitHub Actions, Vercel, Docker
+  * Logging: NestJS Logger
+  * Testing: Jest, Supertest
+  * Documentation: Swagger, Postman
+* **Auth & Roles**
   * User Authentication (JWT/Session)
   * Role-based access: Borrower, Lender, Admin
-* **Folder Structure**: Clean modular layout
-* **CI/CD**: GitHub Actions / Vercel / Render / Docker
 
 ---
 
 ## 🔐 **Phase 2: KYC & User Identity Module**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * User Registration
 * Upload ID Card / Passport
 * Store scanned documents (Cloudinary, S3, or local)
 * Admin panel for **manual KYC approval**
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * Use file upload API with storage (e.g., `multer` + S3)
 * Store user KYC status in DB: `PENDING`, `VERIFIED`, `REJECTED`
@@ -40,14 +50,14 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 💰 **Phase 3: Loan Origination & Credit System**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * Loan request form: amount, term, purpose
 * Auto-calculate monthly payments
 * Credit Score Integration (optional mock or real API)
 * Document attachment (proof of income, ID)
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * Create `loans` table with user\_id, status, and metadata
 * Build calculator logic on frontend using amortization formula
@@ -60,13 +70,13 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 📊 **Phase 4: Loan Listings & Investment Flow**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * Display all active loan listings (with credit score, loan details)
 * Lenders can fund full or partial amounts
 * Update funding progress in real-time (Socket.io or polling)
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * `investments` table: lender\_id, loan\_id, amount
 * Validate no overfunding
@@ -77,13 +87,13 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 💸 **Phase 5: Payment & Repayment System**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * Auto-payment by borrowers (via schedule)
 * Repayment dashboard for both parties
 * Late payment notifications & penalties
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * Schedule repayments using cron jobs or workers
 * Integration with payment gateway (VNPay, Stripe, MoMo)
@@ -94,12 +104,12 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 📣 **Phase 6: Messaging & Notification System**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * Email / in-app notifications
 * Alerts for payment due, KYC result, investment changes
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * Use NodeMailer or SendGrid for emails
 * Use database-triggered events or message queue (RabbitMQ) for notifications
@@ -109,13 +119,13 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 🧑‍💼 **Phase 7: Dashboard (All Roles)**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * **Borrower:** Loan status, repayment schedule
 * **Lender:** Portfolio summary, returns
 * **Admin:** User stats, platform analytics
 
-### 🔧 Tech Steps:
+### 🔧 Tech Steps
 
 * Use chart libraries (Chart.js, Recharts) for data visualization
 * Fetch data using paginated and filtered APIs
@@ -125,7 +135,7 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 🛡️ **Phase 8: Security, Roles & Audits**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * Role-based route guards
 * Encrypted documents & sensitive data
@@ -135,7 +145,7 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ## 📈 **Phase 9: Reporting & Analytics**
 
-### 🧩 Core Features:
+### 🧩 Core Features
 
 * User transaction history
 * Platform-wide stats (total invested, total repaid)
@@ -166,3 +176,11 @@ Let me know if you want:
 * Or a **Figma UI layout for all user roles**
 
 I can help build those next.
+
+| 🧩 Service           | 📦 Tables                         | 🔁 Events Emitted                        | 🔄 Events Consumed                 |
+| -------------------- | --------------------------------- | ---------------------------------------- | ---------------------------------- |
+| **Auth Service**     | `users`, `user_roles`, `sessions` | `user.created`, `user.updated`           | *N/A*                              |
+| **User Service**     | `user_profiles`, `addresses`      | `user.profile.updated`                   | `user.created`                     |
+| **Order Service**    | `orders`, `order_items`, `cart`   | `order.created`, `order.cancelled`       | `user.created`, `payment.success`  |
+| **Payment Service**  | `payments`, `transactions`        | `payment.success`, `payment.failed`      | `order.created`                    |
+| **Shipping Service** | `shipments`, `tracking_events`    | `shipment.created`, `shipment.delivered` | `payment.success`, `order.created` |
