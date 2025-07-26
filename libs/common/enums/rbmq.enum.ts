@@ -1,4 +1,4 @@
-enum RBMQ_SERVICES {
+enum RmqService {
   AUTH = 'AUTH_SERVICE',
   USER = 'USER_SERVICE',
   LOAN = 'LOAN_SERVICE',
@@ -8,7 +8,7 @@ enum RBMQ_SERVICES {
   PAYMENT = 'PAYMENT_SERVICE',
   REPORT = 'REPORT_SERVICE',
 }
-enum RBMQ_QUEUES {
+enum RmqQueue {
   AUTH = 'AUTH_QUEUE',
   USER = 'USER_QUEUE',
   LOAN = 'LOAN_QUEUE',
@@ -19,4 +19,4 @@ enum RBMQ_QUEUES {
   REPORT = 'REPORT_QUEUE',
 }
 
-export { RBMQ_SERVICES, RBMQ_QUEUES };
+export { RmqQueue, RmqService };

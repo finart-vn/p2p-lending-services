@@ -4,21 +4,16 @@ import { AppService } from './user.service';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { KeyTokenModule } from './key-token/key-token.module';
-import { Transport, ClientsModule } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
+import { getRmqOptions } from '@p2p-lending/config/rmq.config';
+import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'AUTH_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'auth_queue',
-          queueOptions: {
-            durable: true,
-          },
-        },
+        name: RmqService.AUTH,
+        ...getRmqOptions(RmqQueue.AUTH),
       },
     ]),
     ConfigModule.forRoot({

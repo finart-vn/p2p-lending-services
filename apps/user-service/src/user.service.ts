@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { KeyTokenService } from './key-token/key-token.service';
+import { User } from '../generated/prisma';
 
 @Injectable()
 export class AppService {
@@ -9,21 +10,25 @@ export class AppService {
     private prisma: PrismaService,
     private keyTokenService: KeyTokenService,
   ) {}
-  async getHello(): Promise<string> {
+  async getHello(): Promise<User | null> {
     try {
-      const user = await this.prisma.user.findMany();
-      await this.keyTokenService.createKeyToken({
-        userId: user[0].id,
-        publicKey: '123',
-        refreshToken: '1232',
+      const user = await this.prisma.user.create({
+        data: {
+          email: 'test1@test.com',
+          passwordHash: '123456',
+          firstName: 'John',
+          lastName: 'Doe',
+          phone: '1234567890',
+          dateOfBirth: new Date(),
+          address: '123 Main St',
+          city: 'New York',
+        },
       });
-      this.logger.error(user[0].email);
-      if (!user) return 'No user found';
-
-      return 'Hello World!';
+      this.logger.log('User created');
+      return user;
     } catch (error) {
       console.log(error);
-      return 'Error';
+      return null;
     }
   }
 }

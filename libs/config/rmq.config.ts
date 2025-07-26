@@ -1,7 +1,8 @@
 // src/config/rmq.config.ts
 import { RmqOptions, Transport } from '@nestjs/microservices';
+import { RmqQueue } from '@p2p-lending/common/enums';
 
-export const getRmqOptions = (queue: string): RmqOptions => ({
+export const getRmqOptions = (queue: RmqQueue): RmqOptions => ({
   transport: Transport.RMQ,
   options: {
     urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
