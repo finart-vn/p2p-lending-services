@@ -26,8 +26,8 @@ export const appConfig: AppConfig = {
   // Rate limiting
   rateLimitEnabled: process.env.RATE_LIMIT_ENABLED === 'true' || true,
   rateLimitWindowMs:
-    parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX) || 100, // 100 requests per window
+    parseInt(process.env.RATE_LIMIT_WINDOW_MS || '15') * 60 * 1000, // 15 minutes
+  rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100'), // 100 requests per window
 
   // Swagger documentation
   swaggerEnabled: process.env.SWAGGER_ENABLED === 'true' || true,
