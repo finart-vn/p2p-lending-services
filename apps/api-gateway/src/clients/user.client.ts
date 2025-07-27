@@ -34,19 +34,19 @@ export class UserClient {
 
   constructor() {} // private readonly userService: ClientProxy, // TODO: Inject appropriate client proxy
 
-  //   async createUser(userData: CreateUserRequest): Promise<UserResponse> {
-  //     // TODO: Implement user creation
-  //     try {
-  //       // TODO: Send request to user microservice
-  //       // const result = await this.userService.send('create_user', userData).toPromise();
-  //       // return result;
-
-  //       throw new Error('Not implemented');
-  //     } catch (error) {
-  //       this.logger.error(`User creation failed: ${error.message}`);
-  //       throw error;
-  //     }
-  //   }
+  async createUser(userData: CreateUserRequest): Promise<UserResponse> {
+    // TODO: Implement user creation
+    try {
+      // TODO: Send request to user microservice
+      // const result = await this.userService.send('create_user', userData).toPromise();
+      // return result;
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      throw new Error('Not implemented');
+    } catch (error) {
+      this.logger.error(`User creation failed: ${error.message}`);
+      throw error;
+    }
+  }
 
   //   async getUserById(id: string): Promise<UserResponse | null> {
   //     // TODO: Implement user retrieval by ID
