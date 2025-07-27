@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { JwtModule } from '@nestjs/jwt';
+import { ClientsModule } from '@nestjs/microservices';
+import { RmqQueue } from '@p2p-lending/common/enums';
+import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -13,6 +16,12 @@ import { AuthService } from './auth.service';
         expiresIn: '60s',
       },
     }),
+    ClientsModule.register([
+      {
+        name: RmqQueue.AUTH,
+        ...getRmqOptions(RmqQueue.AUTH),
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService],
