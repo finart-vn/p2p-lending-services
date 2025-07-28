@@ -2,6 +2,12 @@ name: Test
 
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Branch to test'
+        required: true
+        default: 'main'
 
 jobs:
   test:
