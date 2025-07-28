@@ -78,8 +78,15 @@
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.ts$": "ts-jest"
     },
+    "transformIgnorePatterns": [
+      "node_modules/",
+      "\\.js$"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/apps/.*/generated/"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
