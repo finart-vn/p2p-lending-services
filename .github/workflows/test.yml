@@ -1,6 +1,7 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -14,4 +15,5 @@ jobs:
           node-version: '20'
 
       - run: npm ci
+      - run: npx prisma generate --schema=apps/user-service/prisma/schema.prisma
       - run: npm run test
