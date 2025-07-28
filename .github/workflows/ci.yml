@@ -1,0 +1,47 @@
+name: Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - ci-cd
+  pull_request:
+    branches:
+      - main
+      - develop
+      - ci-cd
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/user-service/prisma/schema.prisma
+
+      - name: Run lint
+        run: npm run lint
+  test:
+    needs: lint
+    uses: ./.github/workflows/test.yml
+    with:
+      ref: ${{ github.ref }}
