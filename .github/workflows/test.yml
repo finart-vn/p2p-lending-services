@@ -4,10 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      branch:
-        ref:
-        required: true
-        type: string
+      ref:
+      required: true
+      type: string
 
 jobs:
   test:
