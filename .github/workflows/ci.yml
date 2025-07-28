@@ -36,4 +36,4 @@ jobs:
         run: npm run lint
   test:
     need: lint
-    uses: ./github/workflows/test.yml       
+    uses: ./.github/workflows/test.yml       
