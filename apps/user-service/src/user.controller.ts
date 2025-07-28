@@ -1,11 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, Get, Logger } from '@nestjs/common';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 
 import { User } from '../generated/prisma';
 import { AppService } from './user.service';
 
 @Controller()
 export class AppController {
+  private readonly logger = new Logger(AppController.name);
   constructor(private readonly appService: AppService) {}
 
   @Get()
@@ -13,8 +19,15 @@ export class AppController {
     return await this.appService.getHello();
   }
 
-  @MessagePattern('create-user')
-  createUser(data: any) {
-    console.log('create-user', data);
+  @MessagePattern({
+    cmd: 'create_user',
+  })
+  createUser(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.logger.log('create_user', data);
+    const message = context.getMessage();
+    this.logger.log('message', JSON.stringify(message));
+    return {
+      message: 'User created successfully',
+    };
   }
 }

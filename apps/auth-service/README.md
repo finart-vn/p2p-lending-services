@@ -1,148 +1,148 @@
-# Auth Service - Prisma Setup
+# Auth Service
 
-This service handles authentication and user management for the P2P Lending Platform.
+Authentication microservice for the P2P Lending platform. This service handles JWT token validation, refresh, and user authentication via RabbitMQ message patterns.
 
-## 🚀 Getting Started
+## RabbitMQ Message Patterns
 
-### Prerequisites
+The auth service listens for the following message patterns from the API Gateway:
 
-- Node.js (v18+)
-- PostgreSQL database
-- Environment variables configured
+### 🔐 Token Validation
+**Pattern:** `auth.validate_token`
+**Request:**
+```typescript
+{
+  token: string
+}
+```
+**Response:**
+```typescript
+{
+  valid: boolean;
+  userId?: string;
+  roles?: string[];
+  error?: string;
+}
+```
 
-### Installation
+### 🔄 Token Refresh
+**Pattern:** `auth.refresh_token`
+**Request:**
+```typescript
+{
+  refreshToken: string
+}
+```
+**Response:**
+```typescript
+{
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+}
+```
 
-1. Install dependencies:
+### ❌ Token Revocation
+**Pattern:** `auth.revoke_token`
+**Request:**
+```typescript
+{
+  token: string
+}
+```
+**Response:**
+```typescript
+{
+  success: boolean
+}
+```
+
+### 👤 User Information
+**Pattern:** `auth.get_user_info`
+**Request:**
+```typescript
+{
+  userId: string
+}
+```
+**Response:**
+```typescript
+{
+  id: string;
+  email: string;
+  roles: string[];
+  firstName?: string;
+  lastName?: string;
+} | null
+```
+
+### ❤️ Health Check
+**Pattern:** `auth.health_check`
+**Response:**
+```typescript
+{
+  status: string;
+  timestamp: string;
+}
+```
+
+## Features
+
+- ✅ **JWT Token Validation** - Validates access tokens and extracts user information
+- ✅ **Token Refresh** - Generates new token pairs using refresh tokens
+- ✅ **Token Revocation** - Marks tokens as invalid (TODO: implement blacklisting)
+- ✅ **User Info Retrieval** - Gets user details from the user service
+- ✅ **RabbitMQ Integration** - Event-driven communication with API Gateway
+- ✅ **Error Handling** - Comprehensive error handling and logging
+
+## Environment Variables
+
+```env
+# JWT Configuration
+JWT_SECRET=your-secret-key-here
+JWT_PUBLIC_KEY=your-public-key-here  # For RSA keys
+JWT_PRIVATE_KEY=your-private-key-here # For RSA keys
+
+# RabbitMQ Configuration (handled by shared config)
+RABBITMQ_URL=amqp://localhost:5672
+```
+
+## Usage
+
+The service runs as a RabbitMQ microservice and automatically listens for messages on the configured queue. The API Gateway will send authentication requests via RabbitMQ.
+
+## TODO Items
+
+1. **Implement token blacklisting** - Add Redis/Database support for revoked tokens
+2. **RSA Key Support** - Switch from HMAC to RSA signatures for enhanced security  
+3. **Refresh Token Storage** - Store and validate refresh tokens in database
+4. **Rate Limiting** - Add rate limiting for token validation requests
+5. **Metrics & Monitoring** - Add Prometheus metrics for token operations
+6. **Token Cleanup** - Implement cleanup job for expired tokens
+
+## Architecture
+
+```
+API Gateway  →  RabbitMQ  →  Auth Service
+                    ↓
+               User Service (for user info)
+```
+
+The auth service:
+1. Receives authentication requests via RabbitMQ
+2. Validates JWT tokens using configured secrets
+3. Communicates with user service for user information
+4. Returns authentication results to the API Gateway
+
+## Development
 
 ```bash
+# Install dependencies
 npm install
-```
 
-2. Set up environment variables:
-
-```bash
-# Copy the example file and update with your values
-cp .env.example .env
-```
-
-Required environment variables:
-
-- `DATABASE_URL`: PostgreSQL connection string
-- `JWT_SECRET`: Secret key for JWT tokens
-- `JWT_EXPIRES_IN`: Token expiration time
-
-### Database Setup
-
-1. Generate Prisma client:
-
-```bash
-npx prisma generate
-```
-
-2. Create and run migrations:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-3. Seed the database with default roles:
-
-```bash
-npx prisma db seed
-```
-
-### Development
-
-1. Start the service:
-
-```bash
+# Run in development mode
 npm run start:dev
+
+# Run tests
+npm run test
 ```
-
-The service will be available at `http://localhost:3005`
-
-## 📊 Database Schema
-
-### Core Models
-
-- **User**: User accounts with authentication data
-- **Role**: System roles (ADMIN, BORROWER, LENDER)
-- **UserRole**: Many-to-many relationship between users and roles
-- **Kyc**: Know Your Customer verification data
-- **Document**: Uploaded verification documents
-
-### Key Features
-
-- Role-based access control
-- KYC verification system
-- Document management
-- User status management
-- Audit trails
-
-## 🔧 Usage Examples
-
-### Creating a User
-
-```typescript
-const user = await authService.createUser({
-  email: 'user@example.com',
-  passwordHash: 'hashed_password',
-  firstName: 'John',
-  lastName: 'Doe',
-  phone: '+1234567890',
-});
-```
-
-### Finding a User
-
-```typescript
-const user = await authService.findUserByEmail('user@example.com');
-```
-
-### Assigning Roles
-
-```typescript
-await authService.assignRoleToUser(userId, roleId, adminId);
-```
-
-## 🛠️ Available Scripts
-
-- `npm run start:dev` - Start development server
-- `npx prisma studio` - Open Prisma Studio
-- `npx prisma migrate dev` - Create and apply migrations
-- `npx prisma db seed` - Seed the database
-- `npx prisma generate` - Generate Prisma client
-
-## 🔐 Security
-
-- Passwords are hashed before storage
-- JWT tokens for authentication
-- Role-based permissions
-- Encrypted document storage
-- Audit logging for sensitive operations
-
-## 📝 Default Roles
-
-### ADMIN
-
-- Full platform access
-- User management
-- KYC approval/rejection
-- Loan approval/rejection
-- Platform configuration
-
-### BORROWER
-
-- Create loan requests
-- Update profile
-- Submit KYC documents
-- Make payments
-- View own loans
-
-### LENDER
-
-- View all loans
-- Create investments
-- View own portfolio
-- Submit KYC documents
-- View returns and analytics
