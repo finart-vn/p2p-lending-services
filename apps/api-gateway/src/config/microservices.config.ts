@@ -12,22 +12,15 @@ export interface MicroserviceConfig {
 }
 
 export const microservicesConfig = {
-  // TODO: Configure auth service connection
   authService: {
     name: RmqService.AUTH,
     ...getRmqOptions(RmqQueue.AUTH),
   } as ClientProviderOptions,
 
-  // TODO: Configure user service connection
   userService: {
     name: RmqService.USER,
     ...getRmqOptions(RmqQueue.USER),
   } as ClientProviderOptions,
-
-  // TODO: Configure other microservices as needed
-  // loanService: { ... },
-  // paymentService: { ... },
-  // notificationService: { ... },
 };
 
 export const getMicroserviceConfig = (

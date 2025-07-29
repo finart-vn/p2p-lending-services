@@ -13,8 +13,8 @@ import { AppService } from './user.service';
   imports: [
     ClientsModule.register([
       {
-        name: RmqService.AUTH,
-        ...getRmqOptions(RmqQueue.AUTH),
+        name: RmqService.USER,
+        ...getRmqOptions(RmqQueue.USER),
       },
     ]),
     ConfigModule.forRoot({
