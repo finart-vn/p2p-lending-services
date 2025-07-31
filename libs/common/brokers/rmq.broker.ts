@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
+import { RmqConfig } from '../config/rmq.config';
 import {
-  BrokerConfig,
   IMessageBroker,
   MessageRequest,
   MessageResponse,
@@ -13,13 +13,16 @@ export class RabbitMQBroker implements IMessageBroker {
   private readonly logger = new Logger(RabbitMQBroker.name);
   private client: ClientProxy;
 
-  constructor(private readonly config: BrokerConfig) {
-    this.client = ClientProxyFactory.create(config);
+  constructor(private readonly config: RmqConfig) {
+    this.client = ClientProxyFactory.create(config.options);
   }
 
   async connect(): Promise<void> {
     try {
       await this.client.connect();
+      this.logger.log(
+        `Connected to RabbitMQ ${JSON.stringify(this.config.options)}`,
+      );
     } catch (error) {
       this.logger.error(`Failed to connect to RabbitMQ: ${error}`);
       throw error;
@@ -44,9 +47,14 @@ export class RabbitMQBroker implements IMessageBroker {
   async healthCheck(): Promise<boolean> {
     try {
       await this.client.connect();
+      this.logger.log(
+        `Connected to RabbitMQ ${JSON.stringify(this.config.name)}`,
+      );
       return true;
     } catch (error) {
-      this.logger.error(`Failed to connect to RabbitMQ: ${error}`);
+      this.logger.error(
+        `Failed to connect ${JSON.stringify(this.config)} to RabbitMQ: ${error}`,
+      );
       return false;
     }
   }

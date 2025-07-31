@@ -1,8 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
-import { firstValueFrom } from 'rxjs';
-// import { ClientProxy } from '@nestjs/microservices';
+
+import { BaseClient } from './base.client';
 
 export interface CreateUserRequest {
   email: string;
@@ -32,26 +32,18 @@ export interface UserResponse {
 }
 
 @Injectable()
-export class UserClient {
-  private readonly logger = new Logger(UserClient.name);
-  constructor(
-    @Inject(RmqService.USER) private readonly rmqClient: ClientProxy,
-  ) {}
+export class UserClient extends BaseClient {
+  constructor(@Inject(RmqService.USER) protected readonly client: ClientProxy) {
+    super(client, RmqService.USER);
+  }
 
   async createUser(userData: CreateUserRequest): Promise<UserResponse> {
     try {
-      //1. connect to the user service
-      await this.rmqClient.connect();
-      //2. send the request to the user service
-      const result = await firstValueFrom(
-        this.rmqClient.send<UserResponse>(
-          { cmd: 'create_user' },
-          {
-            userData,
-          },
-        ),
+      const result = await this.send<CreateUserRequest, UserResponse>(
+        { cmd: 'create_user' },
+        userData,
       );
-      //3. return the result
+      this.logger.log(`User created: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
       this.logger.error(`User creation failed: ${JSON.stringify(error)}`);

@@ -1,16 +1,15 @@
 // src/config/rmq.config.ts
 import { Injectable } from '@nestjs/common';
 import { RmqOptions, Transport } from '@nestjs/microservices';
+import { RmqService } from '@p2p-lending/common/enums';
 import { RmqQueue } from '@p2p-lending/common/enums';
 
-import { BrokerConfig, BrokerType } from '../interfaces/broker.interface';
-
 @Injectable()
-export class RabbitMQConfig implements BrokerConfig {
-  type: BrokerType;
+export class RmqConfig {
+  name: string | symbol;
   options: RmqOptions;
   constructor(queue: RmqQueue) {
-    this.type = BrokerType.RABBITMQ;
+    this.name = RmqService.USER as string;
     this.options = {
       transport: Transport.RMQ,
       options: {

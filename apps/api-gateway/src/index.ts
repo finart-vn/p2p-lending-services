@@ -23,7 +23,6 @@ export * from './clients/user.client';
 // Configuration
 export * from './config/app.config';
 export * from './config/jwt.config';
-export * from './config/microservices.config';
 
 // DTOs
 export * from './dtos/common.dto';

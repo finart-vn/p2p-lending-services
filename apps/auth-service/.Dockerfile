@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /apps/api-gateway
+WORKDIR /apps
 
 COPY package.json .
 
