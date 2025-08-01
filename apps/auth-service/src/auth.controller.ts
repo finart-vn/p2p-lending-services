@@ -3,6 +3,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patternns';
 
 import { AuthService } from './auth.service';
+import { AuthUserCreateDto } from './dto/auth-user-create.dto';
 // import {
 //   AuthValidationRequestDto,
 //   AuthValidationResponseDto,
@@ -20,12 +21,12 @@ export class AuthController {
   @MessagePattern({
     cmd: MESSAGE_PATTERNS.AUTH.REGISTER,
   })
-  async createUserAuthToken(user: any): Promise<string> {
+  async createUserAuthToken(
+    user: AuthUserCreateDto,
+  ): Promise<AuthUserCreateDto> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
-      return new Promise((resolve) => {
-        resolve('auth_token created!');
-      });
+      return await this.authService.createUserAuthToken(user);
     } catch (error) {
       this.logger.error(`Create auth token failed: ${error}`);
       throw error;

@@ -4,7 +4,6 @@ import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patternn
 import { RmqService } from '@p2p-lending/common/enums';
 
 import { BaseClient } from './base.client';
-import { UserResponse } from './user.client';
 
 export interface AuthValidationRequest {
   token: string;
@@ -24,13 +23,19 @@ export interface UserInfoResponse {
   // TODO: Add more user properties
 }
 
+export interface AuthUserCreateDto {
+  email: string;
+  password: string;
+  userId: string;
+}
+
 @Injectable()
 export class AuthClient extends BaseClient {
   constructor(@Inject(RmqService.AUTH) protected readonly client: ClientProxy) {
     super(client, RmqService.AUTH);
   }
-  async createAuthToken(user: UserResponse): Promise<string> {
-    const result = await this.send<UserResponse, string>(
+  async createAuthToken(user: AuthUserCreateDto): Promise<string> {
+    const result = await this.send<AuthUserCreateDto, string>(
       { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
       user,
     );

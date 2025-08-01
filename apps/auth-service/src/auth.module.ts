@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule } from '@nestjs/microservices';
 import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
@@ -6,6 +7,7 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -15,6 +17,10 @@ import { AuthService } from './auth.service';
       signOptions: {
         expiresIn: '2h',
       },
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
     ClientsModule.register([
       {
@@ -28,6 +34,6 @@ import { AuthService } from './auth.service';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, PrismaService],
 })
 export class AuthModule {}

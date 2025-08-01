@@ -8,6 +8,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
+
+import { AuthUserCreateDto } from './dto/auth-user-create.dto';
+import { PrismaService } from './prisma/prisma.service';
 // import { firstValueFrom } from 'rxjs';
 
 // import {
@@ -24,12 +27,32 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     @Inject(RmqService.USER) private readonly userClient: ClientProxy,
+    private readonly prismaService: PrismaService,
   ) {}
 
   getHello(): string {
     return 'Hello World!';
   }
 
+  async createUserAuthToken(
+    user: AuthUserCreateDto,
+  ): Promise<AuthUserCreateDto> {
+    try {
+      this.logger.log('Creating auth token for user:: ', user);
+      await this.prismaService.userAuth.create({
+        data: {
+          email: user.email,
+          userId: user.userId,
+          passwordHash: user.password,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      this.logger.log('Error creating auth token for user:: ', error);
+      throw error;
+    }
+  }
   // async validateToken(token: string): Promise<AuthValidationResponseDto> {
   //   try {
   //     // TODO: Get public key from database or key management service

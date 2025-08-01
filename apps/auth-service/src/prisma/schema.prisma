@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("AUTH_SERVICE_DATABASE_URL")
+}
+
+model UserAuth {
+  id              String     @id @default(uuid())
+  email           String     @unique @db.VarChar(255)
+  passwordHash    String     @map("password_hash") @db.VarChar(255)
+  userId          String     @unique @map("user_id") @default(uuid())
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @default(now()) @updatedAt @map("updated_at")
+
+  tokenKeys TokenKey[]
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("users_auth")
+}
+model TokenKey {
+  id           String   @id @default(uuid())
+  userAuthId   String   @map("user_auth_id")
+  publicKey    String   @map("public_key")
+  refreshToken String   @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  userAuth UserAuth @relation(fields: [userAuthId], references: [id])
+
+  @@index([userAuthId])
+  @@index([expiresAt])
+  @@map("token_keys")
+}

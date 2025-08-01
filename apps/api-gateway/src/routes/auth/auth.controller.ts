@@ -12,21 +12,22 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
-    const user = await this.userClient.createUser(loginDto);
-    const createToken = await this.authClient.createAuthToken(user);
+  login(@Body(new ValidationPipe()) loginDto: LoginDto) {
+    console.log(loginDto);
+  }
+
+  @Post('register')
+  async register(@Body(new ValidationPipe()) registerDto: RegisterDto) {
+    const user = await this.userClient.createUser(registerDto);
+    const createToken = await this.authClient.createAuthToken({
+      email: user.email,
+      password: registerDto.password,
+      userId: user.id,
+    });
     return {
       message: 'Login successful',
       user: JSON.stringify(user),
       createToken,
-    };
-  }
-
-  @Post('register')
-  register(@Body(new ValidationPipe()) registerDto: RegisterDto) {
-    console.log(registerDto);
-    return {
-      message: 'Register successful',
     };
   }
 }
