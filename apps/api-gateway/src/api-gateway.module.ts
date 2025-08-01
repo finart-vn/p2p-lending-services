@@ -4,6 +4,7 @@ import { RmqQueue } from '@p2p-lending/common/enums';
 import { RmqService } from '@p2p-lending/common/enums';
 import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
+import { AuthClient } from './clients/auth.client';
 import { UserClient } from './clients/user.client';
 import { AuthController } from './routes/auth/auth.controller';
 
@@ -15,6 +16,6 @@ import { AuthController } from './routes/auth/auth.controller';
     ]),
   ],
   controllers: [AuthController],
-  providers: [UserClient],
+  providers: [UserClient, AuthClient],
 })
 export class ApiGatewayModule {}

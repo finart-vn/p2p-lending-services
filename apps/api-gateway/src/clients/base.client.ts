@@ -8,11 +8,6 @@ export interface MessagePattern {
   [key: string]: any;
 }
 
-export interface RequestOptions {
-  timeout?: number;
-  retries?: number;
-}
-
 export abstract class BaseClient {
   protected readonly logger = new Logger(this.constructor.name);
   protected readonly defaultTimeout = 5000;
@@ -25,7 +20,7 @@ export abstract class BaseClient {
   protected async send<TRequest, TResponse>(
     pattern: MessagePattern,
     data: TRequest,
-    // options?: RequestOptions,
+    // options?: RmqOptions['options'],
   ): Promise<TResponse> {
     try {
       await this.ensureConnection();

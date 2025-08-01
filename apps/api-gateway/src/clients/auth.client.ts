@@ -1,4 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patternns';
+import { RmqService } from '@p2p-lending/common/enums';
+
+import { BaseClient } from './base.client';
+import { UserResponse } from './user.client';
 
 export interface AuthValidationRequest {
   token: string;
@@ -19,11 +25,18 @@ export interface UserInfoResponse {
 }
 
 @Injectable()
-export class AuthClient {
-  private readonly logger = new Logger(AuthClient.name);
-
-  constructor() {} // private readonly authService: ClientProxy, // TODO: Inject appropriate client proxy
-
+export class AuthClient extends BaseClient {
+  constructor(@Inject(RmqService.AUTH) protected readonly client: ClientProxy) {
+    super(client, RmqService.AUTH);
+  }
+  async createAuthToken(user: UserResponse): Promise<string> {
+    const result = await this.send<UserResponse, string>(
+      { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
+      user,
+    );
+    this.logger.log(`Auth token created: ${JSON.stringify(result)}`);
+    return result;
+  }
   //   async validateToken(token: string): Promise<AuthValidationResponse> {
   //     // TODO: Implement token validation with auth service
   //     try {
