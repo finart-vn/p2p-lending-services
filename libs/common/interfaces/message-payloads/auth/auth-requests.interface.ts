@@ -1,24 +1,16 @@
-import { LoginDto } from '../../../dto/auth/login.dto';
-import { RegisterDto } from '../../../dto/auth/register.dto';
-
 // ===== AUTH SERVICE REQUEST INTERFACES =====
+import {
+  ApiLoginRequestDto,
+  ApiRegisterRequestDto,
+} from '@p2p-lending/api-gateway/src/dtos';
 
-export interface LoginRequest extends LoginDto {
+export interface LoginRequest extends ApiLoginRequestDto {
   email: string;
   password: string;
 }
 
-export interface RegisterRequest extends RegisterDto {
+export interface RegisterRequest extends ApiRegisterRequestDto {
   id: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: Date;
-  phone: string;
-  address: string;
-  city: string;
-  country: string;
 }
 
 export interface ValidateTokenRequest {

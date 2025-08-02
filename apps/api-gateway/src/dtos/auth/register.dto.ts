@@ -1,32 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEmail,
-  IsISO8601,
   IsNotEmpty,
   IsString,
   MinLength,
 } from 'class-validator';
 
 // ===== API AUTH REQUEST DTOs (External Interface) =====
-
-export class ApiLoginRequestDto {
-  @ApiProperty({
-    description: 'User email address',
-    example: 'user@example.com',
-  })
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @ApiProperty({
-    description: 'User password',
-    example: 'SecurePassword123!',
-  })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(6)
-  password: string;
-}
 
 export class ApiRegisterRequestDto {
   @ApiProperty({
@@ -64,11 +45,11 @@ export class ApiRegisterRequestDto {
 
   @ApiProperty({
     description: 'Date of birth (YYYY-MM-DD)',
-    example: '1990-01-01T00:00:00.000Z',
+    example: '1990-01-01',
   })
-  @IsISO8601()
+  @IsDateString()
   @IsNotEmpty()
-  dateOfBirth: string;
+  dateOfBirth: Date;
 
   @ApiProperty({
     description: 'Phone number',

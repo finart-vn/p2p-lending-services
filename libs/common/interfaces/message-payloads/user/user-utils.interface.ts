@@ -1,18 +1,19 @@
-import { RegisterDto } from '../../../dto/auth/register.dto';
+import { ApiRegisterRequestDto } from '@p2p-lending/api-gateway/src/dtos';
+
 import { CreateUserRequest } from './user-requests.interface';
 
 // ===== UTILITY TYPES =====
 
-export type CreateUserFromRegisterDto = Omit<RegisterDto, 'password'>;
+export type CreateUserFromRegisterDto = Omit<ApiRegisterRequestDto, 'password'>;
 
 // Helper function to convert RegisterDto to CreateUserRequest
 export const mapRegisterDtoToCreateUserRequest = (
-  registerDto: RegisterDto,
+  registerDto: ApiRegisterRequestDto,
 ): CreateUserRequest => ({
   email: registerDto.email,
   firstName: registerDto.firstName,
   lastName: registerDto.lastName,
-  dateOfBirth: registerDto.dateOfBirth,
+  dateOfBirth: new Date(registerDto.dateOfBirth),
   phone: registerDto.phone,
   address: registerDto.address,
   city: registerDto.city,

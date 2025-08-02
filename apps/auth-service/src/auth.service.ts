@@ -42,8 +42,8 @@ export class AuthService {
       this.logger.log('Creating auth token for user:: ', user);
       const userAuthCreated = await this.prismaService.userAuth.create({
         data: {
-          email: user.email,
           userId: user.id,
+          email: user.email,
           passwordHash: user.password,
         },
       });

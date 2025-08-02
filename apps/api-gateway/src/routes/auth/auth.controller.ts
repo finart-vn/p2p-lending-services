@@ -1,6 +1,17 @@
 import { AuthClient } from '@api-gateway/clients/auth.client';
 import { UserClient } from '@api-gateway/clients/user.client';
 import {
+  ApiLoginRequestDto,
+  ApiLoginResponseDto,
+  ApiRegisterRequestDto,
+  ApiRegisterResponseDto,
+} from '@api-gateway/dtos/auth';
+import {
+  ApiErrorResponseDto,
+  ApiResponseDto,
+} from '@api-gateway/dtos/common.dto';
+import { DtoMappers } from '@api-gateway/utils/dto-mappers';
+import {
   Body,
   Controller,
   Logger,
@@ -10,15 +21,6 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-
-import {
-  // ApiLoginRequestDto,
-  //   ApiLoginResponseDto,
-  ApiRegisterRequestDto,
-  ApiRegisterResponseDto,
-} from '../../dtos/auth';
-import { ApiErrorResponseDto, ApiResponseDto } from '../../dtos/common.dto';
-import { DtoMappers } from '../../utils/dto-mappers';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -30,48 +32,50 @@ export class AuthController {
     private readonly authClient: AuthClient,
   ) {}
 
-  // @Post('login')
-  // @ApiOperation({ summary: 'User login' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Login successful',
-  //   type: ApiResponseDto<ApiLoginResponseDto>,
-  // })
-  // @ApiResponse({
-  //   status: 401,
-  //   description: 'Invalid credentials',
-  //   type: ApiErrorResponseDto,
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'Validation error',
-  //   type: ApiErrorResponseDto,
-  // })
-  // async login(
-  //   @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
-  //   @Req() req: Request,
-  // ): Promise<ApiResponseDto<ApiLoginResponseDto>> {
-  //   try {
-  //     this.logger.log(`Login attempt for email: ${loginDto.email}`);
+  @Post('login')
+  @ApiOperation({ summary: 'User login' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    type: ApiResponseDto<ApiLoginResponseDto>,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid credentials',
+    type: ApiErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+    type: ApiErrorResponseDto,
+  })
+  async login(
+    @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
+    // @Req() req: Request,
+  ) {
+    try {
+      this.logger.log(`Login attempt for email: ${loginDto.email}`);
 
-  //     // Map API DTO to RMQ request
-  //     const rmqLoginRequest = DtoMappers.mapApiLoginToRmqLogin(loginDto);
+      // Map API DTO to RMQ request
+      const rmqLoginRequest = DtoMappers.mapApiLoginToRmqLogin(loginDto);
 
-  //     // Call auth service via RMQ
-  //     const loginResponse = await this.authClient.login(rmqLoginRequest);
+      // Call auth service via RMQ
+      const loginResponse = await this.authClient.login(rmqLoginRequest);
 
-  //     // Map RMQ response to API response
-  //     const apiResponse =
-  //       DtoMappers.mapRmqLoginResponseToApiLoginResponse(loginResponse);
+      // Map RMQ response to API response
+      // const apiResponse =
+      //   DtoMappers.mapRmqLoginResponseToApiLoginResponse(loginResponse);
 
-  //     this.logger.log(`Login successful for user: ${loginResponse.user.id}`);
+      this.logger.log(`Login successful for user: ${loginResponse.user.id}`);
 
-  //     return new ApiResponseDto(apiResponse, 'Login successful', req.url);
-  //   } catch (error) {
-  //     this.logger.error(`Login failed for email: ${loginDto.email}`, error);
-  //     throw error; // Will be handled by global exception filter
-  //   }
-  // }
+      return {
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error(`Login failed for email: ${loginDto.email}`, error);
+      throw error; // Will be handled by global exception filter
+    }
+  }
 
   @Post('register')
   @ApiOperation({ summary: 'User registration' })
@@ -93,34 +97,29 @@ export class AuthController {
   async register(
     @Body(new ValidationPipe()) registerDto: ApiRegisterRequestDto,
     @Req() req: Request,
-  ): Promise<ApiResponseDto<ApiRegisterResponseDto>> {
+  ) {
     try {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
 
       // Map API DTO to RMQ request
       const rmqRegisterRequest =
         DtoMappers.mapApiRegisterToRmqRegister(registerDto);
-
       // Create user via RMQ
       const userResponse = await this.userClient.createUser(rmqRegisterRequest);
 
-      // Register with auth service
+      // // Register with auth service
       const authResponse = await this.authClient.register(rmqRegisterRequest);
 
       // Map to API response
-      const apiResponse =
-        DtoMappers.mapRmqRegisterResponseToApiRegisterResponse(
-          authResponse,
-          userResponse,
-        );
 
       this.logger.log(`Registration successful for user: ${userResponse.id}`);
 
-      return new ApiResponseDto(
-        apiResponse,
-        'Registration successful',
-        req.url,
-      );
+      return {
+        success: true,
+        data: { userResponse, authResponse },
+        message: 'Registration successful',
+        path: req.url,
+      };
     } catch (error) {
       this.logger.error(
         `Registration failed for email: ${registerDto.email}`,

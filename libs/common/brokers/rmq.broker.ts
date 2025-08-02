@@ -7,7 +7,7 @@ import {
   IMessageBroker,
   MessageRequest,
   MessageResponse,
-} from '../interfaces/broker.interface';
+} from '../interfaces/message-payloads/broker.interface';
 @Injectable()
 export class RabbitMQBroker implements IMessageBroker {
   private readonly logger = new Logger(RabbitMQBroker.name);

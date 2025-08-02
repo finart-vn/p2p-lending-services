@@ -1,11 +1,6 @@
 // Export all common interfaces and types
 export * from './interfaces/message-payloads';
 
-// Export DTOs
-export * from './dto/auth/login.dto';
-export * from './dto/auth/register.dto';
-export * from './dto/user/create-user.dto';
-
 // Export constants
 export * from './constants/message-patterns';
 

@@ -10,7 +10,6 @@ import {
 import {
   ApiAuthTokensDto,
   ApiLoginRequestDto,
-  //   ApiLoginResponseDto,
   ApiRegisterRequestDto,
   ApiRegisterResponseDto,
   ApiUserDto,
@@ -37,7 +36,7 @@ export class DtoMappers {
       password: apiDto.password,
       firstName: apiDto.firstName,
       lastName: apiDto.lastName,
-      dateOfBirth: new Date(apiDto.dateOfBirth),
+      dateOfBirth: apiDto.dateOfBirth,
       phone: apiDto.phone,
       address: apiDto.address,
       city: apiDto.city,
