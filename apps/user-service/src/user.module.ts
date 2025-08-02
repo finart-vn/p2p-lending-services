@@ -4,7 +4,6 @@ import { ClientsModule } from '@nestjs/microservices';
 import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
 import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
-import { KeyTokenModule } from './key-token/key-token.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AppController } from './user.controller';
 import { AppService } from './user.service';
@@ -21,7 +20,6 @@ import { AppService } from './user.service';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    KeyTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

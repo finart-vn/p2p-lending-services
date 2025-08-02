@@ -1,6 +1,6 @@
 import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patternns';
+import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 
 import { AuthService } from './auth.service';
 import { AuthUserCreateDto } from './dto/auth-user-create.dto';

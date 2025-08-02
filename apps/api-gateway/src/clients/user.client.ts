@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
+import { RegisterDto } from '@p2p-lending/common/dto/user/register.dto';
 import { RmqService } from '@p2p-lending/common/enums';
 
 import { BaseClient } from './base.client';
@@ -37,10 +39,11 @@ export class UserClient extends BaseClient {
     super(client, RmqService.USER);
   }
 
-  async createUser(userData: CreateUserRequest): Promise<UserResponse> {
+  async createUser(userData: RegisterDto): Promise<UserResponse> {
     try {
-      const result = await this.send<CreateUserRequest, UserResponse>(
-        { cmd: 'create_user' },
+      this.logger.log(`Creating user: ${JSON.stringify(userData)}`);
+      const result = await this.send<RegisterDto, UserResponse>(
+        { cmd: MESSAGE_PATTERNS.USER.CREATE },
         userData,
       );
       this.logger.log(`User created: ${JSON.stringify(result)}`);
