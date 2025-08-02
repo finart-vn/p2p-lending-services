@@ -1,9 +1,12 @@
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
+import {
+  RegisterRequest,
+  RegisterResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AuthService } from './auth.service';
-import { AuthUserCreateDto } from './dto/auth-user-create.dto';
 // import {
 //   AuthValidationRequestDto,
 //   AuthValidationResponseDto,
@@ -22,8 +25,8 @@ export class AuthController {
     cmd: MESSAGE_PATTERNS.AUTH.REGISTER,
   })
   async createUserAuthToken(
-    user: AuthUserCreateDto,
-  ): Promise<AuthUserCreateDto> {
+    @Payload() user: RegisterRequest,
+  ): Promise<RegisterResponse> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
       return await this.authService.createUserAuthToken(user);

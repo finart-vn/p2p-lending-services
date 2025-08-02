@@ -4,16 +4,18 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { RegisterDto } from '@p2p-lending/common/dto/user/register.dto';
+import {
+  CreateUserRequest,
+  UserResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
-import { User } from '../generated/prisma';
 import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
   constructor(private prisma: PrismaService) {}
-  async createUser(user: RegisterDto): Promise<User | null> {
+  async createUser(user: CreateUserRequest): Promise<UserResponse> {
     try {
       // 1. Check if user already exists
       const existingUser = await this.prisma.user.findUnique({
@@ -27,10 +29,19 @@ export class AppService {
             email: user.email,
           },
         });
-
+      this.logger.debug('create user', JSON.stringify(user));
       // 2. Create new user
       const newUser = await this.prisma.user.create({
-        data: user,
+        data: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          dateOfBirth: user.dateOfBirth,
+          address: user.address,
+          city: user.city,
+          country: user.country,
+        },
       });
       this.logger.log(`User created: ${newUser.email}`);
       return newUser;

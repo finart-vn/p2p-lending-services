@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsDateString, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsISO8601, IsNotEmpty, IsString } from 'class-validator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,11 +37,11 @@ export class RegisterDto {
   })
   lastName: string;
 
-  @IsDateString()
+  @IsISO8601()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Date of Birth',
-    example: '1999-02-05',
+    example: '1999-02-05T00:00:00.000Z',
   })
   dateOfBirth: Date;
 

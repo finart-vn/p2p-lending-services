@@ -2,6 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
 import { BaseClient } from './base.client';
 
@@ -26,6 +32,36 @@ export class AuthClient extends BaseClient {
   constructor(@Inject(RmqService.AUTH) protected readonly client: ClientProxy) {
     super(client, RmqService.AUTH);
   }
+  async login(loginRequest: LoginRequest): Promise<LoginResponse> {
+    try {
+      this.logger.log(`Login request for email: ${loginRequest.email}`);
+      const result = await this.send<LoginRequest, LoginResponse>(
+        { cmd: MESSAGE_PATTERNS.AUTH.LOGIN },
+        loginRequest,
+      );
+      this.logger.log(`Login successful for user: ${result.user.id}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Login failed:`, error);
+      throw error;
+    }
+  }
+
+  async register(registerRequest: RegisterRequest): Promise<RegisterResponse> {
+    try {
+      this.logger.log(`Register request for email: ${registerRequest.email}`);
+      const result = await this.send<RegisterRequest, RegisterResponse>(
+        { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
+        registerRequest,
+      );
+      this.logger.log(`Registration successful for user: ${result.user.id}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Registration failed:`, error);
+      throw error;
+    }
+  }
+
   async createAuthToken(user: UserInfoResponse): Promise<UserInfoResponse> {
     const result = await this.send<UserInfoResponse, UserInfoResponse>(
       { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },

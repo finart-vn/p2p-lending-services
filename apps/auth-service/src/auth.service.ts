@@ -8,8 +8,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
+import {
+  RegisterRequest,
+  RegisterResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
-import { AuthUserCreateDto } from './dto/auth-user-create.dto';
 import { PrismaService } from './prisma/prisma.service';
 // import { firstValueFrom } from 'rxjs';
 
@@ -34,20 +37,27 @@ export class AuthService {
     return 'Hello World!';
   }
 
-  async createUserAuthToken(
-    user: AuthUserCreateDto,
-  ): Promise<AuthUserCreateDto> {
+  async createUserAuthToken(user: RegisterRequest): Promise<RegisterResponse> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
-      await this.prismaService.userAuth.create({
+      const userAuthCreated = await this.prismaService.userAuth.create({
         data: {
           email: user.email,
-          userId: user.userId,
+          userId: user.id,
           passwordHash: user.password,
         },
       });
 
-      return user;
+      return {
+        user: {
+          id: userAuthCreated.userId,
+          email: userAuthCreated.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isVerified: false,
+        },
+        message: 'User created successfully',
+      };
     } catch (error) {
       this.logger.log('Error creating auth token for user:: ', error);
       throw error;

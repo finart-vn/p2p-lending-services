@@ -1,12 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
-import {
-  Ctx,
-  MessagePattern,
-  Payload,
-  RmqContext,
-} from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
-import { RegisterDto } from '@p2p-lending/common/dto/user/register.dto';
+import { CreateUserRequest } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AppService } from './user.service';
 
@@ -16,8 +11,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @MessagePattern({ cmd: MESSAGE_PATTERNS.USER.CREATE })
-  createUser(@Payload() user: RegisterDto, @Ctx() context: RmqContext) {
-    this.logger.log('context', JSON.stringify(context));
-    // return this.appService.createUser(user);
+  createUser(@Payload() user: CreateUserRequest) {
+    this.logger.log('context', JSON.stringify(user));
+    return this.appService.createUser(user);
   }
 }

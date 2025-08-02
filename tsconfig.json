@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@p2p-lending/*": ["./libs/*", "./apps/*"],
-      "@api-gateway/*": ["./apps/api-gateway/src/*"]
+      "@api-gateway/*": ["./apps/api-gateway/src/*"],
     }
   }
 }

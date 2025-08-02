@@ -1,79 +1,122 @@
-import { Controller } from '@nestjs/common';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsDateString, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsISO8601,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
-@ApiTags('Auth')
-@Controller('auth')
-export class RegisterDto {
+// ===== API AUTH REQUEST DTOs (External Interface) =====
+
+export class ApiLoginRequestDto {
+  @ApiProperty({
+    description: 'User email address',
+    example: 'user@example.com',
+  })
   @IsEmail()
   @IsNotEmpty()
-  @ApiProperty({
-    description: 'Email',
-    example: 'hoaitran@gmail.com',
-  })
   email: string;
 
+  @ApiProperty({
+    description: 'User password',
+    example: 'SecurePassword123!',
+  })
   @IsString()
   @IsNotEmpty()
+  @MinLength(6)
+  password: string;
+}
+
+export class ApiRegisterRequestDto {
   @ApiProperty({
-    description: 'Password',
-    example: '123456',
+    description: 'User email address',
+    example: 'user@example.com',
   })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    description: 'User password (minimum 6 characters)',
+    example: 'SecurePassword123!',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
+  @ApiProperty({
+    description: 'User first name',
+    example: 'John',
+  })
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({
-    description: 'First Name',
-    example: 'Hoai',
-  })
   firstName: string;
 
+  @ApiProperty({
+    description: 'User last name',
+    example: 'Doe',
+  })
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({
-    description: 'Last Name',
-    example: 'Tran',
-  })
   lastName: string;
 
-  @IsDateString()
-  @IsNotEmpty()
   @ApiProperty({
-    description: 'Date of Birth',
-    example: '1999-02-05',
+    description: 'Date of birth (YYYY-MM-DD)',
+    example: '1990-01-01T00:00:00.000Z',
   })
-  dateOfBirth: Date;
+  @IsISO8601()
+  @IsNotEmpty()
+  dateOfBirth: string;
 
+  @ApiProperty({
+    description: 'Phone number',
+    example: '+1234567890',
+  })
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({
-    description: 'Phone',
-    example: '0909090909',
-  })
   phone: string;
 
-  @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Address',
-    example: '35/7 Nha Tho, Dang Tat',
+    example: '123 Main St',
   })
+  @IsString()
+  @IsNotEmpty()
   address: string;
 
-  @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'City',
-    example: 'Nha Trang',
+    example: 'New York',
   })
-  city: string;
-
   @IsString()
   @IsNotEmpty()
+  city: string;
+
   @ApiProperty({
     description: 'Country',
-    example: 'Vietnam',
+    example: 'United States',
   })
+  @IsString()
+  @IsNotEmpty()
   country: string;
+}
+
+export class ApiVerifyOtpRequestDto {
+  @ApiProperty({
+    description: 'Email address',
+    example: 'user@example.com',
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    description: 'OTP code',
+    example: '123456',
+  })
+  @IsString()
+  @IsNotEmpty()
+  otp: string;
 }

@@ -1,37 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
-import { RegisterDto } from '@p2p-lending/common/dto/user/register.dto';
+import { RegisterDto } from '@p2p-lending/common/dto/auth/register.dto';
 import { RmqService } from '@p2p-lending/common/enums';
+import {
+  CreateUserRequest,
+  mapRegisterDtoToCreateUserRequest,
+  UserResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
 import { BaseClient } from './base.client';
-
-export interface CreateUserRequest {
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-  // TODO: Add more user creation fields
-}
-
-export interface UpdateUserRequest {
-  id: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  // TODO: Add more user update fields
-}
-
-export interface UserResponse {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  roles: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  // TODO: Add more user properties
-}
 
 @Injectable()
 export class UserClient extends BaseClient {
@@ -42,14 +20,17 @@ export class UserClient extends BaseClient {
   async createUser(userData: RegisterDto): Promise<UserResponse> {
     try {
       this.logger.log(`Creating user: ${JSON.stringify(userData)}`);
-      const result = await this.send<RegisterDto, UserResponse>(
+
+      // Convert RegisterDto to CreateUserRequest (removing password)
+      const createUserRequest = mapRegisterDtoToCreateUserRequest(userData);
+      const result = await this.send<CreateUserRequest, UserResponse>(
         { cmd: MESSAGE_PATTERNS.USER.CREATE },
-        userData,
+        createUserRequest,
       );
       this.logger.log(`User created: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
-      this.logger.error(`User creation failed: ${JSON.stringify(error)}`);
+      this.logger.error(`User creation failed:`, error);
       throw error;
     }
   }
