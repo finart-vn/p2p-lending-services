@@ -10,7 +10,7 @@ export interface LoginRequest extends ApiLoginRequestDto {
 }
 
 export interface RegisterRequest extends ApiRegisterRequestDto {
-  id: string;
+  userId: string;
 }
 
 export interface ValidateTokenRequest {

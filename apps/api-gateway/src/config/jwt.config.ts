@@ -34,11 +34,14 @@ export class JwtUtils {
   }
 
   static isTokenExpired(token: string): boolean {
+    console.log(token);
     // TODO: Implement token expiration check
     return false;
   }
 
   static getTokenPayload(token: string): any {
+    console.log(token);
+
     // TODO: Implement token payload extraction
     return null;
   }

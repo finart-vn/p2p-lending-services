@@ -14,6 +14,8 @@ import { DtoMappers } from '@api-gateway/utils/dto-mappers';
 import {
   Body,
   Controller,
+  HttpException,
+  HttpStatus,
   Logger,
   Post,
   Req,
@@ -73,7 +75,6 @@ export class AuthController {
       };
     } catch (error) {
       this.logger.error(`Login failed for email: ${loginDto.email}`, error);
-      throw error; // Will be handled by global exception filter
     }
   }
 
@@ -106,13 +107,13 @@ export class AuthController {
         DtoMappers.mapApiRegisterToRmqRegister(registerDto);
       // Create user via RMQ
       const userResponse = await this.userClient.createUser(rmqRegisterRequest);
-
       // // Register with auth service
-      const authResponse = await this.authClient.register(rmqRegisterRequest);
+      const authResponse = await this.authClient.register(
+        rmqRegisterRequest,
+        userResponse.id,
+      );
 
       // Map to API response
-
-      this.logger.log(`Registration successful for user: ${userResponse.id}`);
 
       return {
         success: true,
@@ -125,7 +126,10 @@ export class AuthController {
         `Registration failed for email: ${registerDto.email}`,
         error,
       );
-      throw error; // Will be handled by global exception filter
+      return new HttpException(
+        `Registration failed for email: ${registerDto.email}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

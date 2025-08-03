@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   CreateUserRequest,
   UserResponse,
@@ -29,7 +24,6 @@ export class AppService {
             email: user.email,
           },
         });
-      this.logger.debug('create user', JSON.stringify(user));
       // 2. Create new user
       const newUser = await this.prisma.user.create({
         data: {
@@ -47,7 +41,7 @@ export class AppService {
       return newUser;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException('Failed to create user');
+      throw error;
     }
   }
 }

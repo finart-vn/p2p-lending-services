@@ -47,12 +47,15 @@ export class AuthClient extends BaseClient {
     }
   }
 
-  async register(registerRequest: RegisterRequest): Promise<RegisterResponse> {
+  async register(
+    registerRequest: RegisterRequest,
+    userId: string,
+  ): Promise<RegisterResponse> {
     try {
       this.logger.log(`Register request for email: ${registerRequest.email}`);
       const result = await this.send<RegisterRequest, RegisterResponse>(
         { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
-        registerRequest,
+        { ...registerRequest, userId },
       );
       this.logger.log(`Registration successful for user: ${result.user.id}`);
       return result;
