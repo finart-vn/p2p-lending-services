@@ -8,6 +8,7 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from './prisma/prisma.service';
+import { TokenKeyModule } from './token-key/token-key.module';
 
 @Module({
   imports: [
@@ -21,6 +22,11 @@ import { PrismaService } from './prisma/prisma.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      load: [
+        () => ({
+          JWT_SECRET: process.env.JWT_SECRET,
+        }),
+      ],
     }),
     ClientsModule.register([
       {
@@ -32,6 +38,7 @@ import { PrismaService } from './prisma/prisma.service';
         ...getRmqOptions(RmqQueue.USER),
       },
     ]),
+    TokenKeyModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, PrismaService],

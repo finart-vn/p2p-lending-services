@@ -33,16 +33,12 @@ export class AuthService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
   async createUserAuthToken(user: RegisterRequest): Promise<RegisterResponse> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
       const userAuthCreated = await this.prismaService.userAuth.create({
         data: {
-          userId: user.id,
+          userId: user.userId,
           email: user.email,
           passwordHash: user.password,
         },

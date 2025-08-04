@@ -7,6 +7,7 @@ import {
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AuthService } from './auth.service';
+import { TokenKeyService } from './token-key/token-key.service';
 // import {
 //   AuthValidationRequestDto,
 //   AuthValidationResponseDto,
@@ -19,7 +20,10 @@ import { AuthService } from './auth.service';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly tokenKeyService: TokenKeyService,
+  ) {}
 
   @MessagePattern({
     cmd: MESSAGE_PATTERNS.AUTH.REGISTER,
@@ -29,7 +33,29 @@ export class AuthController {
   ): Promise<RegisterResponse> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
-      return await this.authService.createUserAuthToken(user);
+      // const userAuth = await this.authService.createUserAuthToken(user);
+
+      const tokenKey = await this.tokenKeyService.generateTokenKey(
+        {
+          // tid: userAuth.user.id,
+          // sub: userAuth.user.id,
+          tid: '123',
+          sub: '321',
+        },
+        'pub key',
+      );
+
+      this.logger.log('Token key generated', tokenKey);
+      return {
+        user: {
+          id: '123',
+          email: 'test@test.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          isVerified: false,
+        },
+        message: '11',
+      };
     } catch (error) {
       this.logger.error(`Create auth token failed: ${error}`);
       throw error;
