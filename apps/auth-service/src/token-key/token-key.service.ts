@@ -17,22 +17,38 @@ export class TokenKeyService {
   ) {}
 
   async generateTokenKey(
-    payload: TokenPayloadDto,
-    publicKey: string,
+    userId: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    this.logger.log('Generating token key', publicKey);
-    this.logger.log('Load Config', this.configService.get('JWT_SECRET'));
+    const payload = {
+      tid: userId,
+      sub: userId,
+    };
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_SECRET'),
+      algorithm: 'HS256',
       expiresIn: '15m',
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_SECRET'),
+      algorithm: 'HS256',
       expiresIn: '7d',
     });
+
     return {
       accessToken,
       refreshToken,
     };
+  }
+
+  async validateToken(token: string): Promise<TokenPayloadDto> {
+    try {
+      return this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_SECRET'),
+        algorithms: ['HS256'],
+      });
+    } catch (error) {
+      this.logger.error('Error validating token', error);
+      throw error;
+    }
   }
 }

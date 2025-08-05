@@ -5,10 +5,10 @@ import { RmqService } from '@p2p-lending/common/enums';
 import {
   CreateUserRequest,
   mapRegisterDtoToCreateUserRequest,
-  RegisterRequest,
   UserResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
+import { ApiRegisterRequestDto } from '../dtos';
 import { BaseClient } from './base.client';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UserClient extends BaseClient {
     super(client, RmqService.USER);
   }
 
-  async createUser(userData: RegisterRequest): Promise<UserResponse> {
+  async createUser(userData: ApiRegisterRequestDto): Promise<UserResponse> {
     try {
       this.logger.log(`Creating user: ${JSON.stringify(userData)}`);
 

@@ -22,11 +22,7 @@ import { TokenKeyModule } from './token-key/token-key.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      load: [
-        () => ({
-          JWT_SECRET: process.env.JWT_SECRET,
-        }),
-      ],
+      expandVariables: true,
     }),
     ClientsModule.register([
       {

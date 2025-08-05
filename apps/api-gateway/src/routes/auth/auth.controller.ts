@@ -103,13 +103,11 @@ export class AuthController {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
 
       // Map API DTO to RMQ request
-      const rmqRegisterRequest =
-        DtoMappers.mapApiRegisterToRmqRegister(registerDto);
       // Create user via RMQ
-      const userResponse = await this.userClient.createUser(rmqRegisterRequest);
+      const userResponse = await this.userClient.createUser(registerDto);
       // // Register with auth service
       const authResponse = await this.authClient.register(
-        rmqRegisterRequest,
+        registerDto,
         userResponse.id,
       );
 

@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   // HttpException,
   // HttpStatus,
   Inject,
@@ -8,11 +10,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
-import {
-  RegisterRequest,
-  RegisterResponse,
-} from '@p2p-lending/common/interfaces/message-payloads';
+import { RegisterRequest } from '@p2p-lending/common/interfaces/message-payloads';
 
+import { UserAuth } from '../generated/prisma';
 import { PrismaService } from './prisma/prisma.service';
 // import { firstValueFrom } from 'rxjs';
 
@@ -33,9 +33,17 @@ export class AuthService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async createUserAuthToken(user: RegisterRequest): Promise<RegisterResponse> {
+  async register(user: RegisterRequest): Promise<UserAuth> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
+      const userExists = await this.prismaService.userAuth.findUnique({
+        where: {
+          userId: user.userId,
+        },
+      });
+      if (userExists) {
+        throw new HttpException('User already exists', HttpStatus.CONFLICT);
+      }
       const userAuthCreated = await this.prismaService.userAuth.create({
         data: {
           userId: user.userId,
@@ -44,21 +52,13 @@ export class AuthService {
         },
       });
 
-      return {
-        user: {
-          id: userAuthCreated.userId,
-          email: userAuthCreated.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          isVerified: false,
-        },
-        message: 'User created successfully',
-      };
+      return userAuthCreated;
     } catch (error) {
       this.logger.log('Error creating auth token for user:: ', error);
       throw error;
     }
   }
+
   // async validateToken(token: string): Promise<AuthValidationResponseDto> {
   //   try {
   //     // TODO: Get public key from database or key management service

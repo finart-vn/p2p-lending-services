@@ -1,10 +1,10 @@
 // ===== AUTH SERVICE RESPONSE INTERFACES =====
 
+import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
-  expiresIn: number;
-  refreshExpiresIn: number;
 }
 
 export interface LoginResponse {
@@ -20,16 +20,7 @@ export interface LoginResponse {
   isFirstLogin: boolean;
 }
 
-export interface RegisterResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    isVerified: boolean;
-  };
-  message: string;
-}
+export type RegisterResponse = Omit<UserAuth, 'passwordHash'>;
 
 export interface TokenValidationResponse {
   isValid: boolean;

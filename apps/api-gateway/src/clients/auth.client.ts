@@ -9,6 +9,7 @@ import {
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
+import { ApiRegisterRequestDto } from '../dtos';
 import { BaseClient } from './base.client';
 
 export interface AuthValidationRequest {
@@ -48,7 +49,7 @@ export class AuthClient extends BaseClient {
   }
 
   async register(
-    registerRequest: RegisterRequest,
+    registerRequest: ApiRegisterRequestDto,
     userId: string,
   ): Promise<RegisterResponse> {
     try {
@@ -57,7 +58,7 @@ export class AuthClient extends BaseClient {
         { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
         { ...registerRequest, userId },
       );
-      this.logger.log(`Registration successful for user: ${result.user.id}`);
+      this.logger.log(`Registration successful for user: `, result);
       return result;
     } catch (error) {
       this.logger.error(`Registration failed:`, error);

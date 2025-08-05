@@ -4,10 +4,7 @@ import {
   ApiRegisterRequestDto,
 } from '@p2p-lending/api-gateway/src/dtos';
 
-export interface LoginRequest extends ApiLoginRequestDto {
-  email: string;
-  password: string;
-}
+export type LoginRequest = ApiLoginRequestDto;
 
 export interface RegisterRequest extends ApiRegisterRequestDto {
   userId: string;
