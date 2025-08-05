@@ -1,17 +1,9 @@
 import {
-  // AuthTokens,
   LoginRequest,
-  //   LoginResponse,
-  // RegisterResponse,
   UserResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import {
-  // ApiAuthTokensDto,
-  ApiLoginRequestDto,
-  // ApiRegisterResponseDto,
-  ApiUserDto,
-} from '../dtos/auth';
+import { ApiLoginRequestDto, ApiUserDto } from '../dtos/auth';
 
 // ===== DTO MAPPING UTILITIES =====
 
@@ -38,25 +30,6 @@ export class DtoMappers {
       //   createdAt: rmqUser.createdAt.toISOString(),
     };
   }
-
-  // static mapRmqTokensToApiTokens(rmqTokens: AuthTokens): ApiAuthTokensDto {
-  //   return {
-  //     accessToken: rmqTokens.accessToken,
-  //     refreshToken: rmqTokens.refreshToken,
-  //     // expiresIn: rmqTokens.expiresIn,
-  //     // refreshExpiresIn: rmqTokens.refreshExpiresIn,
-  //   };
-  // }
-
-  //   static mapRmqLoginResponseToApiLoginResponse(
-  //     rmqResponse: LoginResponse,
-  //   ): ApiLoginResponseDto {
-  //     return {
-  //       user: this.mapRmqUserToApiUser(rmqResponse.user),
-  //       tokens: this.mapRmqTokensToApiTokens(rmqResponse.tokens),
-  //       isFirstLogin: rmqResponse.isFirstLogin,
-  //     };
-  //   }
 
   // ===== UTILITY FUNCTIONS =====
 

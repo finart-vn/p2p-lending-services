@@ -26,10 +26,6 @@ export abstract class BaseClient {
       await this.ensureConnection();
       const $response = this.client.send<TResponse>(pattern, data).pipe(
         catchError((error: unknown) => {
-          this.logger.error(
-            `Failed to send message to ${this.serviceName}`,
-            error,
-          );
           return throwError(() => error);
         }),
       );
@@ -37,7 +33,7 @@ export abstract class BaseClient {
       return await firstValueFrom($response);
     } catch (error) {
       this.logger.error(
-        `${this.serviceName} request failed for pattern ${JSON.stringify(pattern)}: ${error}`,
+        `${this.serviceName} request failed for pattern ${JSON.stringify(pattern)}: ${JSON.stringify(error)}`,
       );
       throw error;
     }
