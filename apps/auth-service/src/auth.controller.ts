@@ -8,7 +8,6 @@ import {
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
-import * as _ from 'lodash';
 
 import { AuthService } from './auth.service';
 import { TokenKeyService } from './token-key/token-key.service';
