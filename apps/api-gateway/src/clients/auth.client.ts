@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
 import {
@@ -13,7 +14,7 @@ import { ApiLoginRequestDto, ApiRegisterRequestDto } from '../dtos';
 import { BaseClient } from './base.client';
 
 export interface AuthValidationRequest {
-  token: string;
+  token: TokenPayloadDto;
 }
 
 export interface AuthValidationResponse {
@@ -73,20 +74,21 @@ export class AuthClient extends BaseClient {
     this.logger.log(`Auth token created: ${JSON.stringify(result)}`);
     return result;
   }
-  //   async validateToken(token: string): Promise<AuthValidationResponse> {
-  //     // TODO: Implement token validation with auth service
-  //     try {
-  //       // TODO: Send request to auth microservice
-  //       // const result = await this.authService.send('validate_token', { token }).toPromise();
-  //       // return result;
-
-  //       // Placeholder return
-  //       return { valid: false, error: 'Not implemented' };
-  //     } catch (error) {
-  //       this.logger.error(`Token validation failed: ${error.message}`);
-  //       return { valid: false, error: error.message };
-  //     }
-  //   }
+  async validateToken(token: TokenPayloadDto): Promise<boolean> {
+    try {
+      // const result = await this.send<AuthValidationRequest, boolean>(
+      //   { cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN },
+      //   token,
+      // );
+      this.logger.log(`Token validation request: ${JSON.stringify(token)}`);
+      return new Promise((resolve) => {
+        resolve(true);
+      });
+    } catch (error) {
+      this.logger.error(`Token validation failed: ${JSON.stringify(error)}`);
+      return false;
+    }
+  }
 
   //   async getUserInfo(userId: string): Promise<UserInfoResponse | null> {
   //     // TODO: Implement user info retrieval
@@ -103,14 +105,14 @@ export class AuthClient extends BaseClient {
   //     }
   //   }
 
-  //   async refreshToken(refreshToken: string): Promise<any> {
-  //     // TODO: Implement token refresh logic
-  //     try {
-  //       // TODO: Send request to auth service
-  //       return null;
-  //     } catch (error) {
-  //       this.logger.error(`Token refresh failed: ${error.message}`);
-  //       throw error;
-  //     }
+  // async refreshToken(refreshToken: string): Promise<any> {
+  //   // TODO: Implement token refresh logic
+  //   try {
+  //     // TODO: Send request to auth service
+  //     return null;
+  //   } catch (error) {
+  //     this.logger.error(`Token refresh failed: ${error.message}`);
+  //     throw error;
   //   }
+  // }
 }

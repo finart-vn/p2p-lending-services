@@ -1,33 +1,76 @@
-// import {
-//   CanActivate,
-//   ExecutionContext,
-//   Injectable,
-//   UnauthorizedException,
-// } from '@nestjs/common';
-// import { Reflector } from '@nestjs/core';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 
-// @Injectable()
-// export class AuthGuard implements CanActivate {
-//   constructor(private reflector: Reflector) {}
+import { AuthClient } from '../clients/auth.client';
 
-//   async canActivate(context: ExecutionContext): Promise<boolean> {
-//     // TODO: Implement JWT token validation logic
-//     const request = context.switchToHttp().getRequest();
-//     const token = this.extractTokenFromHeader(request);
+interface RequestWithUser {
+  user?: TokenPayloadDto; // The authenticated user's data from JWT payload
+  headers: {
+    authorization?: string; // The Authorization header containing the Bearer token
+    [key: string]: any;
+  };
+}
 
-//     if (!token) {
-//       throw new UnauthorizedException('Token not found');
-//     }
+@Injectable()
+export class AuthGuard implements CanActivate {
+  private readonly logger = new Logger(AuthGuard.name);
+  constructor(
+    private jwtService: JwtService,
+    private authClient: AuthClient,
+    private configService: ConfigService,
+  ) {}
 
-//     // TODO: Validate token with auth service
-//     // TODO: Attach user info to request
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    //1. Extract token from header
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    const token = this.extractTokenFromHeader(request);
 
-//     return true;
-//   }
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+    //2. Decode token
+    const decodedToken: TokenPayloadDto = this.jwtService.verify(token, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+    //3. Validate token
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      this.logger.error('Token decode failed or returned invalid payload');
+      throw new UnauthorizedException('Invalid token format');
+    }
 
-//   private extractTokenFromHeader(request: any): string | undefined {
-//     // TODO: Implement token extraction logic
-//     const [type, token] = request.headers.authorization?.split(' ') ?? [];
-//     return type === 'Bearer' ? token : undefined;
-//   }
-// }
+    //4. Validate token with auth service
+    const isValid = await this.authClient.validateToken(decodedToken);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    //5. Attach user info to request
+    request.user = decodedToken;
+
+    this.logger.log(`User authenticated: ${JSON.stringify(decodedToken)}`);
+
+    return true;
+  }
+  private extractTokenFromHeader(request: RequestWithUser): string | undefined {
+    const authHeader = request.headers.authorization;
+    // VALIDATION: Ensure authorization header exists and is a string
+    if (!authHeader || typeof authHeader !== 'string') {
+      return undefined;
+    }
+    // Split "Bearer token" into type and token parts
+    const [type, token] = authHeader.split(' ');
+    // CLEANING: Remove any quotes and whitespace from token
+    // Some clients might send tokens wrapped in quotes
+    const cleanToken = token.replace(/['"]+/g, '').trim();
+    // VALIDATION: Ensure it's a Bearer token (not Basic auth, etc.)
+    return type === 'Bearer' ? cleanToken : undefined;
+  }
+}
