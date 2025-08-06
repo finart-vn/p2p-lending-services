@@ -41,7 +41,7 @@ export class PrismaService
 
     // Log queries in development
     this.$on('query', (event: Prisma.QueryEvent) => {
-      this.logger.debug(`Query: ${event.query}`);
+      // this.logger.debug(`Query: ${event.query}`);
       this.logger.debug(`Params: ${event.params}`);
       this.logger.debug(`Duration: ${event.duration}ms`);
     });
