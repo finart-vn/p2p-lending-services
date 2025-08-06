@@ -147,8 +147,8 @@ export const getServicePatterns = (
 
 // Helper function to validate pattern
 export const isValidPattern = (pattern: string): boolean => {
-  const allPatterns = Object.values(MESSAGE_PATTERNS).flatMap((service) =>
-    Object.values(service),
+  const allPatterns: string[] = Object.values(MESSAGE_PATTERNS).flatMap(
+    (service) => Object.values(service),
   );
-  return allPatterns.includes(pattern as any);
+  return allPatterns.includes(pattern);
 };

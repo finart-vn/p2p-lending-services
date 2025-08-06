@@ -1,8 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { TokenKeyService } from './token-key.service';
+import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
 
 describe('TokenKeyService', () => {
   let service: TokenKeyService;
@@ -45,11 +44,11 @@ describe('TokenKeyService', () => {
 
     // Setup default mock returns
     mockConfigService.get.mockImplementation((key: string) => {
-      const config: Record<string, string> = {
+      const config = {
         JWT_SECRET: 'test-secret',
         JWT_REFRESH_SECRET: 'test-refresh-secret',
       };
-      return config[key] || `test-${key.toLowerCase()}`;
+      return config[key as keyof typeof config];
     });
   });
 

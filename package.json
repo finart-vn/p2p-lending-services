@@ -20,7 +20,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/user-service/test/jest-e2e.json",
+    "test:e2e": "jest test/e2e",
+    "test:unit": "jest test/*/unit",
+    "test:integration": "jest test/*/integration",
+    "test:api-gateway": "jest test/api-gateway",
+    "test:auth-service": "jest test/auth-service",
+    "test:user-service": "jest test/user-service",
     "prisma:user:generate": "cd apps/user-service && prisma generate",
     "prisma:user:migrate": "cd apps/user-service && prisma migrate dev",
     "prisma:user:studio": "cd apps/user-service && prisma studio",
@@ -83,7 +88,10 @@
       "ts"
     ],
     "rootDir": ".",
-    "testRegex": ".*\\.spec\\.ts$",
+    "testMatch": [
+      "<rootDir>/test/**/*.spec.ts",
+      "<rootDir>/test/**/*.test.ts"
+    ],
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
@@ -94,13 +102,34 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/apps/.*/generated/"
     ],
+    "moduleNameMapper": {
+      "^@p2p-lending/auth-service/(.*)$": "<rootDir>/apps/auth-service/$1",
+      "^@p2p-lending/user-service/(.*)$": "<rootDir>/apps/user-service/$1",
+      "^@p2p-lending/api-gateway/(.*)$": "<rootDir>/apps/api-gateway/$1",
+      "^@p2p-lending/(.*)$": "<rootDir>/libs/$1",
+      "^@api-gateway/(.*)$": "<rootDir>/apps/api-gateway/src/$1",
+      "^@auth-service/(.*)$": "<rootDir>/apps/auth-service/src/$1",
+      "^@user-service/(.*)$": "<rootDir>/apps/user-service/src/$1"
+    },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "apps/**/*.ts",
+      "libs/**/*.ts",
+      "!apps/**/*.spec.ts",
+      "!apps/**/*.test.ts",
+      "!apps/**/main.ts",
+      "!apps/**/generated/**",
+      "!libs/**/index.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/test/setup.ts"],
+    "clearMocks": true,
+    "verbose": true,
+    "testTimeout": 10000,
     "roots": [
-      "<rootDir>/apps/"
+      "<rootDir>/test/",
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
     ]
   }
 }

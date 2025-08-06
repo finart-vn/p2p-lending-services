@@ -1,8 +1,7 @@
+import { AuthClient } from '@api-gateway/clients/auth.client';
+import { UserClient } from '@api-gateway/clients/user.client';
+import { AuthController } from '@api-gateway/routes/auth/auth.controller';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { AuthClient } from '../../clients/auth.client';
-import { UserClient } from '../../clients/user.client';
-import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;

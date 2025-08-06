@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from '@p2p-lending/auth-service/src/auth.controller';
+import { AuthService } from '@p2p-lending/auth-service/src/auth.service';
+import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -16,6 +16,11 @@ describe('AuthController', () => {
     logout: jest.fn(),
   };
 
+  const mockTokenKeyService = {
+    generateTokenKey: jest.fn(),
+    validateToken: jest.fn(),
+  };
+
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -23,6 +28,10 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: mockAuthService,
+        },
+        {
+          provide: TokenKeyService,
+          useValue: mockTokenKeyService,
         },
       ],
     }).compile();
