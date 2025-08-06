@@ -24,7 +24,7 @@ jobs:
           node-version: '20'
 
       - name: Generate User Prisma Client
-      run: npx prisma generate --schema=apps/user-service/src/prisma/schema.prisma
+        run: npx prisma generate --schema=apps/user-service/src/prisma/schema.prisma
       
       - name: Generate Auth Prisma Client
         run: npx prisma generate --schema=apps/auth-service/src/prisma/schema.prisma
