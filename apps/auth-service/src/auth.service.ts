@@ -1,8 +1,6 @@
 import {
   HttpException,
   HttpStatus,
-  // HttpException,
-  // HttpStatus,
   Inject,
   Injectable,
   Logger,
@@ -10,18 +8,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
-import { RegisterRequest } from '@p2p-lending/common/interfaces/message-payloads';
+import {
+  LoginRequest,
+  RegisterRequest,
+} from '@p2p-lending/common/interfaces/message-payloads';
+import * as bcrypt from 'bcrypt';
 
 import { UserAuth } from '../generated/prisma';
 import { PrismaService } from './prisma/prisma.service';
-// import { firstValueFrom } from 'rxjs';
-
-// import {
-//   AuthValidationResponseDto,
-//   RefreshTokenResponseDto,
-//   TokenPayloadDto,
-//   UserInfoResponseDto,
-// } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +29,7 @@ export class AuthService {
 
   async register(user: RegisterRequest): Promise<UserAuth> {
     try {
-      this.logger.log('Creating auth token for user:: ', user);
+      // 1. check if user already exists
       const userExists = await this.prismaService.userAuth.findUnique({
         where: {
           userId: user.userId,
@@ -44,11 +38,16 @@ export class AuthService {
       if (userExists) {
         throw new HttpException('User already exists', HttpStatus.CONFLICT);
       }
+
+      // 2. generate password salt and hash
+      const passwordHash = bcrypt.hashSync(user.password, 10);
+
+      // 3. create user auth
       const userAuthCreated = await this.prismaService.userAuth.create({
         data: {
           userId: user.userId,
           email: user.email,
-          passwordHash: user.password,
+          passwordHash,
         },
       });
 
@@ -59,6 +58,37 @@ export class AuthService {
     }
   }
 
+  async login(user: LoginRequest) {
+    try {
+      // 1. check if user exists
+      const userAuthExists = await this.prismaService.userAuth.findUnique({
+        where: {
+          email: user.email,
+        },
+      });
+
+      if (!userAuthExists) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      // 2. validate password
+      const isMatch = bcrypt.compareSync(
+        user.password,
+        userAuthExists.passwordHash,
+      );
+      if (!isMatch) {
+        throw new HttpException(
+          'Invalid email or password',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return userAuthExists;
+    } catch (error) {
+      this.logger.log('Error logging in user:: ', error);
+      throw error;
+    }
+  }
   // async validateToken(token: string): Promise<AuthValidationResponseDto> {
   //   try {
   //     // TODO: Get public key from database or key management service

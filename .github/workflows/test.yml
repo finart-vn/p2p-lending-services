@@ -23,8 +23,11 @@ jobs:
         with:
           node-version: '20'
 
-      - run: npm ci
-      - run: npx prisma generate --schema=apps/user-service/prisma/schema.prisma
+      - name: Generate User Prisma Client
+      run: npx prisma generate --schema=apps/user-service/src/prisma/schema.prisma
+      
+      - name: Generate Auth Prisma Client
+        run: npx prisma generate --schema=apps/auth-service/src/prisma/schema.prisma
 
       - name: Run tests
         run: npm run test

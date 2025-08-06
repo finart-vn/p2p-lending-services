@@ -9,7 +9,7 @@ import {
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { ApiRegisterRequestDto } from '../dtos';
+import { ApiLoginRequestDto, ApiRegisterRequestDto } from '../dtos';
 import { BaseClient } from './base.client';
 
 export interface AuthValidationRequest {
@@ -33,14 +33,13 @@ export class AuthClient extends BaseClient {
   constructor(@Inject(RmqService.AUTH) protected readonly client: ClientProxy) {
     super(client, RmqService.AUTH);
   }
-  async login(loginRequest: LoginRequest): Promise<LoginResponse> {
+  async login(loginRequest: ApiLoginRequestDto): Promise<LoginResponse> {
     try {
       this.logger.log(`Login request for email: ${loginRequest.email}`);
       const result = await this.send<LoginRequest, LoginResponse>(
         { cmd: MESSAGE_PATTERNS.AUTH.LOGIN },
         loginRequest,
       );
-      this.logger.log(`Login successful for user: ${result.user.id}`);
       return result;
     } catch (error) {
       this.logger.error(`Login failed:`, error);

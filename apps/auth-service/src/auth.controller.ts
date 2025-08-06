@@ -1,13 +1,17 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import {
+  LoginRequest,
+  LoginResponse,
   // LoginRequest,
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
+import * as _ from 'lodash';
 
 import { AuthService } from './auth.service';
+import { TokenKeyService } from './token-key/token-key.service';
 // import {
 //   AuthValidationRequestDto,
 //   AuthValidationResponseDto,
@@ -20,7 +24,10 @@ import { AuthService } from './auth.service';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly tokenService: TokenKeyService,
+  ) {}
 
   @MessagePattern({
     cmd: MESSAGE_PATTERNS.AUTH.REGISTER,
@@ -37,19 +44,36 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern({
-  //   cmd: MESSAGE_PATTERNS.AUTH.LOGIN,
-  // })
-  // async authLogin(@Payload() user: LoginRequest): Promise<any> {
-  //   this.logger.log('Generating token key for user:: ', user);
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.LOGIN,
+  })
+  async authLogin(@Payload() user: LoginRequest): Promise<LoginResponse> {
+    try {
+      this.logger.log('Logging in user:: ', user.email);
+      const userAuthExists = await this.authService.login(user);
 
-  //   // const userAuthExists = await this.authService.getUserAuth(user.id);
-  //   // if (!userAuthExists) {
-  //   //   throw new NotFoundException('User not found');
-  //   // }
-  //   const tokenKey = await this.tokenKeyService.generateTokenKey(user.id);
-  //   return tokenKey;
-  // }
+      if (!userAuthExists) {
+        throw new NotFoundException('User not found');
+      }
+      const tokenKey = await this.tokenService.generateTokenKey(
+        userAuthExists.id,
+        userAuthExists.userId,
+      );
+      this.logger.log('Token key generated for user:: ', user.email);
+      return {
+        user: {
+          id: userAuthExists.id,
+          email: userAuthExists.email,
+          isVerified: userAuthExists.emailVerified,
+          isActive: userAuthExists.isActive,
+        },
+        tokens: tokenKey,
+      };
+    } catch (error) {
+      this.logger.error(`Login failed: ${error}`);
+      throw error;
+    }
+  }
 
   // @MessagePattern('auth.validate_token')
   // async validateToken(

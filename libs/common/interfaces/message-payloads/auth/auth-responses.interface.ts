@@ -11,13 +11,10 @@ export interface LoginResponse {
   user: {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
-    roles: string[];
     isVerified: boolean;
+    isActive: boolean;
   };
   tokens: AuthTokens;
-  isFirstLogin: boolean;
 }
 
 export type RegisterResponse = Omit<UserAuth, 'passwordHash'>;

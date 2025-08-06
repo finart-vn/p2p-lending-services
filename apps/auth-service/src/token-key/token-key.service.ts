@@ -18,9 +18,10 @@ export class TokenKeyService {
 
   async generateTokenKey(
     userId: string,
+    userAuthId: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = {
-      tid: userId,
+      tid: userAuthId,
       sub: userId,
     };
     const accessToken = await this.jwtService.signAsync(payload, {

@@ -10,7 +10,6 @@ import {
   ApiErrorResponseDto,
   ApiResponseDto,
 } from '@api-gateway/dtos/common.dto';
-import { DtoMappers } from '@api-gateway/utils/dto-mappers';
 import {
   Body,
   Controller,
@@ -53,25 +52,24 @@ export class AuthController {
   })
   async login(
     @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
-    // @Req() req: Request,
+    @Req() req: Request,
   ) {
     try {
       this.logger.log(`Login attempt for email: ${loginDto.email}`);
 
       // Map API DTO to RMQ request
-      const rmqLoginRequest = DtoMappers.mapApiLoginToRmqLogin(loginDto);
+      // const rmqLoginRequest = DtoMappers.mapApiLoginToRmqLogin(loginDto);
 
       // Call auth service via RMQ
-      const loginResponse = await this.authClient.login(rmqLoginRequest);
+      const loginResponse = await this.authClient.login(loginDto);
 
-      // Map RMQ response to API response
-      // const apiResponse =
-      //   DtoMappers.mapRmqLoginResponseToApiLoginResponse(loginResponse);
-
-      this.logger.log(`Login successful for user: ${loginResponse.user.id}`);
+      this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
 
       return {
         success: true,
+        data: loginResponse,
+        message: 'Login successful',
+        path: req.url,
       };
     } catch (error) {
       this.logger.error(`Login failed for email: ${loginDto.email}`, error);
