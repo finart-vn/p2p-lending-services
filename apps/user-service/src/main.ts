@@ -14,7 +14,7 @@ async function bootstrap() {
       prefix: 'user-service',
     }),
   });
-  const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.AUTH);
+  const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.USER);
   app.connectMicroservice<MicroserviceOptions>(rmqConfig);
   await app.startAllMicroservices();
   await app.listen(configService.get('PORT') || 3006);

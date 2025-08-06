@@ -5,19 +5,37 @@ import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let authController: AuthController;
+  let authService: AuthService;
+
+  const mockAuthService = {
+    register: jest.fn(),
+    login: jest.fn(),
+    verifyOtp: jest.fn(),
+    validateToken: jest.fn(),
+    refreshToken: jest.fn(),
+    logout: jest.fn(),
+  };
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [AuthService],
+      providers: [
+        {
+          provide: AuthService,
+          useValue: mockAuthService,
+        },
+      ],
     }).compile();
 
     authController = app.get<AuthController>(AuthController);
+    authService = app.get<AuthService>(AuthService);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(authController.getHello()).toBe('Hello World!');
-    });
+  it('should be defined', () => {
+    expect(authController).toBeDefined();
+  });
+
+  it('should have auth service injected', () => {
+    expect(authService).toBeDefined();
   });
 });

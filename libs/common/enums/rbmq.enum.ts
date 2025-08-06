@@ -9,14 +9,14 @@ enum RmqService {
   REPORT = 'REPORT_SERVICE',
 }
 enum RmqQueue {
-  AUTH = 'AUTH_QUEUE',
-  USER = 'USER_QUEUE',
-  LOAN = 'LOAN_QUEUE',
-  INVESTMENT = 'INVESTMENT_QUEUE',
-  REPAYMENT = 'REPAYMENT_QUEUE',
-  NOTIFICATION = 'NOTIFICATION_QUEUE',
-  PAYMENT = 'PAYMENT_QUEUE',
-  REPORT = 'REPORT_QUEUE',
+  AUTH = 'auth_queue',
+  USER = 'user_queue',
+  LOAN = 'loan_queue',
+  INVESTMENT = 'investment_queue',
+  REPAYMENT = 'repayment_queue',
+  NOTIFICATION = 'notification_queue',
+  PAYMENT = 'payment_queue',
+  REPORT = 'report_queue',
 }
 
 export { RmqQueue, RmqService };

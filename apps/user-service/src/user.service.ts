@@ -1,35 +1,47 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  CreateUserRequest,
+  UserResponse,
+} from '@p2p-lending/common/interfaces/message-payloads';
 
-import { User } from '../generated/prisma';
-import { KeyTokenService } from './key-token/key-token.service';
 import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
-  constructor(
-    private prisma: PrismaService,
-    private keyTokenService: KeyTokenService,
-  ) {}
-  async getHello(): Promise<User | null> {
+  constructor(private prisma: PrismaService) {}
+  async createUser(user: CreateUserRequest): Promise<UserResponse> {
     try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: 'test1@test.com',
-          passwordHash: '123456',
-          firstName: 'John',
-          lastName: 'Doe',
-          phone: '1234567890',
-          dateOfBirth: new Date(),
-          address: '123 Main St',
-          city: 'New York',
+      // 1. Check if user already exists
+      const existingUser = await this.prisma.user.findUnique({
+        where: {
+          email: user.email,
         },
       });
-      this.logger.log('User created');
-      return user;
+      if (existingUser)
+        throw new BadRequestException('User already exists', {
+          cause: {
+            email: user.email,
+          },
+        });
+      // 2. Create new user
+      const newUser = await this.prisma.user.create({
+        data: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          dateOfBirth: user.dateOfBirth,
+          address: user.address,
+          city: user.city,
+          country: user.country,
+        },
+      });
+      this.logger.log(`User created: ${newUser.email}`);
+      return newUser;
     } catch (error) {
-      console.log(error);
-      return null;
+      this.logger.error(error);
+      throw error;
     }
   }
 }

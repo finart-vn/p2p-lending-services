@@ -1,20 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, Logger } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
+import { CreateUserRequest } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { User } from '../generated/prisma';
 import { AppService } from './user.service';
 
 @Controller()
 export class AppController {
+  private readonly logger = new Logger(AppController.name);
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  async getHello(): Promise<User | null> {
-    return await this.appService.getHello();
-  }
-
-  @MessagePattern('create-user')
-  createUser(data: any) {
-    console.log('create-user', data);
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.USER.CREATE })
+  createUser(@Payload() user: CreateUserRequest) {
+    this.logger.log('context', JSON.stringify(user));
+    return this.appService.createUser(user);
   }
 }
