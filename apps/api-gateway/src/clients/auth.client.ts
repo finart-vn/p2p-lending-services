@@ -4,8 +4,10 @@ import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
 import {
+  AuthTokens,
   LoginRequest,
   LoginResponse,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
@@ -90,6 +92,13 @@ export class AuthClient extends BaseClient {
     }
   }
 
+  async validateRefreshToken(refreshToken: string, payload: TokenPayloadDto) {
+    const result = await this.send<RefreshTokenRequest, AuthTokens>(
+      { cmd: MESSAGE_PATTERNS.AUTH.REFRESH_TOKEN },
+      { refreshToken, payload },
+    );
+    return result;
+  }
   //   async getUserInfo(userId: string): Promise<UserInfoResponse | null> {
   //     // TODO: Implement user info retrieval
   //     try {

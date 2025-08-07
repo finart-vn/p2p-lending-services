@@ -2,22 +2,16 @@ import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import {
+  AuthTokens,
   LoginRequest,
   LoginResponse,
-  // LoginRequest,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AuthService } from './auth.service';
 import { TokenKeyService } from './token-key/token-key.service';
-// import {
-//   AuthValidationRequestDto,
-//   AuthValidationResponseDto,
-//   RefreshTokenRequestDto,
-//   RefreshTokenResponseDto,
-//   UserInfoResponseDto,
-// } from './dto';
 
 @Controller()
 export class AuthController {
@@ -74,13 +68,15 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern('auth.validate_token')
+  // @MessagePattern({
+  //   cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN,
+  // })
   // async validateToken(
-  //   @Payload() data: AuthValidationRequestDto,
-  // ): Promise<AuthValidationResponseDto> {
+  //   @Payload() data: TokenPayloadDto,
+  // ): Promise<TokenValidationResponse> {
   //   try {
-  //     this.logger.log(`Validating token: ${data.token.substring(0, 20)}...`);
-  //     return await this.authService.validateToken(data.token);
+  //     this.logger.log(`Validating token: ${data.tid.substring(0, 20)}...`);
+  //     return await this.tokenService.validateToken(data.tid);
   //   } catch (error) {
   //     this.logger.error(`Token validation failed: ${error}`);
   //     return {
@@ -89,20 +85,24 @@ export class AuthController {
   //   }
   // }
 
-  // @MessagePattern('auth.refresh_token')
-  // async refreshToken(
-  //   @Payload() data: RefreshTokenRequestDto,
-  // ): Promise<RefreshTokenResponseDto> {
-  //   try {
-  //     this.logger.log(
-  //       `Refreshing token: ${data.refreshToken.substring(0, 20)}...`,
-  //     );
-  //     return await this.authService.refreshToken(data.refreshToken);
-  //   } catch (error) {
-  //     this.logger.error(`Token refresh failed: ${error}`);
-  //     throw error;
-  //   }
-  // }
+  @MessagePattern('auth.refresh_token')
+  async refreshToken(
+    @Payload() data: RefreshTokenRequest,
+  ): Promise<AuthTokens> {
+    try {
+      this.logger.log(
+        `Refreshing token: ${data.refreshToken.substring(0, 20)}...`,
+      );
+      const payload = await this.tokenService.validateRefreshToken(
+        data.payload,
+        data.refreshToken,
+      );
+      return payload;
+    } catch (error) {
+      this.logger.error(`Token refresh failed: ${error}`);
+      throw error;
+    }
+  }
 
   // @MessagePattern('auth.revoke_token')
   // async revokeToken(

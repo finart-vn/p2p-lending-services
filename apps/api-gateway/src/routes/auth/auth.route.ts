@@ -21,6 +21,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto/token-payload.dto';
 import { Request } from 'express';
 
 @ApiTags('Authentication')
@@ -120,6 +121,38 @@ export class AuthController {
       );
       return new HttpException(
         `Registration failed for email: ${registerDto.email}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async refreshToken(@Req() req: Request) {
+    try {
+      const refreshToken = req.cookies['refreshToken'] as string;
+      if (!refreshToken) {
+        throw new HttpException(
+          'Refresh token not found',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const payload = req.cookies['payload'] as TokenPayloadDto;
+      if (!payload) {
+        throw new HttpException('Payload not found', HttpStatus.BAD_REQUEST);
+      }
+      const refreshTokenResponse = await this.authClient.validateRefreshToken(
+        refreshToken,
+        payload,
+      );
+      return {
+        success: true,
+        data: refreshTokenResponse,
+        message: 'Token refreshed',
+        path: req.url,
+      };
+    } catch (error) {
+      this.logger.error('Error refreshing token', error);
+      return new HttpException(
+        'Error refreshing token',
         HttpStatus.BAD_REQUEST,
       );
     }

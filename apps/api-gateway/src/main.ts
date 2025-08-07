@@ -1,6 +1,7 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { ApiGatewayModule } from './api-gateway.module';
 
@@ -10,6 +11,7 @@ async function bootstrap() {
       prefix: 'ApiGateway',
     }),
   });
+  app.use(cookieParser());
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({

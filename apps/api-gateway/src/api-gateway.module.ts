@@ -6,7 +6,7 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AuthClient } from './clients/auth.client';
 import { UserClient } from './clients/user.client';
-import { AuthController } from './routes/auth/auth.controller';
+import { AuthController } from './routes/auth/auth.route';
 
 @Module({
   imports: [

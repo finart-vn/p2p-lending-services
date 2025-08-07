@@ -7,7 +7,7 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
-export interface LoginResponse {
+export type LoginResponse = {
   user: {
     id: string;
     email: string;
@@ -15,7 +15,7 @@ export interface LoginResponse {
     isActive: boolean;
   };
   tokens: AuthTokens;
-}
+};
 
 export type RegisterResponse = Omit<UserAuth, 'passwordHash'>;
 
@@ -26,15 +26,6 @@ export interface TokenValidationResponse {
   roles?: string[];
   expiresAt?: Date;
   error?: string;
-}
-
-export interface RefreshTokenResponse {
-  tokens: AuthTokens;
-  user: {
-    id: string;
-    email: string;
-    roles: string[];
-  };
 }
 
 export interface LogoutResponse {
@@ -53,4 +44,10 @@ export interface PasswordResetResponse {
   success: boolean;
   message: string;
   requiresLogin: boolean;
+}
+export interface TokenPayloadDto {
+  tid: string;
+  sub: string;
+  iat?: number;
+  exp?: number;
 }

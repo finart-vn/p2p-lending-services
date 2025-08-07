@@ -1,6 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { AuthTokens } from '@p2p-lending/common/interfaces/message-payloads/auth/auth-responses.interface';
+
+import { PrismaService } from '../prisma/prisma.service';
 export interface TokenPayloadDto {
   tid: string;
   sub: string;
@@ -13,13 +16,14 @@ export class TokenKeyService {
   private readonly logger = new Logger(TokenKeyService.name);
   constructor(
     private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {}
 
   async generateTokenKey(
     userId: string,
     userAuthId: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<AuthTokens> {
     const payload = {
       tid: userAuthId,
       sub: userId,
@@ -49,6 +53,28 @@ export class TokenKeyService {
       });
     } catch (error) {
       this.logger.error('Error validating token', error);
+      throw error;
+    }
+  }
+
+  async validateRefreshToken(
+    payload: TokenPayloadDto,
+    refreshToken: string,
+  ): Promise<AuthTokens> {
+    try {
+      const userAuth = await this.prismaService.userAuth.findUnique({
+        where: {
+          id: payload.tid,
+        },
+      });
+      if (!userAuth) {
+        throw new ForbiddenException('User not found');
+      }
+      const tokens = await this.generateTokenKey(payload.sub, payload.tid);
+      this.logger.log(`User auth: ${JSON.stringify(refreshToken)}`);
+      return tokens;
+    } catch (error) {
+      this.logger.error('Error validating refresh token', error);
       throw error;
     }
   }
