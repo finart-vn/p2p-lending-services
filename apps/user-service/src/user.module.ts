@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
+import {
+  CONFIG_TOKENS,
+  ConfigModule,
+  createUserServiceConfig,
+} from '@p2p-lending/common/config';
 import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
 import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
@@ -10,16 +14,16 @@ import { AppService } from './user.service';
 
 @Module({
   imports: [
+    ConfigModule.forService(
+      createUserServiceConfig,
+      CONFIG_TOKENS.USER_SERVICE,
+    ),
     ClientsModule.register([
       {
         name: RmqService.USER,
         ...getRmqOptions(RmqQueue.USER),
       },
     ]),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -1,7 +1,7 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { AuthServiceConfig, CONFIG_TOKENS } from '@p2p-lending/common/config';
 import { getRedisOptions } from '@p2p-lending/common/config/redis.config';
 import { RmqQueue } from '@p2p-lending/common/enums';
 import { getRmqOptions } from '@p2p-lending/config/rmq.config';
@@ -13,7 +13,7 @@ async function bootstrap() {
     logger: new ConsoleLogger('AuthService'),
   });
 
-  const configService = app.get(ConfigService);
+  const config = app.get<AuthServiceConfig>(CONFIG_TOKENS.AUTH_SERVICE);
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -28,34 +28,44 @@ async function bootstrap() {
   );
 
   // Connect to RabbitMQ
-  const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.AUTH);
-  app.connectMicroservice<MicroserviceOptions>(rmqConfig);
+  if (config.rabbitmq) {
+    const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.AUTH);
+    app.connectMicroservice<MicroserviceOptions>(rmqConfig);
+  }
 
   // Connect to Redis
-  const redisConfig = getRedisOptions();
-  const redisMicroservice =
-    app.connectMicroservice<MicroserviceOptions>(redisConfig);
+  if (config.redis) {
+    const redisConfig = getRedisOptions();
+    const redisMicroservice =
+      app.connectMicroservice<MicroserviceOptions>(redisConfig);
 
-  redisMicroservice.on('connect', () => {
-    console.log('🟢 Redis microservice connected successfully');
-  });
+    redisMicroservice.on('connect', () => {
+      console.log('🟢 Redis microservice connected successfully');
+    });
 
-  redisMicroservice.on('error', (error) => {
-    console.error('❌ Redis microservice connection error:', error);
-  });
+    redisMicroservice.on('error', (error) => {
+      console.error('❌ Redis microservice connection error:', error);
+    });
+  }
 
   // Start all microservices
   await app.startAllMicroservices();
 
-  // Get port from configuration
-  const port = configService.get<number>('app.PORT') || 3007;
-  const appName = configService.get<string>('app.APP_NAME') || 'Auth Service';
-  const nodeEnv = configService.get<string>('app.NODE_ENV') || 'development';
+  await app.listen(config.port);
 
-  await app.listen(port);
+  console.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  console.log(`🌍 Environment: ${config.environment}`);
+  console.log(`📊 Log Level: ${config.logLevel}`);
 
-  console.log(`🚀 ${appName} is running on port ${port}`);
-  console.log(`🌍 Environment: ${nodeEnv}`);
+  if (config.jwt) {
+    console.log('🔐 JWT authentication enabled');
+  }
+
+  if (config.redis) {
+    console.log(
+      `🗄️  Redis connected: ${config.redis.host}:${config.redis.port}`,
+    );
+  }
 }
 
 bootstrap().catch((error) => {

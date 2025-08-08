@@ -125,7 +125,8 @@ export class AuthController {
       );
     }
   }
-
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh token' })
   async refreshToken(@Req() req: Request) {
     try {
       const refreshToken = req.cookies['refreshToken'] as string;
