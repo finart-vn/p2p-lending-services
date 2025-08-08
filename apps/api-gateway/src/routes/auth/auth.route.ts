@@ -18,11 +18,13 @@ import {
   Logger,
   Post,
   Req,
+  Res,
   ValidationPipe,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto/token-payload.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -32,6 +34,7 @@ export class AuthController {
   constructor(
     private readonly userClient: UserClient,
     private readonly authClient: AuthClient,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Post('login')
@@ -54,6 +57,7 @@ export class AuthController {
   async login(
     @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ) {
     try {
       this.logger.log(`Login attempt for email: ${loginDto.email}`);
@@ -66,9 +70,25 @@ export class AuthController {
 
       this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
 
+      // Set cookies with proper security options
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict' as const,
+        signed: true,
+      };
+
+      // Set refresh token cookie (7 days expiry)
+      res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
       return {
         success: true,
-        data: loginResponse,
+        data: {
+          accessToken: loginResponse.tokens.accessToken,
+        },
         message: 'Login successful',
         path: req.url,
       };
@@ -127,26 +147,62 @@ export class AuthController {
   }
   @Post('refresh-token')
   @ApiOperation({ summary: 'Refresh token' })
-  async refreshToken(@Req() req: Request) {
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
-      const refreshToken = req.cookies['refreshToken'] as string;
+      this.logger.debug('start refresh token');
+
+      // Read signed cookies instead of regular cookies
+      const refreshToken = req.signedCookies['refreshToken'] as string;
+      console.log('Signed cookies:', req.signedCookies);
+      console.log('Regular cookies:', req.cookies);
+
       if (!refreshToken) {
         throw new HttpException(
           'Refresh token not found',
           HttpStatus.BAD_REQUEST,
         );
       }
-      const payload = req.cookies['payload'] as TokenPayloadDto;
-      if (!payload) {
+
+      // Parse payload from signed cookie
+      const payloadString = req.signedCookies['payload'] as string;
+      if (!payloadString) {
         throw new HttpException('Payload not found', HttpStatus.BAD_REQUEST);
       }
+
+      const payload = JSON.parse(payloadString) as TokenPayloadDto;
       const refreshTokenResponse = await this.authClient.validateRefreshToken(
         refreshToken,
         payload,
       );
+
+      // Update cookies with new tokens if refresh was successful
+      if (refreshTokenResponse) {
+        const cookieOptions = {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict' as const,
+          signed: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        };
+
+        // Update refresh token cookie
+        res.cookie(
+          'refreshToken',
+          refreshTokenResponse.refreshToken,
+          cookieOptions,
+        );
+
+        res.cookie(refreshTokenResponse.accessToken, cookieOptions);
+      }
+
       return {
         success: true,
-        data: refreshTokenResponse,
+        data: {
+          accessToken: refreshTokenResponse.accessToken,
+        },
         message: 'Token refreshed',
         path: req.url,
       };

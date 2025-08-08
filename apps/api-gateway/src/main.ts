@@ -15,7 +15,9 @@ async function bootstrap() {
 
   const config = app.get<ApiGatewayConfig>(CONFIG_TOKENS.API_GATEWAY);
 
-  app.use(cookieParser());
+  // Configure cookie parser with secret for signed cookies
+  const cookieSecret = config.jwt?.secret || 'DefaultSecret';
+  app.use(cookieParser(cookieSecret));
 
   if (config.globalPrefix) {
     app.setGlobalPrefix(config.globalPrefix);

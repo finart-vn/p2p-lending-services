@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule } from '@nestjs/microservices';
 import {
@@ -13,6 +13,7 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AuthClient } from './clients/auth.client';
 import { UserClient } from './clients/user.client';
+import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import { AuthController } from './routes/auth/auth.route';
 import { UserController } from './routes/user/user.route';
 
@@ -39,4 +40,8 @@ import { UserController } from './routes/user/user.route';
   controllers: [AuthController, UserController],
   providers: [UserClient, AuthClient],
 })
-export class ApiGatewayModule {}
+export class ApiGatewayModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggingMiddleware).forRoutes('*');
+  }
+}

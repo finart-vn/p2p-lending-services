@@ -10,14 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 
 import { AuthClient } from '../clients/auth.client';
-
-interface RequestWithUser {
-  user?: TokenPayloadDto; // The authenticated user's data from JWT payload
-  headers: {
-    authorization?: string; // The Authorization header containing the Bearer token
-    [key: string]: any;
-  };
-}
+import { RequestWithUser } from '../interfaces/auth.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -46,18 +39,14 @@ export class AuthGuard implements CanActivate {
         this.logger.error('Token decode failed or returned invalid payload');
         throw new UnauthorizedException('Invalid token format');
       }
-
       //4. Validate token with auth service
       const isValid = await this.authClient.validateToken(decodedToken);
       if (!isValid) {
         throw new UnauthorizedException('Invalid token');
       }
-
       //5. Attach user info to request
       request.user = decodedToken;
-
       this.logger.debug(`User authenticated: ${JSON.stringify(decodedToken)}`);
-
       return true;
     } catch (error) {
       throw new UnauthorizedException(error);
