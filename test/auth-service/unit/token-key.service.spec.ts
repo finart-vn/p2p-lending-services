@@ -1,6 +1,8 @@
+import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '@p2p-lending/auth-service/src/prisma/prisma.service';
 import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
 
 describe('TokenKeyService', () => {
@@ -18,6 +20,13 @@ describe('TokenKeyService', () => {
     get: jest.fn(),
   };
 
+  const mockPrismaService = {
+    userAuth: {
+      update: jest.fn(),
+      findUnique: jest.fn(),
+    },
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,6 +38,10 @@ describe('TokenKeyService', () => {
         {
           provide: ConfigService,
           useValue: mockConfigService,
+        },
+        {
+          provide: PrismaService,
+          useValue: mockPrismaService,
         },
       ],
     }).compile();
@@ -65,17 +78,22 @@ describe('TokenKeyService', () => {
   });
 
   describe('generateTokenKey', () => {
-    it('should generate access and refresh tokens', async () => {
+    it('should generate access and refresh tokens and update database', async () => {
       // Arrange
-      const userId = 'user-123';
       const userAuthId = 'auth-456';
+      const userId = 'user-123';
 
       mockJwtService.signAsync
         .mockResolvedValueOnce('mock-access-token')
         .mockResolvedValueOnce('mock-refresh-token');
 
+      mockPrismaService.userAuth.update.mockResolvedValue({
+        id: userAuthId,
+        refreshToken: 'mock-refresh-token',
+      });
+
       // Act
-      const result = await service.generateTokenKey(userId, userAuthId);
+      const result = await service.generateTokenKey(userAuthId, userId);
 
       // Assert
       expect(result).toEqual({
@@ -86,6 +104,200 @@ describe('TokenKeyService', () => {
       expect(mockJwtService.signAsync).toHaveBeenCalledTimes(2);
       expect(mockConfigService.get).toHaveBeenCalledWith('JWT_SECRET');
       expect(mockConfigService.get).toHaveBeenCalledTimes(2);
+
+      expect(mockPrismaService.userAuth.update).toHaveBeenCalledWith({
+        where: { id: userAuthId },
+        data: {
+          refreshToken: 'mock-refresh-token',
+          lastSuccessfulLoginAt: expect.any(Date) as Date,
+        },
+      });
+    });
+  });
+
+  describe('validateRefreshToken', () => {
+    it('should validate refresh token and return new tokens', async () => {
+      // Arrange
+      const refreshToken = 'valid-refresh-token';
+      const userAuthId = 'auth-456';
+      const userId = 'user-123';
+
+      const mockPayload = { tid: userAuthId, sub: userId };
+      const mockUserAuth = {
+        id: userAuthId,
+        userId,
+        refreshToken,
+        isActive: true,
+      };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+      mockJwtService.signAsync
+        .mockResolvedValueOnce('new-access-token')
+        .mockResolvedValueOnce('new-refresh-token');
+      mockPrismaService.userAuth.update.mockResolvedValue({});
+
+      // Act
+      const result = await service.validateRefreshToken(refreshToken);
+
+      // Assert
+      expect(result).toEqual({
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+      });
+
+      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+        secret: 'test-secret',
+        algorithms: ['HS256'],
+      });
+      expect(mockPrismaService.userAuth.findUnique).toHaveBeenCalledWith({
+        where: { id: userAuthId },
+      });
+    });
+
+    it('should throw ForbiddenException when user not found', async () => {
+      // Arrange
+      const refreshToken = 'valid-refresh-token';
+      const mockPayload = { tid: 'auth-456', sub: 'user-123' };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+
+    it('should throw ForbiddenException when refresh token does not match', async () => {
+      // Arrange
+      const refreshToken = 'valid-refresh-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+      const mockUserAuth = {
+        id: userAuthId,
+        refreshToken: 'different-refresh-token',
+        isActive: true,
+      };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+
+      // Act & Assert
+      await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+
+    it('should throw ForbiddenException when user is inactive', async () => {
+      // Arrange
+      const refreshToken = 'valid-refresh-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+      const mockUserAuth = {
+        id: userAuthId,
+        refreshToken,
+        isActive: false,
+      };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+
+      // Act & Assert
+      await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+  });
+
+  describe('revokeToken', () => {
+    it('should revoke refresh token successfully', async () => {
+      // Arrange
+      const refreshToken = 'valid-refresh-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.update.mockResolvedValue({});
+
+      // Act
+      const result = await service.revokeToken(refreshToken);
+
+      // Assert
+      expect(result).toEqual({
+        success: true,
+        message: 'Token revoked successfully',
+      });
+
+      expect(mockPrismaService.userAuth.update).toHaveBeenCalledWith({
+        where: { id: userAuthId },
+        data: { refreshToken: null },
+      });
+    });
+
+    it('should throw ForbiddenException when token validation fails', async () => {
+      // Arrange
+      const refreshToken = 'invalid-refresh-token';
+      mockJwtService.verifyAsync.mockRejectedValue(new Error('Invalid token'));
+
+      // Act & Assert
+      await expect(service.revokeToken(refreshToken)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+  });
+
+  describe('validateAccessToken', () => {
+    it('should validate access token and return payload', async () => {
+      // Arrange
+      const accessToken = 'valid-access-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+      const mockUserAuth = { isActive: true };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+
+      // Act
+      const result = await service.validateAccessToken(accessToken);
+
+      // Assert
+      expect(result).toEqual(mockPayload);
+      expect(mockPrismaService.userAuth.findUnique).toHaveBeenCalledWith({
+        where: { id: userAuthId },
+        select: { isActive: true },
+      });
+    });
+
+    it('should throw ForbiddenException when user is inactive', async () => {
+      // Arrange
+      const accessToken = 'valid-access-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+      const mockUserAuth = { isActive: false };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+
+      // Act & Assert
+      await expect(service.validateAccessToken(accessToken)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+
+    it('should throw ForbiddenException when user not found', async () => {
+      // Arrange
+      const accessToken = 'valid-access-token';
+      const userAuthId = 'auth-456';
+      const mockPayload = { tid: userAuthId, sub: 'user-123' };
+
+      mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
+      mockPrismaService.userAuth.findUnique.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.validateAccessToken(accessToken)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });
