@@ -4,8 +4,6 @@ import {
   ApiRegisterRequestDto,
 } from '@p2p-lending/api-gateway/src/dtos';
 
-import { TokenPayloadDto } from './auth-responses.interface';
-
 export type LoginRequest = ApiLoginRequestDto;
 
 export interface RegisterRequest extends ApiRegisterRequestDto {
@@ -19,7 +17,6 @@ export interface ValidateTokenRequest {
 
 export interface RefreshTokenRequest {
   refreshToken: string;
-  payload: TokenPayloadDto;
 }
 
 export interface RevokeTokenRequest {
@@ -29,8 +26,7 @@ export interface RevokeTokenRequest {
 }
 
 export interface LogoutRequest {
-  userId: string;
-  token: string;
+  refreshToken: string;
 }
 
 export interface VerifyOtpRequest {

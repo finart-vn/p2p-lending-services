@@ -7,6 +7,8 @@ import {
   AuthTokens,
   LoginRequest,
   LoginResponse,
+  LogoutRequest,
+  LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
@@ -92,10 +94,18 @@ export class AuthClient extends BaseClient {
     }
   }
 
-  async validateRefreshToken(refreshToken: string, payload: TokenPayloadDto) {
+  async validateRefreshToken(refreshToken: string) {
     const result = await this.send<RefreshTokenRequest, AuthTokens>(
       { cmd: MESSAGE_PATTERNS.AUTH.REFRESH_TOKEN },
-      { refreshToken, payload },
+      { refreshToken },
+    );
+    return result;
+  }
+
+  async logout(refreshToken: string) {
+    const result = await this.send<LogoutRequest, LogoutResponse>(
+      { cmd: MESSAGE_PATTERNS.AUTH.LOGOUT },
+      { refreshToken },
     );
     return result;
   }

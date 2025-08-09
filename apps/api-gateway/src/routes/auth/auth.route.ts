@@ -19,12 +19,18 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto/token-payload.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request, Response } from 'express';
+
+import { AuthGuard } from '../../guards/auth.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -34,10 +40,8 @@ export class AuthController {
   constructor(
     private readonly userClient: UserClient,
     private readonly authClient: AuthClient,
-    private readonly jwtService: JwtService,
   ) {}
 
-  @Post('login')
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({
     status: 200,
@@ -45,15 +49,11 @@ export class AuthController {
     type: ApiResponseDto<ApiLoginResponseDto>,
   })
   @ApiResponse({
-    status: 401,
-    description: 'Invalid credentials',
-    type: ApiErrorResponseDto,
-  })
-  @ApiResponse({
     status: 400,
     description: 'Validation error',
     type: ApiErrorResponseDto,
   })
+  @Post('login')
   async login(
     @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
     @Req() req: Request,
@@ -61,27 +61,15 @@ export class AuthController {
   ) {
     try {
       this.logger.log(`Login attempt for email: ${loginDto.email}`);
-
-      // Map API DTO to RMQ request
-      // const rmqLoginRequest = DtoMappers.mapApiLoginToRmqLogin(loginDto);
-
       // Call auth service via RMQ
       const loginResponse = await this.authClient.login(loginDto);
 
       this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
-
-      // Set cookies with proper security options
-      const cookieOptions = {
+      // Set refresh token cookie (7 days expiry)
+      res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict' as const,
-        signed: true,
-      };
-
-      // Set refresh token cookie (7 days expiry)
-      res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
-        ...cookieOptions,
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       return {
@@ -89,7 +77,6 @@ export class AuthController {
         data: {
           accessToken: loginResponse.tokens.accessToken,
         },
-        message: 'Login successful',
         path: req.url,
       };
     } catch (error) {
@@ -116,23 +103,20 @@ export class AuthController {
   })
   async register(
     @Body(new ValidationPipe()) registerDto: ApiRegisterRequestDto,
-    @Req() req: Request,
   ) {
     try {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
       // Create user via RMQ
       const userResponse = await this.userClient.createUser(registerDto);
-      // // Register with auth service
+      // Register with auth service
       const authResponse = await this.authClient.register(
         registerDto,
         userResponse.id,
       );
 
       return {
-        success: true,
-        data: { userResponse, authResponse },
-        message: 'Registration successful',
-        path: req.url,
+        userResponse,
+        authResponse,
       };
     } catch (error) {
       this.logger.error(
@@ -145,6 +129,17 @@ export class AuthController {
       );
     }
   }
+
+  @ApiOperation({ summary: 'User logout' })
+  @ApiBearerAuth()
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  logout(@Req() req: Request) {
+    const refreshToken = req.cookies['refreshToken'] as string;
+    this.logger.debug(`Refresh token: ${refreshToken}`);
+    return this.authClient.logout(refreshToken);
+  }
+
   @Post('refresh-token')
   @ApiOperation({ summary: 'Refresh token' })
   async refreshToken(
@@ -155,9 +150,8 @@ export class AuthController {
       this.logger.debug('start refresh token');
 
       // Read signed cookies instead of regular cookies
-      const refreshToken = req.signedCookies['refreshToken'] as string;
-      console.log('Signed cookies:', req.signedCookies);
-      console.log('Regular cookies:', req.cookies);
+      const refreshToken = req.cookies['refreshToken'] as string;
+      this.logger.debug(`Refresh token: ${refreshToken}`);
 
       if (!refreshToken) {
         throw new HttpException(
@@ -167,16 +161,8 @@ export class AuthController {
       }
 
       // Parse payload from signed cookie
-      const payloadString = req.signedCookies['payload'] as string;
-      if (!payloadString) {
-        throw new HttpException('Payload not found', HttpStatus.BAD_REQUEST);
-      }
-
-      const payload = JSON.parse(payloadString) as TokenPayloadDto;
-      const refreshTokenResponse = await this.authClient.validateRefreshToken(
-        refreshToken,
-        payload,
-      );
+      const refreshTokenResponse =
+        await this.authClient.validateRefreshToken(refreshToken);
 
       // Update cookies with new tokens if refresh was successful
       if (refreshTokenResponse) {
@@ -184,8 +170,6 @@ export class AuthController {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict' as const,
-          signed: true,
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         };
 
         // Update refresh token cookie
@@ -198,14 +182,7 @@ export class AuthController {
         res.cookie(refreshTokenResponse.accessToken, cookieOptions);
       }
 
-      return {
-        success: true,
-        data: {
-          accessToken: refreshTokenResponse.accessToken,
-        },
-        message: 'Token refreshed',
-        path: req.url,
-      };
+      return refreshTokenResponse.accessToken;
     } catch (error) {
       this.logger.error('Error refreshing token', error);
       return new HttpException(

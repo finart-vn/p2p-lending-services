@@ -15,7 +15,7 @@ model UserAuth {
   email        String @unique @db.VarChar(255)
   passwordHash String @map("password_hash") @db.VarChar(255)
   userId       String @unique @default(uuid()) @map("user_id")
-
+  refreshToken String? @map("refresh_token") @db.VarChar(255)
   // Basic Security
   emailVerified         Boolean   @default(false) @map("email_verified")
   emailVerifiedAt       DateTime? @map("email_verified_at")

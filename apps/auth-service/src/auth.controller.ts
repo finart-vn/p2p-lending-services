@@ -5,6 +5,8 @@ import {
   AuthTokens,
   LoginRequest,
   LoginResponse,
+  LogoutRequest,
+  LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
@@ -68,33 +70,15 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern({
-  //   cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN,
-  // })
-  // async validateToken(
-  //   @Payload() data: TokenPayloadDto,
-  // ): Promise<TokenValidationResponse> {
-  //   try {
-  //     this.logger.log(`Validating token: ${data.tid.substring(0, 20)}...`);
-  //     return await this.tokenService.validateToken(data.tid);
-  //   } catch (error) {
-  //     this.logger.error(`Token validation failed: ${error}`);
-  //     return {
-  //       valid: false,
-  //     };
-  //   }
-  // }
-
-  @MessagePattern('auth.refresh_token')
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.REFRESH_TOKEN,
+  })
   async refreshToken(
     @Payload() data: RefreshTokenRequest,
   ): Promise<AuthTokens> {
     try {
-      this.logger.log(
-        `Refreshing token: ${data.refreshToken.substring(0, 20)}...`,
-      );
+      this.logger.log(`Refreshing token: ${data.refreshToken}`);
       const payload = await this.tokenService.validateRefreshToken(
-        data.payload,
         data.refreshToken,
       );
       return payload;
@@ -104,32 +88,12 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern('auth.revoke_token')
-  // async revokeToken(
-  //   @Payload() data: { token: string },
-  // ): Promise<{ success: boolean }> {
-  //   try {
-  //     this.logger.log(`Revoking token: ${data.token.substring(0, 20)}...`);
-  //     await this.authService.revokeToken(data.token);
-  //     return { success: true };
-  //   } catch (error) {
-  //     this.logger.error(`Token revocation failed: ${error}`);
-  //     throw error;
-  //   }
-  // }
-
-  // @MessagePattern('auth.get_user_info')
-  // async getUserInfo(
-  //   @Payload() data: { userId: string },
-  // ): Promise<UserInfoResponseDto | null> {
-  //   try {
-  //     this.logger.log(`Getting user info for: ${data.userId}`);
-  //     return await this.authService.getUserInfo(data.userId);
-  //   } catch (error) {
-  //     this.logger.error(`Get user info failed: ${error}`);
-  //     return null;
-  //   }
-  // }
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.LOGOUT,
+  })
+  async logout(@Payload() data: LogoutRequest): Promise<LogoutResponse> {
+    return await this.tokenService.revokeToken(data.refreshToken);
+  }
 
   // Keep the original HTTP endpoint for direct access if needed
   @MessagePattern('auth.health_check')
