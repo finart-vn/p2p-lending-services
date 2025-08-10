@@ -5,6 +5,8 @@ import { ApiGatewayConfig, CONFIG_TOKENS } from '@p2p-lending/common/config';
 import * as cookieParser from 'cookie-parser';
 
 import { ApiGatewayModule } from './api-gateway.module';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, {
@@ -12,8 +14,11 @@ async function bootstrap() {
       prefix: 'ApiGateway',
     }),
   });
-
+  // Global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
   const config = app.get<ApiGatewayConfig>(CONFIG_TOKENS.API_GATEWAY);
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   // Configure cookie parser with secret for signed cookies
   const cookieSecret = config.jwt?.secret || 'DefaultSecret';

@@ -17,9 +17,6 @@ export class UserController {
     const user = req.user;
 
     this.logger.log('Getting user profile');
-    return {
-      status: 'success',
-      user,
-    };
+    return user;
   }
 }

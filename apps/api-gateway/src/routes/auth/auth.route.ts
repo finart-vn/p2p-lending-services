@@ -73,11 +73,7 @@ export class AuthController {
       });
 
       return {
-        success: true,
-        data: {
-          accessToken: loginResponse.tokens.accessToken,
-        },
-        path: req.url,
+        accessToken: loginResponse.tokens.accessToken,
       };
     } catch (error) {
       this.logger.error(`Login failed for email: ${loginDto.email}`, error);
