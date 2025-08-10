@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import appConfig from '@p2p-lending/common/config/app.config';
-import redisConfig, {
-  getRedisConfig,
-} from '@p2p-lending/common/config/redis.config';
+import {
+  AuthServiceConfig,
+  CONFIG_TOKENS,
+  ConfigModule,
+  createAuthServiceConfig,
+} from '@p2p-lending/common/config';
 import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
 import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
@@ -16,21 +17,19 @@ import { TokenKeyModule } from './token-key/token-key.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [appConfig, redisConfig],
-      envFilePath: ['.env.local', '.env'],
-      expandVariables: true,
-      cache: true,
-    }),
+    ConfigModule.forService(
+      createAuthServiceConfig,
+      CONFIG_TOKENS.AUTH_SERVICE,
+    ),
     JwtModule.registerAsync({
       global: true,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: process.env.JWT_SECRET || 'DefaultSecret',
+      inject: [CONFIG_TOKENS.AUTH_SERVICE],
+      useFactory: (config: AuthServiceConfig) => ({
+        secret: config.jwt?.secret || 'DefaultSecret',
         signOptions: {
-          expiresIn: process.env.JWT_EXPIRES_IN || '2h',
-          issuer: configService.get<string>('app.APP_NAME'),
+          expiresIn: config.jwt?.accessTokenExpiresIn || '15m',
+          issuer: config.jwt?.issuer || config.serviceName,
+          audience: config.jwt?.audience,
         },
       }),
     }),
@@ -45,20 +44,23 @@ import { TokenKeyModule } from './token-key/token-key.module';
       },
       {
         name: 'REDIS_SERVICE',
-        useFactory: () => {
-          const redisConf = getRedisConfig();
+        inject: [CONFIG_TOKENS.AUTH_SERVICE],
+        useFactory: (config: AuthServiceConfig) => {
+          if (!config.redis) {
+            throw new Error('Redis configuration is required for AUTH service');
+          }
           return {
             transport: Transport.REDIS,
             options: {
-              host: redisConf.host,
-              port: redisConf.port,
-              password: redisConf.password,
-              username: redisConf.username,
-              db: redisConf.db,
-              retryDelay: redisConf.retryDelay,
-              retryAttempts: redisConf.retryAttempts,
-              connectTimeout: redisConf.connectTimeout,
-              commandTimeout: redisConf.commandTimeout,
+              host: config.redis.host,
+              port: config.redis.port,
+              password: config.redis.password,
+              username: config.redis.username,
+              db: config.redis.db,
+              retryDelay: config.redis.retryDelay,
+              retryAttempts: config.redis.retryAttempts,
+              connectTimeout: config.redis.connectTimeout,
+              commandTimeout: config.redis.commandTimeout,
               lazyConnect: true,
             },
           };

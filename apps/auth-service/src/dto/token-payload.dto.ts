@@ -1,6 +1,6 @@
 export interface TokenPayloadDto {
-  tid: number;
-  sub: number;
+  tid: string;
+  sub: string;
   iat?: number;
   exp?: number;
 }

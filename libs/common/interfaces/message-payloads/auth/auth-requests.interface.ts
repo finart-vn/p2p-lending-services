@@ -17,7 +17,6 @@ export interface ValidateTokenRequest {
 
 export interface RefreshTokenRequest {
   refreshToken: string;
-  userId: string;
 }
 
 export interface RevokeTokenRequest {
@@ -27,8 +26,7 @@ export interface RevokeTokenRequest {
 }
 
 export interface LogoutRequest {
-  userId: string;
-  token: string;
+  refreshToken: string;
 }
 
 export interface VerifyOtpRequest {

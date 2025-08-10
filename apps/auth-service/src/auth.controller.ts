@@ -2,22 +2,18 @@ import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import {
+  AuthTokens,
   LoginRequest,
   LoginResponse,
-  // LoginRequest,
+  LogoutRequest,
+  LogoutResponse,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AuthService } from './auth.service';
 import { TokenKeyService } from './token-key/token-key.service';
-// import {
-//   AuthValidationRequestDto,
-//   AuthValidationResponseDto,
-//   RefreshTokenRequestDto,
-//   RefreshTokenResponseDto,
-//   UserInfoResponseDto,
-// } from './dto';
 
 @Controller()
 export class AuthController {
@@ -74,62 +70,53 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern('auth.validate_token')
-  // async validateToken(
-  //   @Payload() data: AuthValidationRequestDto,
-  // ): Promise<AuthValidationResponseDto> {
-  //   try {
-  //     this.logger.log(`Validating token: ${data.token.substring(0, 20)}...`);
-  //     return await this.authService.validateToken(data.token);
-  //   } catch (error) {
-  //     this.logger.error(`Token validation failed: ${error}`);
-  //     return {
-  //       valid: false,
-  //     };
-  //   }
-  // }
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.REFRESH_TOKEN,
+  })
+  async refreshToken(
+    @Payload() data: RefreshTokenRequest,
+  ): Promise<AuthTokens> {
+    try {
+      this.logger.log(`Refreshing token: ${data.refreshToken}`);
+      const payload = await this.tokenService.validateRefreshToken(
+        data.refreshToken,
+      );
+      return payload;
+    } catch (error) {
+      this.logger.error(`Token refresh failed: ${error}`);
+      throw error;
+    }
+  }
 
-  // @MessagePattern('auth.refresh_token')
-  // async refreshToken(
-  //   @Payload() data: RefreshTokenRequestDto,
-  // ): Promise<RefreshTokenResponseDto> {
-  //   try {
-  //     this.logger.log(
-  //       `Refreshing token: ${data.refreshToken.substring(0, 20)}...`,
-  //     );
-  //     return await this.authService.refreshToken(data.refreshToken);
-  //   } catch (error) {
-  //     this.logger.error(`Token refresh failed: ${error}`);
-  //     throw error;
-  //   }
-  // }
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.LOGOUT,
+  })
+  async logout(@Payload() data: LogoutRequest): Promise<LogoutResponse> {
+    return await this.tokenService.revokeToken(data.refreshToken);
+  }
 
-  // @MessagePattern('auth.revoke_token')
-  // async revokeToken(
-  //   @Payload() data: { token: string },
-  // ): Promise<{ success: boolean }> {
-  //   try {
-  //     this.logger.log(`Revoking token: ${data.token.substring(0, 20)}...`);
-  //     await this.authService.revokeToken(data.token);
-  //     return { success: true };
-  //   } catch (error) {
-  //     this.logger.error(`Token revocation failed: ${error}`);
-  //     throw error;
-  //   }
-  // }
-
-  // @MessagePattern('auth.get_user_info')
-  // async getUserInfo(
-  //   @Payload() data: { userId: string },
-  // ): Promise<UserInfoResponseDto | null> {
-  //   try {
-  //     this.logger.log(`Getting user info for: ${data.userId}`);
-  //     return await this.authService.getUserInfo(data.userId);
-  //   } catch (error) {
-  //     this.logger.error(`Get user info failed: ${error}`);
-  //     return null;
-  //   }
-  // }
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN,
+  })
+  async validateToken(
+    @Payload() data: { token: string },
+  ): Promise<{ valid: boolean; payload?: any }> {
+    try {
+      this.logger.log(`Validating access token`);
+      const payload = await this.tokenService.validateAccessToken(data.token);
+      return {
+        valid: true,
+        payload,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Token validation failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return {
+        valid: false,
+      };
+    }
+  }
 
   // Keep the original HTTP endpoint for direct access if needed
   @MessagePattern('auth.health_check')

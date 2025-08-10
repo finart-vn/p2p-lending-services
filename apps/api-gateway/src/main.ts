@@ -1,6 +1,8 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiGatewayConfig, CONFIG_TOKENS } from '@p2p-lending/common/config';
+import * as cookieParser from 'cookie-parser';
 
 import { ApiGatewayModule } from './api-gateway.module';
 
@@ -10,25 +12,78 @@ async function bootstrap() {
       prefix: 'ApiGateway',
     }),
   });
-  app.setGlobalPrefix('api/v1');
+
+  const config = app.get<ApiGatewayConfig>(CONFIG_TOKENS.API_GATEWAY);
+
+  // Configure cookie parser with secret for signed cookies
+  const cookieSecret = config.jwt?.secret || 'DefaultSecret';
+  app.use(cookieParser(cookieSecret));
+
+  if (config.globalPrefix) {
+    app.setGlobalPrefix(config.globalPrefix);
+  }
+
+  // CORS Configuration
+  if (config.cors?.enabled) {
+    app.enableCors({
+      origin: config.cors.origins,
+      methods: config.cors.methods,
+      allowedHeaders: config.cors.allowedHeaders,
+      credentials: config.cors.credentials,
+    });
+  }
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
-  // Swagger
-  const config = new DocumentBuilder()
-    .setTitle('P2P Lending API Gateway')
-    .setDescription('API Gateway for P2P Lending')
-    .setVersion('1.0')
-    .addTag('api-gateway')
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, documentFactory);
+  // Swagger Documentation
+  if (config.swagger?.enabled) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle(config.swagger.title || 'P2P Lending API Gateway')
+      .setDescription(
+        config.swagger.description || 'API Gateway for P2P Lending',
+      )
+      .setVersion(config.swagger.version || '1.0')
+      .addBearerAuth();
 
-  await app.listen(process.env.PORT || 3005);
-  console.log(`Server is running on port ${process.env.PORT || 3005}`);
+    // Add tags if specified
+    if (config.swagger.tags) {
+      config.swagger.tags.forEach((tag) => swaggerConfig.addTag(tag));
+    }
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig.build());
+    SwaggerModule.setup(config.swagger.path || 'api-docs', app, document);
+  }
+
+  await app.listen(config.port);
+
+  console.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  console.log(`🌍 Environment: ${config.environment}`);
+  console.log(`📊 Log Level: ${config.logLevel}`);
+
+  if (config.globalPrefix) {
+    console.log(`🔗 Global Prefix: ${config.globalPrefix}`);
+  }
+
+  if (config.cors?.enabled) {
+    console.log(
+      `🌐 CORS enabled for origins: ${config.cors.origins?.join(', ')}`,
+    );
+  }
+
+  if (config.swagger?.enabled) {
+    console.log(`📚 Swagger docs available at: /${config.swagger.path}`);
+  }
+
+  if (config.rateLimit?.enabled) {
+    console.log(
+      `⏱️  Rate limiting: ${config.rateLimit.max} requests per ${config.rateLimit.windowMs}ms`,
+    );
+  }
 }
-bootstrap();
+void bootstrap();

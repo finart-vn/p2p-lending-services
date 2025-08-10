@@ -4,8 +4,12 @@ import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
 import {
+  AuthTokens,
   LoginRequest,
   LoginResponse,
+  LogoutRequest,
+  LogoutResponse,
+  RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
@@ -74,22 +78,37 @@ export class AuthClient extends BaseClient {
     this.logger.log(`Auth token created: ${JSON.stringify(result)}`);
     return result;
   }
-  async validateToken(token: TokenPayloadDto): Promise<boolean> {
+
+  async validateRefreshToken(refreshToken: string) {
+    const result = await this.send<RefreshTokenRequest, AuthTokens>(
+      { cmd: MESSAGE_PATTERNS.AUTH.REFRESH_TOKEN },
+      { refreshToken },
+    );
+    return result;
+  }
+
+  async validateToken(token: string) {
     try {
-      // const result = await this.send<AuthValidationRequest, boolean>(
-      //   { cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN },
-      //   token,
-      // );
-      this.logger.log(`Token validation request: ${JSON.stringify(token)}`);
-      return new Promise((resolve) => {
-        resolve(true);
-      });
+      this.logger.log(`Validating access token`);
+      const result = await this.send<
+        { token: string },
+        { valid: boolean; payload: TokenPayloadDto }
+      >({ cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN }, { token });
+      this.logger.log(`Token validation result: ${JSON.stringify(result)}`);
+      return result;
     } catch (error) {
       this.logger.error(`Token validation failed: ${JSON.stringify(error)}`);
       return false;
     }
   }
 
+  async logout(refreshToken: string) {
+    const result = await this.send<LogoutRequest, LogoutResponse>(
+      { cmd: MESSAGE_PATTERNS.AUTH.LOGOUT },
+      { refreshToken },
+    );
+    return result;
+  }
   //   async getUserInfo(userId: string): Promise<UserInfoResponse | null> {
   //     // TODO: Implement user info retrieval
   //     try {
@@ -104,15 +123,4 @@ export class AuthClient extends BaseClient {
   //       return null;
   //     }
   //   }
-
-  // async refreshToken(refreshToken: string): Promise<any> {
-  //   // TODO: Implement token refresh logic
-  //   try {
-  //     // TODO: Send request to auth service
-  //     return null;
-  //   } catch (error) {
-  //     this.logger.error(`Token refresh failed: ${error.message}`);
-  //     throw error;
-  //   }
-  // }
 }
