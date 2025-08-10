@@ -1,8 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule } from '@nestjs/microservices';
 import {
-  ApiGatewayConfig,
   CONFIG_TOKENS,
   ConfigModule,
   createApiGatewayConfig,
@@ -24,18 +22,6 @@ import { UserController } from './routes/user/user.route';
       { name: RmqService.AUTH, ...getRmqOptions(RmqQueue.AUTH) },
       { name: RmqService.USER, ...getRmqOptions(RmqQueue.USER) },
     ]),
-    JwtModule.registerAsync({
-      global: true,
-      inject: [CONFIG_TOKENS.API_GATEWAY],
-      useFactory: (config: ApiGatewayConfig) => ({
-        secret: config.jwt?.secret || 'DefaultSecret',
-        signOptions: {
-          expiresIn: config.jwt?.accessTokenExpiresIn || '15m',
-          issuer: config.jwt?.issuer || config.serviceName,
-          audience: config.jwt?.audience,
-        },
-      }),
-    }),
   ],
   controllers: [AuthController, UserController],
   providers: [UserClient, AuthClient],

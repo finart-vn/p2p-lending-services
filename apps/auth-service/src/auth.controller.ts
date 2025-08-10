@@ -95,6 +95,29 @@ export class AuthController {
     return await this.tokenService.revokeToken(data.refreshToken);
   }
 
+  @MessagePattern({
+    cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN,
+  })
+  async validateToken(
+    @Payload() data: { token: string },
+  ): Promise<{ valid: boolean; payload?: any }> {
+    try {
+      this.logger.log(`Validating access token`);
+      const payload = await this.tokenService.validateAccessToken(data.token);
+      return {
+        valid: true,
+        payload,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Token validation failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return {
+        valid: false,
+      };
+    }
+  }
+
   // Keep the original HTTP endpoint for direct access if needed
   @MessagePattern('auth.health_check')
   getHealthCheck(): { status: string; timestamp: string } {

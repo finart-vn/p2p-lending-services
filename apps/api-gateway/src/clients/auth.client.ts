@@ -78,21 +78,6 @@ export class AuthClient extends BaseClient {
     this.logger.log(`Auth token created: ${JSON.stringify(result)}`);
     return result;
   }
-  async validateToken(token: TokenPayloadDto): Promise<boolean> {
-    try {
-      // const result = await this.send<AuthValidationRequest, boolean>(
-      //   { cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN },
-      //   token,
-      // );
-      this.logger.log(`Token validation request: ${JSON.stringify(token)}`);
-      return new Promise((resolve) => {
-        resolve(true);
-      });
-    } catch (error) {
-      this.logger.error(`Token validation failed: ${JSON.stringify(error)}`);
-      return false;
-    }
-  }
 
   async validateRefreshToken(refreshToken: string) {
     const result = await this.send<RefreshTokenRequest, AuthTokens>(
@@ -100,6 +85,21 @@ export class AuthClient extends BaseClient {
       { refreshToken },
     );
     return result;
+  }
+
+  async validateToken(token: string) {
+    try {
+      this.logger.log(`Validating access token`);
+      const result = await this.send<
+        { token: string },
+        { valid: boolean; payload: TokenPayloadDto }
+      >({ cmd: MESSAGE_PATTERNS.AUTH.VALIDATE_TOKEN }, { token });
+      this.logger.log(`Token validation result: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Token validation failed: ${JSON.stringify(error)}`);
+      return false;
+    }
   }
 
   async logout(refreshToken: string) {
@@ -123,15 +123,4 @@ export class AuthClient extends BaseClient {
   //       return null;
   //     }
   //   }
-
-  // async refreshToken(refreshToken: string): Promise<any> {
-  //   // TODO: Implement token refresh logic
-  //   try {
-  //     // TODO: Send request to auth service
-  //     return null;
-  //   } catch (error) {
-  //     this.logger.error(`Token refresh failed: ${error.message}`);
-  //     throw error;
-  //   }
-  // }
 }
