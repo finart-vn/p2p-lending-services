@@ -49,16 +49,16 @@ export class UserClient extends BaseClient {
   //     }
   //   }
 
-  //   async getUserByEmail(email: string): Promise<UserResponse | null> {
-  //     // TODO: Implement user retrieval by email
-  //     try {
-  //       // TODO: Send request to user service
-  //       return null;
-  //     } catch (error) {
-  //       this.logger.error(`Failed to get user by email: ${error.message}`);
-  //       return null;
-  //     }
-  //   }
+  async getUserByEmail(email: string): Promise<UserResponse | null> {
+    // TODO: Implement user retrieval by email
+    try {
+      // TODO: Send request to user service
+      return null;
+    } catch (error) {
+      this.logger.error(`Failed to get user by email: ${error.message}`);
+      return null;
+    }
+  }
 
   //   async updateUser(userData: UpdateUserRequest): Promise<UserResponse> {
   //     // TODO: Implement user update

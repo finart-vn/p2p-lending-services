@@ -5,11 +5,15 @@ import {
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { PrismaService } from './prisma/prisma.service';
+import { RolesService } from './roles/roles.service';
 
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private rolesService: RolesService,
+  ) {}
   async createUser(user: CreateUserRequest): Promise<UserResponse> {
     try {
       // 1. Check if user already exists
@@ -37,6 +41,15 @@ export class AppService {
           country: user.country,
         },
       });
+
+      //3. Assign user role
+      const assignedRole = await this.rolesService.assignRole(
+        newUser.id,
+        user.role,
+      );
+
+      this.logger.debug(assignedRole);
+
       this.logger.log(`User created: ${newUser.email}`);
       return newUser;
     } catch (error) {
