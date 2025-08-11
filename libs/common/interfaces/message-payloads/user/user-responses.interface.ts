@@ -13,7 +13,7 @@ export interface UserResponse {
   country: string;
   createdAt: Date;
   updatedAt: Date;
-  roles: RoleEnum[];
+  role: RoleEnum;
 }
 
 export interface UserListResponse {

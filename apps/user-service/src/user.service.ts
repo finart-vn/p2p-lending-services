@@ -48,10 +48,11 @@ export class AppService {
         user.role,
       );
 
-      this.logger.debug(assignedRole);
-
       this.logger.log(`User created: ${newUser.email}`);
-      return newUser;
+      return {
+        ...newUser,
+        role: assignedRole?.role?.name,
+      };
     } catch (error) {
       this.logger.error(error);
       throw error;

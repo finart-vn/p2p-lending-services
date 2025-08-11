@@ -21,7 +21,8 @@ export class RolesService {
         where: { name: roleName },
       });
       if (!role) {
-        throw new NotFoundException(`Role ${roleName} not found`);
+        this.logger.error(`User ${userId}: ${roleName} not found`);
+        return null;
       }
 
       const existingUserRole = await this.prisma.userRole.findUnique({
@@ -44,10 +45,15 @@ export class RolesService {
           roleId: role.id,
           assignedBy,
         },
+        include: {
+          role: true,
+        },
       });
+
       return newUserRole;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
+      throw error;
     }
   }
 }
