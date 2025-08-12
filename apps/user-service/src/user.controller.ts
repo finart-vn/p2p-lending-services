@@ -21,4 +21,9 @@ export class AppController {
     this.logger.log('context', JSON.stringify(email));
     return this.appService.getUserByEmail(email);
   }
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.USER.GET_BY_ID })
+  getUserById(@Payload() id: string) {
+    this.logger.log('context', JSON.stringify(id));
+    return this.appService.getUserById(id);
+  }
 }

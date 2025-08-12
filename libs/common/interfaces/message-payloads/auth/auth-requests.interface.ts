@@ -3,11 +3,8 @@ import {
   ApiLoginRequestDto,
   ApiRegisterRequestDto,
 } from '@p2p-lending/api-gateway/src/dtos';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-export interface LoginRequest extends ApiLoginRequestDto {
-  role: RoleEnum;
-}
+export type LoginRequest = ApiLoginRequestDto;
 
 export interface RegisterRequest extends ApiRegisterRequestDto {
   userId: string;

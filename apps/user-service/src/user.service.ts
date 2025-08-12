@@ -105,4 +105,30 @@ export class AppService {
       return null;
     }
   }
+
+  async getUserById(id: string): Promise<UserResponse | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
+      if (!user) {
+        return null;
+      }
+      const userRole = await this.prisma.userRole.findFirst({
+        select: { role: { select: { name: true } } },
+        where: { userId: user.id },
+      });
+      if (!userRole) {
+        this.logger.error(`User ${user.email} has no role`);
+        throw new NotFoundException(`User ${user.email} has no role`);
+      }
+      return {
+        ...user,
+        role: userRole.role.name,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get user by id: ${error}`);
+      return null;
+    }
+  }
 }
