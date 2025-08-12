@@ -1,10 +1,19 @@
 // ===== USER SERVICE RESPONSE INTERFACES =====
+import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
 export interface UserResponse {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  dateOfBirth: Date | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
   createdAt: Date;
   updatedAt: Date;
+  role: RoleEnum;
 }
 
 export interface UserListResponse {

@@ -1,5 +1,5 @@
-// import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from '@nestjs/common';
+import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-// import { ROLES_KEY } from '../guards/roles.guard';
-
-// export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
+export const ROLES_KEY = 'roles';
+export const Roles = (...roles: RoleEnum[]) => SetMetadata(ROLES_KEY, roles);

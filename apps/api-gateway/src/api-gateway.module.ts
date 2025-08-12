@@ -13,6 +13,7 @@ import { AuthClient } from './clients/auth.client';
 import { UserClient } from './clients/user.client';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import { AuthController } from './routes/auth/auth.route';
+import { LenderController } from './routes/lender/lender.controller';
 import { UserController } from './routes/user/user.route';
 
 @Module({
@@ -23,7 +24,7 @@ import { UserController } from './routes/user/user.route';
       { name: RmqService.USER, ...getRmqOptions(RmqQueue.USER) },
     ]),
   ],
-  controllers: [AuthController, UserController],
+  controllers: [AuthController, UserController, LenderController],
   providers: [UserClient, AuthClient],
 })
 export class ApiGatewayModule implements NestModule {

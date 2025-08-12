@@ -1,38 +1,52 @@
-// import {
-//   CanActivate,
-//   ExecutionContext,
-//   ForbiddenException,
-//   Injectable,
-// } from '@nestjs/common';
-// import { Reflector } from '@nestjs/core';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-// export const ROLES_KEY = 'roles';
+import { UserClient } from '../clients/user.client';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { RequestWithUser } from '../interfaces/auth.interface';
 
-// @Injectable()
-// export class RolesGuard implements CanActivate {
-//   constructor(private reflector: Reflector) {}
+@Injectable()
+export class RolesGuard implements CanActivate {
+  private readonly logger = new Logger(RolesGuard.name);
+  constructor(
+    private reflector: Reflector,
+    private userClient: UserClient,
+  ) {}
 
-//   canActivate(context: ExecutionContext): boolean {
-//     // TODO: Implement role-based authorization logic
-//     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
-//       ROLES_KEY,
-//       [context.getHandler(), context.getClass()],
-//     );
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredRoles = this.reflector.getAllAndOverride<RoleEnum[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    // If no roles are required, allow access
+    if (!requiredRoles) {
+      return true;
+    }
 
-//     if (!requiredRoles) {
-//       return true;
-//     }
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    const user = request.user;
 
-//     // TODO: Get user from request
-//     // TODO: Check if user has required roles
-//     const request = context.switchToHttp().getRequest();
-//     const user = request.user;
+    this.logger.log(`Checking roles for user:: ${user?.sub}`);
 
-//     if (!user) {
-//       throw new ForbiddenException('User not found');
-//     }
+    if (!user) {
+      throw new ForbiddenException('User not found');
+    }
+    const userExisted = await this.userClient.getUserById(user?.sub);
 
-//     // TODO: Implement role checking logic
-//     return true;
-//   }
-// }
+    if (!userExisted) {
+      throw new ForbiddenException('User not found');
+    }
+
+    if (!userExisted.role) {
+      throw new ForbiddenException('User has no role');
+    }
+    return requiredRoles.includes(userExisted.role);
+  }
+}

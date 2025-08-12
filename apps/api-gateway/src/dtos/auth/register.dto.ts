@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 import {
   IsDateString,
   IsEmail,
@@ -82,6 +83,14 @@ export class ApiRegisterRequestDto {
   @IsString()
   @IsNotEmpty()
   country: string;
+
+  @ApiProperty({
+    description: 'Role',
+    example: 'admin',
+  })
+  @IsString()
+  @IsNotEmpty()
+  role: RoleEnum;
 }
 
 export class ApiVerifyOtpRequestDto {

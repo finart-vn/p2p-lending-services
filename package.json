@@ -31,6 +31,9 @@
     "prisma:user:studio": "cd apps/user-service && prisma studio",
     "prisma:user:push": "cd apps/user-service && prisma db push"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",

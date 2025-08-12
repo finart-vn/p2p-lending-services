@@ -18,4 +18,5 @@ export const mapRegisterDtoToCreateUserRequest = (
   address: registerDto.address,
   city: registerDto.city,
   country: registerDto.country,
+  role: registerDto.role,
 });

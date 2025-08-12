@@ -35,30 +35,33 @@ export class UserClient extends BaseClient {
     }
   }
 
-  //   async getUserById(id: string): Promise<UserResponse | null> {
-  //     // TODO: Implement user retrieval by ID
-  //     try {
-  //       // TODO: Send request to user service
-  //       // const result = await this.userService.send('get_user_by_id', { id }).toPromise();
-  //       // return result;
+  async getUserById(id: string): Promise<UserResponse | null> {
+    try {
+      const user = await this.send<string, UserResponse>(
+        { cmd: MESSAGE_PATTERNS.USER.GET_BY_ID },
+        id,
+      );
+      return user;
 
-  //       return null;
-  //     } catch (error) {
-  //       this.logger.error(`Failed to get user by ID: ${error.message}`);
-  //       return null;
-  //     }
-  //   }
+      return null;
+    } catch (error) {
+      this.logger.error(`Failed to get user by ID: ${error}`);
+      return null;
+    }
+  }
 
-  //   async getUserByEmail(email: string): Promise<UserResponse | null> {
-  //     // TODO: Implement user retrieval by email
-  //     try {
-  //       // TODO: Send request to user service
-  //       return null;
-  //     } catch (error) {
-  //       this.logger.error(`Failed to get user by email: ${error.message}`);
-  //       return null;
-  //     }
-  //   }
+  async getUserByEmail(email: string): Promise<UserResponse | null> {
+    try {
+      const user = await this.send<string, UserResponse>(
+        { cmd: MESSAGE_PATTERNS.USER.GET_BY_EMAIL },
+        email,
+      );
+      return user;
+    } catch (error) {
+      this.logger.error(`Failed to get user by email: ${error}`);
+      return null;
+    }
+  }
 
   //   async updateUser(userData: UpdateUserRequest): Promise<UserResponse> {
   //     // TODO: Implement user update
