@@ -6,11 +6,11 @@ export interface UserResponse {
   email: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  dateOfBirth: Date;
-  address: string;
-  city: string;
-  country: string;
+  phone: string | null;
+  dateOfBirth: Date | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
   createdAt: Date;
   updatedAt: Date;
   role: RoleEnum;

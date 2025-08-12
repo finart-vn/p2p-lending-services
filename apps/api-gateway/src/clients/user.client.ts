@@ -50,12 +50,14 @@ export class UserClient extends BaseClient {
   //   }
 
   async getUserByEmail(email: string): Promise<UserResponse | null> {
-    // TODO: Implement user retrieval by email
     try {
-      // TODO: Send request to user service
-      return null;
+      const user = await this.send<string, UserResponse>(
+        { cmd: MESSAGE_PATTERNS.USER.GET_BY_EMAIL },
+        email,
+      );
+      return user;
     } catch (error) {
-      this.logger.error(`Failed to get user by email: ${error.message}`);
+      this.logger.error(`Failed to get user by email: ${error}`);
       return null;
     }
   }

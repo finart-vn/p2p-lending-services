@@ -1,5 +1,4 @@
 import { ApiRegisterRequestDto } from '@p2p-lending/api-gateway/src/dtos';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
 import { CreateUserRequest } from './user-requests.interface';
 
@@ -19,5 +18,5 @@ export const mapRegisterDtoToCreateUserRequest = (
   address: registerDto.address,
   city: registerDto.city,
   country: registerDto.country,
-  role: RoleEnum.ADMIN,
+  role: registerDto.role,
 });

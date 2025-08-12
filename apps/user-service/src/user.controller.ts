@@ -15,4 +15,10 @@ export class AppController {
     this.logger.log('context', JSON.stringify(user));
     return this.appService.createUser(user);
   }
+
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.USER.GET_BY_EMAIL })
+  getUserByEmail(@Payload() email: string) {
+    this.logger.log('context', JSON.stringify(email));
+    return this.appService.getUserByEmail(email);
+  }
 }

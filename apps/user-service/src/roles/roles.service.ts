@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { Role, UserRole } from '@p2p-lending/user-service/generated/prisma';
 
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -15,14 +15,18 @@ export class RolesService {
       console.log(error);
     }
   }
-  async assignRole(userId: string, roleName: RoleEnum, assignedBy?: string) {
+  async assignRole(
+    userId: string,
+    roleId: number,
+    assignedBy?: string,
+  ): Promise<UserRole & { role: Role }> {
     try {
       const role = await this.prisma.role.findUnique({
-        where: { name: roleName },
+        where: { id: roleId },
       });
       if (!role) {
-        this.logger.error(`User ${userId}: ${roleName} not found`);
-        return null;
+        this.logger.error(`User ${userId}: ${roleId} not found`);
+        throw new NotFoundException(`Role ${roleId} not found`);
       }
 
       const existingUserRole = await this.prisma.userRole.findUnique({
@@ -32,10 +36,13 @@ export class RolesService {
             roleId: role.id,
           },
         },
+        include: {
+          role: true,
+        },
       });
 
       if (existingUserRole) {
-        this.logger.warn(`User ${userId} already has role ${roleName}`);
+        this.logger.warn(`User ${userId} already has role ${role.name}`);
         return existingUserRole;
       }
 
