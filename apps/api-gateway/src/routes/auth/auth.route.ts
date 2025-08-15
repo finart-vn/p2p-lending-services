@@ -64,19 +64,28 @@ export class AuthController {
       // Call auth service via RMQ
       const loginResponse = await this.authClient.login(loginDto);
 
+      const userProfile = await this.userClient.getUserById(
+        loginResponse.user.id,
+      );
+
       this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
       // Set refresh token cookie (7 days expiry)
       res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
-        httpOnly: true,
+        httpOnly: process.env.NODE_ENV === 'production',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict' as const,
       });
 
       return {
         accessToken: loginResponse.tokens.accessToken,
+        user: userProfile,
       };
     } catch (error) {
       this.logger.error(`Login failed for email: ${loginDto.email}`, error);
+      throw new HttpException(
+        `Login failed for email: ${loginDto.email}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

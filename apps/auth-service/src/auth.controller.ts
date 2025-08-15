@@ -57,7 +57,7 @@ export class AuthController {
       this.logger.log('Token key generated for user:: ', user.email);
       return {
         user: {
-          id: userAuthExists.id,
+          id: userAuthExists.userId,
           email: userAuthExists.email,
           isVerified: userAuthExists.emailVerified,
           isActive: userAuthExists.isActive,
