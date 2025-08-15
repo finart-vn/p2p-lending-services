@@ -11,7 +11,7 @@ import {
   LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
-  RegisterResponse,
+  RegisterResponseMQ,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { ApiLoginRequestDto, ApiRegisterRequestDto } from '../dtos';
@@ -55,10 +55,10 @@ export class AuthClient extends BaseClient {
   async register(
     registerRequest: ApiRegisterRequestDto,
     userId: string,
-  ): Promise<RegisterResponse> {
+  ): Promise<RegisterResponseMQ> {
     try {
       this.logger.log(`Register request for email: ${registerRequest.email}`);
-      const result = await this.send<RegisterRequest, RegisterResponse>(
+      const result = await this.send<RegisterRequest, RegisterResponseMQ>(
         { cmd: MESSAGE_PATTERNS.AUTH.REGISTER },
         { ...registerRequest, userId },
       );

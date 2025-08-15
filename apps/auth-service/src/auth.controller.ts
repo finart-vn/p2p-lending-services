@@ -9,7 +9,7 @@ import {
   LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
-  RegisterResponse,
+  RegisterResponseMQ,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { AuthService } from './auth.service';
@@ -29,10 +29,19 @@ export class AuthController {
   })
   async createUserAuthToken(
     @Payload() user: RegisterRequest,
-  ): Promise<RegisterResponse> {
+  ): Promise<RegisterResponseMQ> {
     try {
       this.logger.log('Creating auth token for user:: ', user);
-      return await this.authService.register(user);
+      const userAuthCreated = await this.authService.register(user);
+
+      const tokenKey = await this.tokenService.generateTokenKey(
+        userAuthCreated.id,
+        userAuthCreated.userId,
+      );
+      return {
+        userAuthCreated: userAuthCreated,
+        tokenKey,
+      };
     } catch (error) {
       this.logger.error(`Create auth token failed: ${error}`);
       throw error;

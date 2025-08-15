@@ -54,10 +54,6 @@ export class AppService {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
-          dateOfBirth: user.dateOfBirth,
-          address: user.address,
-          city: user.city,
-          country: user.country,
         },
       });
 

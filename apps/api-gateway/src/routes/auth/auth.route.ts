@@ -28,6 +28,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RegisterResponseApi, UserResponse } from '@p2p-lending/common';
 import { Request, Response } from 'express';
 
 import { AuthGuard } from '../../guards/auth.guard';
@@ -108,20 +109,32 @@ export class AuthController {
   })
   async register(
     @Body(new ValidationPipe()) registerDto: ApiRegisterRequestDto,
-  ) {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ApiResponseDto<RegisterResponseApi>> {
     try {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
       // Create user via RMQ
       const userResponse = await this.userClient.createUser(registerDto);
       // Register with auth service
-      const authResponse = await this.authClient.register(
+      const { userAuthCreated, tokenKey } = await this.authClient.register(
         registerDto,
         userResponse.id,
       );
+      // Set refresh token cookie (7 days expiry)
+      res.cookie('refreshToken', tokenKey.refreshToken, {
+        httpOnly: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict' as const,
+      });
 
       return {
-        userResponse,
-        authResponse,
+        user: {
+          ...userResponse,
+          emailVerified: userAuthCreated.emailVerified,
+          emailVerifiedAt: userAuthCreated.emailVerifiedAt,
+          isActive: userAuthCreated.isActive,
+        },
+        accessToken: tokenKey.accessToken,
       };
     } catch (error) {
       this.logger.error(
