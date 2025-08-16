@@ -28,7 +28,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RegisterResponseApi, UserResponse } from '@p2p-lending/common';
+import { RegisterResponseApi } from '@p2p-lending/common';
 import { Request, Response } from 'express';
 
 import { AuthGuard } from '../../guards/auth.guard';
@@ -72,9 +72,9 @@ export class AuthController {
       this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
       // Set refresh token cookie (7 days expiry)
       res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
-        httpOnly: process.env.NODE_ENV === 'production',
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict' as const,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       });
 
       return {
@@ -110,26 +110,26 @@ export class AuthController {
   async register(
     @Body(new ValidationPipe()) registerDto: ApiRegisterRequestDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<ApiResponseDto<RegisterResponseApi>> {
+  ): Promise<RegisterResponseApi> {
     try {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
       // Create user via RMQ
-      const userResponse = await this.userClient.createUser(registerDto);
+      const userCreated = await this.userClient.createUser(registerDto);
       // Register with auth service
       const { userAuthCreated, tokenKey } = await this.authClient.register(
         registerDto,
-        userResponse.id,
+        userCreated.id,
       );
       // Set refresh token cookie (7 days expiry)
       res.cookie('refreshToken', tokenKey.refreshToken, {
-        httpOnly: process.env.NODE_ENV === 'production',
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict' as const,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       });
 
       return {
         user: {
-          ...userResponse,
+          ...userCreated,
           emailVerified: userAuthCreated.emailVerified,
           emailVerifiedAt: userAuthCreated.emailVerifiedAt,
           isActive: userAuthCreated.isActive,
@@ -141,7 +141,7 @@ export class AuthController {
         `Registration failed for email: ${registerDto.email}`,
         error,
       );
-      return new HttpException(
+      throw new HttpException(
         `Registration failed for email: ${registerDto.email}`,
         HttpStatus.BAD_REQUEST,
       );
@@ -153,9 +153,14 @@ export class AuthController {
   @Post('logout')
   @UseGuards(AuthGuard)
   logout(@Req() req: Request) {
-    const refreshToken = req.cookies['refreshToken'] as string;
-    this.logger.debug(`Refresh token: ${refreshToken}`);
-    return this.authClient.logout(refreshToken);
+    try {
+      const refreshToken = req.cookies['refreshToken'] as string;
+      this.logger.debug(`Refresh token: ${refreshToken}`);
+      return this.authClient.logout(refreshToken);
+    } catch (error) {
+      this.logger.error('Error logging out', error);
+      throw new HttpException('Error logging out', HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('refresh-token')
@@ -187,7 +192,6 @@ export class AuthController {
         const cookieOptions = {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict' as const,
         };
 
         // Update refresh token cookie
@@ -196,8 +200,6 @@ export class AuthController {
           refreshTokenResponse.refreshToken,
           cookieOptions,
         );
-
-        res.cookie(refreshTokenResponse.accessToken, cookieOptions);
       }
 
       return refreshTokenResponse.accessToken;
