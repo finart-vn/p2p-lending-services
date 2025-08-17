@@ -24,7 +24,7 @@ export class ConfigFactory {
 
     // Base service configuration
     config.serviceName = options.serviceName;
-    config.port = this.parseNumber(process.env.PORT, options.defaultPort);
+    config.port = options.defaultPort;
     config.environment = this.parseEnum(
       Environment,
       process.env.NODE_ENV,

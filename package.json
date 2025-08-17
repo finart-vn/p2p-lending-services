@@ -20,7 +20,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest test/e2e",
+    "test:e2e": "jest apps/user-service/test/e2e",
     "test:unit": "jest test/*/unit",
     "test:integration": "jest test/*/integration",
     "test:api-gateway": "jest test/api-gateway",

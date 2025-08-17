@@ -25,10 +25,10 @@ import { TokenKeyModule } from './token-key/token-key.module';
       global: true,
       inject: [CONFIG_TOKENS.AUTH_SERVICE],
       useFactory: (config: AuthServiceConfig) => ({
-        secret: config.jwt?.secret || 'DefaultSecret',
+        secret: config.jwt?.secret,
         signOptions: {
-          expiresIn: config.jwt?.accessTokenExpiresIn || '15m',
-          issuer: config.jwt?.issuer || config.serviceName,
+          expiresIn: config.jwt?.accessTokenExpiresIn,
+          issuer: config.jwt?.issuer,
           audience: config.jwt?.audience,
         },
       }),
@@ -36,7 +36,9 @@ import { TokenKeyModule } from './token-key/token-key.module';
     ClientsModule.registerAsync([
       {
         name: RmqService.AUTH,
-        useFactory: () => getRmqOptions(RmqQueue.AUTH),
+        useFactory: (config: AuthServiceConfig) =>
+          getRmqOptions(RmqQueue.AUTH, config.rabbitmq?.url),
+        inject: [CONFIG_TOKENS.AUTH_SERVICE],
       },
       {
         name: RmqService.USER,
@@ -51,18 +53,7 @@ import { TokenKeyModule } from './token-key/token-key.module';
           }
           return {
             transport: Transport.REDIS,
-            options: {
-              host: config.redis.host,
-              port: config.redis.port,
-              password: config.redis.password,
-              username: config.redis.username,
-              db: config.redis.db,
-              retryDelay: config.redis.retryDelay,
-              retryAttempts: config.redis.retryAttempts,
-              connectTimeout: config.redis.connectTimeout,
-              commandTimeout: config.redis.commandTimeout,
-              lazyConnect: true,
-            },
+            ...config.redis,
           };
         },
       },

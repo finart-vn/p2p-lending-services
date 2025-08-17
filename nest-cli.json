@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/user-service",
   "projects": {
+    "/apps/loan-service": {
+      "type": "application",
+      "root": "apps/apps/loan-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/apps/loan-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/apps/loan-service/tsconfig.app.json"
+      }
+    },
     "api-gateway": {
       "type": "application",
       "root": "apps/api-gateway",
@@ -26,6 +35,24 @@
       "sourceRoot": "apps/auth-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/auth-service/tsconfig.app.json"
+      }
+    },
+    "loan-service": {
+      "type": "application",
+      "root": "apps/loan-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/loan-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/loan-service/tsconfig.app.json"
+      }
+    },
+    "payment-service": {
+      "type": "application",
+      "root": "apps/payment-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/payment-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payment-service/tsconfig.app.json"
       }
     },
     "user-service": {
