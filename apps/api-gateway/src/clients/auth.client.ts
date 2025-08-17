@@ -14,7 +14,7 @@ import {
   RegisterResponseMQ,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { ApiLoginRequestDto, ApiRegisterRequestDto } from '../dtos';
+import { LoginDto, RegisterDto } from '../dtos';
 import { BaseClient } from './base.client';
 
 export interface AuthValidationRequest {
@@ -38,7 +38,7 @@ export class AuthClient extends BaseClient {
   constructor(@Inject(RmqService.AUTH) protected readonly client: ClientProxy) {
     super(client, RmqService.AUTH);
   }
-  async login(loginRequest: ApiLoginRequestDto): Promise<LoginResponse> {
+  async login(loginRequest: LoginDto): Promise<LoginResponse> {
     try {
       this.logger.log(`Login request for email: ${loginRequest.email}`);
       const result = await this.send<LoginRequest, LoginResponse>(
@@ -53,7 +53,7 @@ export class AuthClient extends BaseClient {
   }
 
   async register(
-    registerRequest: ApiRegisterRequestDto,
+    registerRequest: RegisterDto,
     userId: string,
   ): Promise<RegisterResponseMQ> {
     try {

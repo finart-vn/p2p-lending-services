@@ -69,6 +69,7 @@ export class AuthController {
           id: userAuthExists.userId,
           email: userAuthExists.email,
           isVerified: userAuthExists.emailVerified,
+          emailVerifiedAt: userAuthExists.emailVerifiedAt ?? null,
           isActive: userAuthExists.isActive,
         },
         tokens: tokenKey,

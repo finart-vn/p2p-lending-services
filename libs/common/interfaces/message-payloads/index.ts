@@ -1,6 +1,6 @@
 // Export all message payload interfaces
-export * from './auth';
-export * from './user';
+export * from '../../../contracts/auth';
+export * from '../../../contracts/user';
 
 // Common message wrapper types
 export interface MessageRequest<T = any> {

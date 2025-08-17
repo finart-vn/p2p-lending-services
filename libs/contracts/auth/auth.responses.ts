@@ -14,6 +14,7 @@ export type LoginResponse = {
     id: string;
     email: string;
     isVerified: boolean;
+    emailVerifiedAt: Date | null;
     isActive: boolean;
   };
   tokens: AuthTokens;

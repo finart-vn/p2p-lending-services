@@ -5,7 +5,7 @@ import {
   AuthTokens,
   LogoutResponse,
   TokenPayloadDto,
-} from '@p2p-lending/common/interfaces/message-payloads/auth/auth-responses.interface';
+} from '@p2p-lending/contracts/auth/auth.responses';
 
 import { PrismaService } from '../prisma/prisma.service';
 

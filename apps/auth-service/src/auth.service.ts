@@ -32,7 +32,7 @@ export class AuthService {
       // 1. check if user already exists
       const userExists = await this.prismaService.userAuth.findUnique({
         where: {
-          userId: user.userId,
+          email: user.email,
         },
       });
       if (userExists) {

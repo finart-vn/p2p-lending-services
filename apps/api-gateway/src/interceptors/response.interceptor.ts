@@ -8,23 +8,16 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  timestamp: string;
-  path: string;
-}
+import { ApiResponseDto } from '../dtos/common.dto';
 
 @Injectable()
 export class ResponseInterceptor<T>
-  implements NestInterceptor<T, ApiResponse<T>>
+  implements NestInterceptor<T, ApiResponseDto<T>>
 {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<ApiResponse<T>> {
-    // TODO: Implement response formatting logic
+  ): Observable<ApiResponseDto<T>> {
     return next.handle().pipe(
       map((data: T) => ({
         success: true,

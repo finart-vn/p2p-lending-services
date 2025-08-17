@@ -1,4 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
+import { UserResponse } from '@p2p-lending/common/interfaces/message-payloads';
+import { IsNotEmpty, IsString } from 'class-validator';
+
+import { ApiResponseDto } from '../common.dto';
 
 // ===== API AUTH RESPONSE DTOs (External Interface) =====
 
@@ -47,6 +52,46 @@ export class ApiUserDto {
   //   createdAt: string;
 }
 
+export class UserAuthResponseDto {
+  @ApiProperty({
+    description: 'Access token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  @IsString()
+  @IsNotEmpty()
+  accessToken: string;
+
+  @ApiProperty({
+    description: 'User information',
+    example: {
+      id: '123',
+      email: 'user@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      phone: '+1234567890',
+      dateOfBirth: '1990-01-01',
+      address: '123 Main St',
+      city: 'New York',
+      country: 'United States',
+      role: 'BORROWER',
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
+    },
+  })
+  @IsString()
+  @IsNotEmpty()
+  user: UserResponse &
+    Pick<UserAuth, 'emailVerified' | 'emailVerifiedAt' | 'isActive'>;
+}
+
+export class ApiUserAuthResponseDto extends ApiResponseDto<UserAuthResponseDto> {
+  @ApiProperty({
+    description: 'User information',
+    type: UserAuthResponseDto,
+  })
+  override data: UserAuthResponseDto;
+}
+
 export class ApiAuthTokensDto {
   @ApiProperty({
     description: 'Access token',
@@ -93,7 +138,7 @@ export class ApiLoginResponseDto {
   isFirstLogin: boolean;
 }
 
-export class ApiRegisterResponseDto {
+export class RegisterResponseDto {
   @ApiProperty({
     description: 'User information',
     type: ApiUserDto,
