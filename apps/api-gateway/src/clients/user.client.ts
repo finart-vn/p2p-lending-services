@@ -42,8 +42,6 @@ export class UserClient extends BaseClient {
         id,
       );
       return user;
-
-      return null;
     } catch (error) {
       this.logger.error(`Failed to get user by ID: ${error}`);
       return null;

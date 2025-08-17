@@ -6,11 +6,7 @@ export interface CreateUserRequest {
   email: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: Date;
   phone: string;
-  address: string;
-  city: string;
-  country: string;
   role: RoleEnum;
 }
 

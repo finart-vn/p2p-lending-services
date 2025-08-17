@@ -11,9 +11,9 @@ export interface UserResponse {
   address: string | null;
   city: string | null;
   country: string | null;
+  role: RoleEnum;
   createdAt: Date;
   updatedAt: Date;
-  role: RoleEnum;
 }
 
 export interface UserListResponse {

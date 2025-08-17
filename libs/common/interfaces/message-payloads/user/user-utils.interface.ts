@@ -13,10 +13,6 @@ export const mapRegisterDtoToCreateUserRequest = (
   email: registerDto.email,
   firstName: registerDto.firstName,
   lastName: registerDto.lastName,
-  dateOfBirth: new Date(registerDto.dateOfBirth),
   phone: registerDto.phone,
-  address: registerDto.address,
-  city: registerDto.city,
-  country: registerDto.country,
   role: registerDto.role,
 });

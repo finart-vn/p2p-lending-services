@@ -2,6 +2,8 @@
 
 import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
 
+import { UserResponse } from '../user';
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
@@ -17,8 +19,16 @@ export type LoginResponse = {
   tokens: AuthTokens;
 };
 
-export type RegisterResponse = Omit<UserAuth, 'passwordHash'>;
+export type RegisterResponseMQ = {
+  userAuthCreated: Omit<UserAuth, 'passwordHash'>;
+  tokenKey: AuthTokens;
+};
 
+export interface RegisterResponseApi {
+  user: UserResponse &
+    Pick<UserAuth, 'emailVerified' | 'emailVerifiedAt' | 'isActive'>;
+  accessToken: string;
+}
 export interface TokenValidationResponse {
   isValid: boolean;
   userId?: string;

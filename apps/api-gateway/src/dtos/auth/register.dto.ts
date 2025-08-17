@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 import {
-  IsDateString,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsString,
   MinLength,
@@ -45,14 +45,6 @@ export class ApiRegisterRequestDto {
   lastName: string;
 
   @ApiProperty({
-    description: 'Date of birth (YYYY-MM-DD)',
-    example: '1990-01-01',
-  })
-  @IsDateString()
-  @IsNotEmpty()
-  dateOfBirth: Date;
-
-  @ApiProperty({
     description: 'Phone number',
     example: '+1234567890',
   })
@@ -61,33 +53,10 @@ export class ApiRegisterRequestDto {
   phone: string;
 
   @ApiProperty({
-    description: 'Address',
-    example: '123 Main St',
-  })
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-
-  @ApiProperty({
-    description: 'City',
-    example: 'New York',
-  })
-  @IsString()
-  @IsNotEmpty()
-  city: string;
-
-  @ApiProperty({
-    description: 'Country',
-    example: 'United States',
-  })
-  @IsString()
-  @IsNotEmpty()
-  country: string;
-
-  @ApiProperty({
     description: 'Role',
-    example: 'admin',
+    example: 'BORROWER',
   })
+  @IsEnum(RoleEnum)
   @IsString()
   @IsNotEmpty()
   role: RoleEnum;
