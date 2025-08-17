@@ -1,15 +1,12 @@
 import { AuthClient } from '@api-gateway/clients/auth.client';
 import { UserClient } from '@api-gateway/clients/user.client';
 import {
-  ApiLoginRequestDto,
-  ApiLoginResponseDto,
-  ApiRegisterRequestDto,
-  ApiRegisterResponseDto,
+  ApiUserAuthResponseDto,
+  LoginDto,
+  RegisterDto,
+  UserAuthResponseDto,
 } from '@api-gateway/dtos/auth';
-import {
-  ApiErrorResponseDto,
-  ApiResponseDto,
-} from '@api-gateway/dtos/common.dto';
+import { ApiErrorResponseDto } from '@api-gateway/dtos/common.dto';
 import {
   Body,
   Controller,
@@ -28,7 +25,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RegisterResponseApi } from '@p2p-lending/common';
 import { Request, Response } from 'express';
 
 import { AuthGuard } from '../../guards/auth.guard';
@@ -47,7 +43,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Login successful',
-    type: ApiResponseDto<ApiLoginResponseDto>,
+    type: ApiUserAuthResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -56,18 +52,24 @@ export class AuthController {
   })
   @Post('login')
   async login(
-    @Body(new ValidationPipe()) loginDto: ApiLoginRequestDto,
+    @Body(new ValidationPipe()) loginDto: LoginDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<UserAuthResponseDto> {
     try {
       this.logger.log(`Login attempt for email: ${loginDto.email}`);
-      // Call auth service via RMQ
+      // Check if login response is valid
       const loginResponse = await this.authClient.login(loginDto);
-
+      if (!loginResponse) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      // Get user profile from user service
       const userProfile = await this.userClient.getUserById(
         loginResponse.user.id,
       );
+      if (!userProfile) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
 
       this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
       // Set refresh token cookie (7 days expiry)
@@ -79,7 +81,12 @@ export class AuthController {
 
       return {
         accessToken: loginResponse.tokens.accessToken,
-        user: userProfile,
+        user: {
+          ...userProfile,
+          emailVerified: loginResponse.user.isVerified,
+          emailVerifiedAt: loginResponse.user.emailVerifiedAt,
+          isActive: loginResponse.user.isActive,
+        },
       };
     } catch (error) {
       this.logger.error(`Login failed for email: ${loginDto.email}`, error);
@@ -95,7 +102,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'Registration successful',
-    type: ApiResponseDto<ApiRegisterResponseDto>,
+    type: ApiUserAuthResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -108,9 +115,9 @@ export class AuthController {
     type: ApiErrorResponseDto,
   })
   async register(
-    @Body(new ValidationPipe()) registerDto: ApiRegisterRequestDto,
+    @Body(new ValidationPipe()) registerDto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<RegisterResponseApi> {
+  ): Promise<UserAuthResponseDto> {
     try {
       this.logger.log(`Registration attempt for email: ${registerDto.email}`);
       // Create user via RMQ

@@ -4,14 +4,13 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+import { ApiErrorResponseDto } from '../dtos/common.dto';
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(HttpExceptionFilter.name);
-
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -22,18 +21,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const responseError = exception.getResponse() as
-      | string
-      | Record<string, unknown>;
+    const responseError = exception.getResponse();
 
     const message =
-      typeof responseError === 'string' ? responseError : responseError.message;
+      typeof responseError === 'string' || Array.isArray(responseError)
+        ? responseError
+        : 'Unknown error occurred';
 
-    const errorResponse = {
+    const errorResponse: ApiErrorResponseDto = {
       success: false,
       statusCode: status,
       message,
-      method: request.method,
       path: request.url,
       timestamp: new Date().toISOString(),
     };

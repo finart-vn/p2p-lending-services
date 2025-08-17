@@ -11,6 +11,8 @@ import {
   Min,
 } from 'class-validator';
 
+import { IApiResponse } from '../interfaces/auth.interface';
+
 // ===== PAGINATION DTO =====
 
 export class PaginationDto {
@@ -65,7 +67,7 @@ export class PaginationDto {
 
 // ===== API RESPONSE STRUCTURE =====
 
-export class ApiResponseDto<T = any> {
+export abstract class ApiResponseDto<T> implements IApiResponse<T> {
   @ApiProperty({
     description: 'Indicates if the request was successful',
     example: true,
@@ -75,7 +77,7 @@ export class ApiResponseDto<T = any> {
   @ApiProperty({
     description: 'Response data',
   })
-  data: T;
+  abstract data: T;
 
   @ApiProperty({
     description: 'Response message',
@@ -96,9 +98,8 @@ export class ApiResponseDto<T = any> {
   })
   path: string;
 
-  constructor(data: T, message?: string, path?: string) {
+  constructor(message?: string, path?: string) {
     this.success = true;
-    this.data = data;
     this.message = message;
     this.timestamp = new Date().toISOString();
     this.path = path || '';
@@ -124,20 +125,7 @@ export class ApiErrorResponseDto {
     description: 'Error message',
     example: 'Validation failed',
   })
-  message: string;
-
-  @ApiProperty({
-    description: 'Error code',
-    example: 'VALIDATION_ERROR',
-    required: false,
-  })
-  errorCode?: string;
-
-  @ApiProperty({
-    description: 'Detailed error information',
-    required: false,
-  })
-  details?: any;
+  message: string | string[];
 
   @ApiProperty({
     description: 'Error timestamp',
@@ -151,18 +139,10 @@ export class ApiErrorResponseDto {
   })
   path: string;
 
-  constructor(
-    statusCode: number,
-    message: string,
-    errorCode?: string,
-    details?: unknown,
-    path?: string,
-  ) {
+  constructor(statusCode: number, message: string, path?: string) {
     this.success = false;
     this.statusCode = statusCode;
     this.message = message;
-    this.errorCode = errorCode;
-    this.details = details;
     this.timestamp = new Date().toISOString();
     this.path = path || '';
   }
@@ -209,6 +189,8 @@ export class PaginationMetaDto {
 }
 
 export class PaginatedApiResponseDto<T = any> extends ApiResponseDto<T[]> {
+  data: T[];
+
   @ApiProperty({
     description: 'Pagination metadata',
     type: PaginationMetaDto,
@@ -221,7 +203,8 @@ export class PaginatedApiResponseDto<T = any> extends ApiResponseDto<T[]> {
     message?: string,
     path?: string,
   ) {
-    super(data, message, path);
+    super(message, path);
+    this.data = data;
     this.pagination = pagination;
   }
 }

@@ -10,7 +10,7 @@ import {
 
 // ===== API AUTH REQUEST DTOs (External Interface) =====
 
-export class ApiRegisterRequestDto {
+export class RegisterDto {
   @ApiProperty({
     description: 'User email address',
     example: 'user@example.com',

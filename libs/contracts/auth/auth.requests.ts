@@ -1,12 +1,9 @@
 // ===== AUTH SERVICE REQUEST INTERFACES =====
-import {
-  ApiLoginRequestDto,
-  ApiRegisterRequestDto,
-} from '@p2p-lending/api-gateway/src/dtos';
+import { LoginDto, RegisterDto } from '@p2p-lending/api-gateway/src/dtos';
 
-export type LoginRequest = ApiLoginRequestDto;
+export type LoginRequest = LoginDto;
 
-export interface RegisterRequest extends ApiRegisterRequestDto {
+export interface RegisterRequest extends RegisterDto {
   userId: string;
 }
 

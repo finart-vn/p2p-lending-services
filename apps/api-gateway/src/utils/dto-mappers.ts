@@ -3,14 +3,14 @@ import {
   UserResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { ApiLoginRequestDto, ApiUserDto } from '../dtos/auth';
+import { ApiUserDto, LoginDto } from '../dtos/auth';
 
 // ===== DTO MAPPING UTILITIES =====
 
 export class DtoMappers {
   // ===== API TO RMQ MAPPINGS =====
 
-  static mapApiLoginToRmqLogin(apiDto: ApiLoginRequestDto): LoginRequest {
+  static mapApiLoginToRmqLogin(apiDto: LoginDto): LoginRequest {
     return {
       email: apiDto.email,
       password: apiDto.password,

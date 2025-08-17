@@ -7,3 +7,11 @@ export interface RequestWithUser {
     [key: string]: any;
   };
 }
+
+export interface IApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  timestamp: string;
+  path: string;
+}
