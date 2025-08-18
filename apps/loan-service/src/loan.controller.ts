@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 
-import { LoanServiceService } from './loan-service.service';
+import { LoanServiceService } from './loan.service';
 
 @Controller()
 export class LoanServiceController {

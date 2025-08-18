@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LOAN_SERVICE_DATABASE_URL")
+}
+
+// ================================
+// Loan Models
+// ================================
+
+model Loan {
+  id              BigInt      @id @default(autoincrement())
+  borrowerId      String      @map("borrower_id") @db.VarChar(255)
+  loanNumber      String      @unique @map("loan_number") @db.VarChar(50)
+  requestedAmount Decimal     @map("requested_amount") @db.Decimal(15, 2)
+  fundedAmount    Decimal     @default(0) @map("funded_amount") @db.Decimal(15, 2)
+  interestRate    Decimal     @map("interest_rate") @db.Decimal(5, 2)
+  termMonths      Int         @map("term_months")
+  monthlyPayment  Decimal     @map("monthly_payment") @db.Decimal(15, 2)
+  purpose         LoanPurpose
+  description     String?     @db.Text
+  status          LoanStatus  @default(DRAFT)
+  listingDate     DateTime?   @map("listing_date")
+  fundingDeadline DateTime?   @map("funding_deadline")
+  disbursedAt     DateTime?   @map("disbursed_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  // Relations (commented for now as they would reference other services)
+  // borrower User @relation(fields: [borrowerId], references: [id])
+  // investments Investment[]
+  // payments Payment[]
+  // documents LoanDocument[]
+
+  @@index([borrowerId])
+  @@index([status])
+  @@index([purpose])
+  @@index([listingDate])
+  @@index([createdAt])
+  @@map("loans")
+}
+
+// ================================
+// Enums
+// ================================
+
+enum LoanPurpose {
+  PERSONAL
+  BUSINESS
+  EDUCATION
+  HOME_IMPROVEMENT
+  DEBT_CONSOLIDATION
+}
+
+enum LoanStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  LISTED
+  FUNDING
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  REJECTED
+}
+

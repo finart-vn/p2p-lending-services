@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { LoanServiceModule } from './../src/loan-service.module';
+import { LoanServiceModule } from '../src/loan.module';
 
 describe('LoanServiceController (e2e)', () => {
   let app: INestApplication;
