@@ -1,6 +1,7 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { RpcException } from '@nestjs/microservices';
 import {
   AuthTokens,
   LogoutResponse,
@@ -62,7 +63,10 @@ export class TokenKeyService {
         },
       );
       if (!payload) {
-        throw new ForbiddenException('Invalid refresh token');
+        throw new RpcException({
+          message: 'Invalid refresh token',
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
       }
       return payload;
     } catch (error) {
@@ -83,17 +87,26 @@ export class TokenKeyService {
       });
 
       if (!userAuth) {
-        throw new ForbiddenException('User not found');
+        throw new RpcException({
+          message: 'User not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        });
       }
 
       // Validate that the provided refresh token matches the stored one
       if (!userAuth.refreshToken || userAuth.refreshToken !== refreshToken) {
-        throw new ForbiddenException('Invalid refresh token');
+        throw new RpcException({
+          message: 'Invalid refresh token',
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
       }
 
       // Check if user is still active
       if (!userAuth.isActive) {
-        throw new ForbiddenException('User account is inactive');
+        throw new RpcException({
+          message: 'User account is inactive',
+          statusCode: HttpStatus.FORBIDDEN,
+        });
       }
 
       // Use refresh token rotation for enhanced security
@@ -122,7 +135,10 @@ export class TokenKeyService {
       };
     } catch (error) {
       this.logger.error('Error revoking token', error);
-      throw new ForbiddenException('Failed to revoke token');
+      throw new RpcException({
+        message: 'Failed to revoke token',
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
     }
   }
 
@@ -140,7 +156,10 @@ export class TokenKeyService {
       });
 
       if (!userAuth?.isActive) {
-        throw new ForbiddenException('User account is inactive');
+        throw new RpcException({
+          message: 'User account is inactive',
+          statusCode: HttpStatus.FORBIDDEN,
+        });
       }
 
       return payload;

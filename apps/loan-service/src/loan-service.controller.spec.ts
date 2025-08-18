@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { LoanServiceController } from './loan-service.controller';
 import { LoanServiceService } from './loan-service.service';
 
@@ -11,7 +12,9 @@ describe('LoanServiceController', () => {
       providers: [LoanServiceService],
     }).compile();
 
-    loanServiceController = app.get<LoanServiceController>(LoanServiceController);
+    loanServiceController = app.get<LoanServiceController>(
+      LoanServiceController,
+    );
   });
 
   describe('root', () => {

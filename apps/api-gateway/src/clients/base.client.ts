@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
+import { HttpException, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
+import { BrokerError } from '@p2p-lending/common/interfaces/message-payloads/broker.interface';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
 
 export interface MessagePattern {
@@ -26,16 +27,22 @@ export abstract class BaseClient {
       await this.ensureConnection();
       const $response = this.client.send<TResponse>(pattern, data).pipe(
         catchError((error: unknown) => {
+          this.logger.error(
+            `Error sending message to ${this.serviceName}: ${JSON.stringify(error)}`,
+          );
           return throwError(() => error);
         }),
       );
 
       return await firstValueFrom($response);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `${this.serviceName} request failed for pattern ${JSON.stringify(pattern)}: ${JSON.stringify(error)}`,
       );
-      throw error;
+      throw new HttpException(
+        (error as BrokerError).message,
+        (error as BrokerError).statusCode,
+      );
     }
   }
 

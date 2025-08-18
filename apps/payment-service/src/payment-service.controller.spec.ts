@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { PaymentServiceController } from './payment-service.controller';
 import { PaymentServiceService } from './payment-service.service';
 
@@ -11,7 +12,9 @@ describe('PaymentServiceController', () => {
       providers: [PaymentServiceService],
     }).compile();
 
-    paymentServiceController = app.get<PaymentServiceController>(PaymentServiceController);
+    paymentServiceController = app.get<PaymentServiceController>(
+      PaymentServiceController,
+    );
   });
 
   describe('root', () => {

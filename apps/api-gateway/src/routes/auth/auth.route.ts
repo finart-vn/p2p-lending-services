@@ -56,45 +56,37 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserAuthResponseDto> {
-    try {
-      this.logger.log(`Login attempt for email: ${loginDto.email}`);
-      // Check if login response is valid
-      const loginResponse = await this.authClient.login(loginDto);
-      if (!loginResponse) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-      // Get user profile from user service
-      const userProfile = await this.userClient.getUserById(
-        loginResponse.user.id,
-      );
-      if (!userProfile) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-
-      this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
-      // Set refresh token cookie (7 days expiry)
-      res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      });
-
-      return {
-        accessToken: loginResponse.tokens.accessToken,
-        user: {
-          ...userProfile,
-          emailVerified: loginResponse.user.isVerified,
-          emailVerifiedAt: loginResponse.user.emailVerifiedAt,
-          isActive: loginResponse.user.isActive,
-        },
-      };
-    } catch (error) {
-      this.logger.error(`Login failed for email: ${loginDto.email}`, error);
-      throw new HttpException(
-        `Login failed for email: ${loginDto.email}`,
-        HttpStatus.BAD_REQUEST,
-      );
+    this.logger.log(`Login attempt for email: ${loginDto.email}`);
+    // Check if login response is valid
+    const loginResponse = await this.authClient.login(loginDto);
+    if (!loginResponse) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+    // Get user profile from user service
+    const userProfile = await this.userClient.getUserById(
+      loginResponse.user.id,
+    );
+    if (!userProfile) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    this.logger.log(`Login successful for user: ${loginResponse.user.email}`);
+    // Set refresh token cookie (7 days expiry)
+    res.cookie('refreshToken', loginResponse.tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
+
+    return {
+      accessToken: loginResponse.tokens.accessToken,
+      user: {
+        ...userProfile,
+        emailVerified: loginResponse.user.isVerified,
+        emailVerifiedAt: loginResponse.user.emailVerifiedAt,
+        isActive: loginResponse.user.isActive,
+      },
+    };
   }
 
   @Post('register')

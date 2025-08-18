@@ -1,4 +1,5 @@
-import { Controller, Logger, NotFoundException } from '@nestjs/common';
+import { Controller, HttpStatus, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import {
@@ -57,7 +58,10 @@ export class AuthController {
       const userAuthExists = await this.authService.login(user);
 
       if (!userAuthExists) {
-        throw new NotFoundException('User not found');
+        throw new RpcException({
+          message: 'User not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        });
       }
       const tokenKey = await this.tokenService.generateTokenKey(
         userAuthExists.id,

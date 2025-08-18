@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import { RmqOptions } from '@nestjs/microservices';
 
 export interface MessageRequest<T = any> {
@@ -47,4 +48,9 @@ export enum BrokerType {
 export interface BrokerConfig {
   type: BrokerType;
   options: RmqOptions;
+}
+
+export interface BrokerError {
+  message: string;
+  statusCode: HttpStatus;
 }
