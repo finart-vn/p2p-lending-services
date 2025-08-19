@@ -1,9 +1,7 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { CONFIG_TOKENS, UserServiceConfig } from '@p2p-lending/common/config';
-import { RmqQueue } from '@p2p-lending/common/enums';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AppModule } from './user.module';
 
@@ -31,13 +29,18 @@ async function bootstrap() {
 
   // Connect to RabbitMQ
   if (config.rabbitmq) {
-    const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.USER);
-    app.connectMicroservice<MicroserviceOptions>(rmqConfig);
+    app.connectMicroservice<MicroserviceOptions>(config.rabbitmq);
+    logger.log(
+      `🔗 Connected to RabbitMQ, exchange: ${JSON.stringify(
+        config.rabbitmq.options?.exchange || 'DEFAULT',
+      )} - queue: ${config.rabbitmq.options?.queue} - queue_options: ${JSON.stringify(
+        config.rabbitmq.options?.queueOptions,
+      )}`,
+    );
   }
 
   // Start all microservices
   await app.startAllMicroservices();
-
   await app.listen(config.port);
 
   logger.log(`🚀 ${config.serviceName} is running on port ${config.port}`);

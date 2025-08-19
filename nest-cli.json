@@ -10,15 +10,6 @@
   "monorepo": true,
   "root": "apps/user-service",
   "projects": {
-    "/apps/loan-service": {
-      "type": "application",
-      "root": "apps/apps/loan-service",
-      "entryFile": "main",
-      "sourceRoot": "apps/apps/loan-service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/apps/loan-service/tsconfig.app.json"
-      }
-    },
     "api-gateway": {
       "type": "application",
       "root": "apps/api-gateway",

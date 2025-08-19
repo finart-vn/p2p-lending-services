@@ -1,23 +1,27 @@
 // src/config/rmq.config.ts
 import { Injectable } from '@nestjs/common';
-import { RmqOptions, Transport } from '@nestjs/microservices';
-import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  RmqOptions,
+  Transport,
+} from '@nestjs/microservices';
 
 @Injectable()
-export class RmqConfig {
-  name: string | symbol;
-  options: RmqOptions;
-  constructor(name: RmqService, queue: RmqQueue, url: string) {
-    this.name = name as string;
+export class RmqConfig implements RmqOptions {
+  transport: Transport.RMQ = Transport.RMQ;
+  options: RmqOptions['options'] = {};
+
+  constructor(options: RmqOptions['options']) {
     this.options = {
-      transport: Transport.RMQ,
-      options: {
-        urls: [url],
-        queue,
-        queueOptions: {
-          durable: false,
-        },
-      },
+      ...options,
+      urls: [process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672'],
     };
+  }
+
+  getClientProxy(): ClientProxy {
+    return ClientProxyFactory.create({
+      options: this.options,
+    });
   }
 }

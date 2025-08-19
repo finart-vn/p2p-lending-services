@@ -1,10 +1,8 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { AuthServiceConfig, CONFIG_TOKENS } from '@p2p-lending/common/config';
 import { getRedisOptions } from '@p2p-lending/common/config/redis.config';
-import { RmqQueue } from '@p2p-lending/common/enums';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AuthModule } from './auth.module';
 
@@ -32,8 +30,15 @@ async function bootstrap() {
 
   // Connect to RabbitMQ
   if (config.rabbitmq) {
-    const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.AUTH);
-    app.connectMicroservice<MicroserviceOptions>(rmqConfig);
+    logger.debug(config.rabbitmq);
+    app.connectMicroservice<MicroserviceOptions>(config.rabbitmq);
+    logger.log(
+      `🔗 Connected to RabbitMQ, exchange: ${JSON.stringify(
+        config.rabbitmq.options?.exchange || 'DEFAULT',
+      )} - queue: ${config.rabbitmq.options?.queue} - queue_options: ${JSON.stringify(
+        config.rabbitmq.options?.queueOptions,
+      )}`,
+    );
   }
 
   // Connect to Redis

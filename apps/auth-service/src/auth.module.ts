@@ -7,8 +7,7 @@ import {
   ConfigModule,
   createAuthServiceConfig,
 } from '@p2p-lending/common/config';
-import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
+import { RmqService } from '@p2p-lending/common/enums';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -35,14 +34,16 @@ import { TokenKeyModule } from './token-key/token-key.module';
     }),
     ClientsModule.registerAsync([
       {
-        name: RmqService.AUTH,
-        useFactory: (config: AuthServiceConfig) =>
-          getRmqOptions(RmqQueue.AUTH, config.rabbitmq?.url),
-        inject: [CONFIG_TOKENS.AUTH_SERVICE],
-      },
-      {
         name: RmqService.USER,
-        useFactory: () => getRmqOptions(RmqQueue.USER),
+        useFactory: (config: AuthServiceConfig) => {
+          if (!config.rabbitmq) {
+            throw new Error(
+              'RabbitMQ configuration is required for USER service',
+            );
+          }
+          return config.rabbitmq;
+        },
+        inject: [CONFIG_TOKENS.AUTH_SERVICE],
       },
       {
         name: 'REDIS_SERVICE',

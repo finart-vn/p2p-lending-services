@@ -21,12 +21,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const responseError = exception.getResponse();
+    const responseError = exception.getResponse() as
+      | string
+      | Record<string, unknown>;
 
     const message =
-      typeof responseError === 'string' || Array.isArray(responseError)
+      typeof responseError === 'string'
         ? responseError
-        : 'Unknown error occurred';
+        : Array.isArray(responseError.message)
+          ? responseError.message
+          : 'Unknown error occurred';
 
     const errorResponse: ApiErrorResponseDto = {
       success: false,

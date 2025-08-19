@@ -9,6 +9,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import { RmqConfig } from './rmq.config';
+
 export enum Environment {
   Development = 'development',
   Staging = 'staging',
@@ -105,28 +107,6 @@ export class RedisConfig {
   enableOfflineQueue?: boolean = true;
 }
 
-export class RabbitMQConfig {
-  @IsString()
-  @IsNotEmpty()
-  url: string;
-
-  @IsNumber()
-  @IsOptional()
-  heartbeat?: number = 60;
-
-  @IsNumber()
-  @IsOptional()
-  connectionTimeout?: number = 10000;
-
-  @IsBoolean()
-  @IsOptional()
-  durable?: boolean = true;
-
-  @IsNumber()
-  @IsOptional()
-  prefetchCount?: number = 10;
-}
-
 export class BaseServiceConfig {
   @IsString()
   @IsNotEmpty()
@@ -169,8 +149,6 @@ export class BaseServiceConfig {
   @IsOptional()
   redis?: RedisConfig;
 
-  @Type(() => RabbitMQConfig)
-  @ValidateNested()
   @IsOptional()
-  rabbitmq?: RabbitMQConfig;
+  rabbitmq?: RmqConfig;
 }

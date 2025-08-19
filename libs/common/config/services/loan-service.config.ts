@@ -2,6 +2,7 @@ import { IsNumber, IsOptional } from 'class-validator';
 
 import { BaseServiceConfig } from '../base.config';
 import { ConfigFactory } from '../config.factory';
+import { RmqConfig } from '../rmq.config';
 
 export class LoanServiceConfig extends BaseServiceConfig {
   @IsNumber()
@@ -20,14 +21,25 @@ export class LoanServiceConfig extends BaseServiceConfig {
   @IsOptional()
   minLoanTermMonths?: number = 6;
 }
-
+export const loanRmqConfig = new RmqConfig({
+  exchange: 'loan_exchange',
+  exchangeType: 'topic',
+  queueOptions: {
+    durable: true,
+  },
+  noAck: true,
+  persistent: true,
+});
 export const createLoanServiceConfig = (): LoanServiceConfig => {
   const config = ConfigFactory.createConfig(LoanServiceConfig, {
     serviceName: 'loan-service',
-    defaultPort: 3008,
+    defaultPort: parseInt(process.env.PORT_LOAN_SERVICE || '3008', 10),
     enableDatabase: true,
     enableRabbitMQ: true,
     enableRedis: false, // Optional for loan service
   });
+
+  config.rabbitmq = loanRmqConfig;
+
   return config;
 };

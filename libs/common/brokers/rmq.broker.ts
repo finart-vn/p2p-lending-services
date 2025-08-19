@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 import { RmqConfig } from '../config/rmq.config';
@@ -14,7 +14,7 @@ export class RabbitMQBroker implements IMessageBroker {
   private client: ClientProxy;
 
   constructor(private readonly config: RmqConfig) {
-    this.client = ClientProxyFactory.create(config.options);
+    this.client = this.config.getClientProxy();
   }
 
   async connect(): Promise<void> {
@@ -48,7 +48,7 @@ export class RabbitMQBroker implements IMessageBroker {
     try {
       await this.client.connect();
       this.logger.log(
-        `Connected to RabbitMQ ${JSON.stringify(this.config.name)}`,
+        `Connected to RabbitMQ ${JSON.stringify(this.config.transport)}`,
       );
       return true;
     } catch (error) {

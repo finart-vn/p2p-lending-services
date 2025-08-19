@@ -91,23 +91,6 @@ export class ConfigFactory {
       };
     }
 
-    // RabbitMQ configuration
-    if (options.enableRabbitMQ) {
-      config.rabbitmq = {
-        url: process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672',
-        heartbeat: this.parseNumber(process.env.RABBITMQ_HEARTBEAT, 60),
-        connectionTimeout: this.parseNumber(
-          process.env.RABBITMQ_CONNECTION_TIMEOUT,
-          10000,
-        ),
-        durable: this.parseBoolean(process.env.RABBITMQ_DURABLE, true),
-        prefetchCount: this.parseNumber(
-          process.env.RABBITMQ_PREFETCH_COUNT,
-          10,
-        ),
-      };
-    }
-
     // Transform and validate
     const transformedConfig = plainToClass(ConfigClass, config);
     const errors = validateSync(transformedConfig, {

@@ -19,9 +19,9 @@ datasource db {
 // ================================
 
 model Loan {
-  id              BigInt      @id @default(autoincrement())
+  id              String      @id @default(uuid())
   borrowerId      String      @map("borrower_id") @db.VarChar(255)
-  loanNumber      String      @unique @map("loan_number") @db.VarChar(50)
+  loanNumber      Int         @unique @default(autoincrement()) @map("loan_number")
   requestedAmount Decimal     @map("requested_amount") @db.Decimal(15, 2)
   fundedAmount    Decimal     @default(0) @map("funded_amount") @db.Decimal(15, 2)
   interestRate    Decimal     @map("interest_rate") @db.Decimal(5, 2)
@@ -36,11 +36,7 @@ model Loan {
   createdAt       DateTime    @default(now()) @map("created_at")
   updatedAt       DateTime    @default(now()) @updatedAt @map("updated_at")
 
-  // Relations (commented for now as they would reference other services)
-  // borrower User @relation(fields: [borrowerId], references: [id])
-  // investments Investment[]
-  // payments Payment[]
-  // documents LoanDocument[]
+  investments Investment[]
 
   @@index([borrowerId])
   @@index([status])
@@ -48,6 +44,31 @@ model Loan {
   @@index([listingDate])
   @@index([createdAt])
   @@map("loans")
+}
+
+// ================================
+// Investments Models
+// ================================
+
+model Investment {
+  id             String           @id @default(uuid())
+  lenderId       String           @map("lender_id")
+  loanId         String           @map("loan_id")
+  amount         Decimal          @map("amount") @db.Decimal(15, 2)
+  percentage     Decimal          @map("percentage") @db.Decimal(5, 2)
+  expectedReturn Decimal          @map("expected_return") @db.Decimal(15, 2)
+  totalReceived  Decimal          @map("total_received") @db.Decimal(15, 2)
+  status         InvestmentStatus @default(DEFAULTED)
+  investedAt     DateTime         @default(now()) @map("invested_at")
+  completedAt    DateTime?        @map("completed_at")
+  Loan           Loan             @relation(fields: [loanId], references: [id])
+
+  @@index([loanId])
+  @@index([lenderId])
+  @@index([status])
+  @@index([investedAt])
+  @@index([completedAt])
+  @@map("investments")
 }
 
 // ================================
@@ -74,3 +95,9 @@ enum LoanStatus {
   REJECTED
 }
 
+enum InvestmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+}
