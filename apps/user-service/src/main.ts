@@ -8,10 +8,11 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 import { AppModule } from './user.module';
 
 async function bootstrap() {
+  const logger = new ConsoleLogger({
+    prefix: 'UserService',
+  });
   const app = await NestFactory.create(AppModule, {
-    logger: new ConsoleLogger({
-      prefix: 'UserService',
-    }),
+    logger,
   });
 
   const config = app.get<UserServiceConfig>(CONFIG_TOKENS.USER_SERVICE);
@@ -39,22 +40,22 @@ async function bootstrap() {
 
   await app.listen(config.port);
 
-  console.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
-  console.log(`🌍 Environment: ${config.environment}`);
-  console.log(`📊 Log Level: ${config.logLevel}`);
+  logger.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  logger.log(`🌍 Environment: ${config.environment}`);
+  logger.log(`📊 Log Level: ${config.logLevel}`);
 
   if (config.enableEmailVerification) {
-    console.log('📧 Email verification enabled');
+    logger.log('📧 Email verification enabled');
   }
 
   if (config.enableProfilePictures) {
-    console.log(
+    logger.log(
       `📷 Profile pictures enabled - Upload dir: ${config.uploadDirectory}`,
     );
   }
 
   if (config.database) {
-    console.log('🗄️  Database connection configured');
+    logger.log('🗄️  Database connection configured');
   }
 }
 void bootstrap();

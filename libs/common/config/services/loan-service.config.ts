@@ -24,7 +24,7 @@ export class LoanServiceConfig extends BaseServiceConfig {
 export const createLoanServiceConfig = (): LoanServiceConfig => {
   const config = ConfigFactory.createConfig(LoanServiceConfig, {
     serviceName: 'loan-service',
-    defaultPort: 3006,
+    defaultPort: 3008,
     enableDatabase: true,
     enableRabbitMQ: true,
     enableRedis: false, // Optional for loan service

@@ -9,8 +9,11 @@ import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 import { LoanServiceModule } from './loan.module';
 
 async function bootstrap() {
+  const logger = new ConsoleLogger({
+    prefix: 'LoanService',
+  });
   const app = await NestFactory.create(LoanServiceModule, {
-    logger: new ConsoleLogger('LoanService'),
+    logger,
   });
 
   const config = app.get<LoanServiceConfig>(CONFIG_TOKENS.LOAN_SERVICE);
@@ -37,9 +40,17 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   await app.listen(config.port);
+
+  logger.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  logger.log(`🌍 Environment: ${config.environment}`);
+  logger.log(`📊 Log Level: ${config.logLevel}`);
+
+  if (config.database) {
+    logger.log(`🗄️  Database connection configured`);
+  }
 }
 
 bootstrap().catch((error) => {
-  console.error('❌ Failed to start Auth Service:', error);
+  console.error('❌ Failed to start Loan Service:', error);
   process.exit(1);
 });
