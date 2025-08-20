@@ -46,6 +46,17 @@ export abstract class BaseClient {
     }
   }
 
+  protected async emit<TRequest, TResponse>(
+    pattern: string,
+    data: TRequest,
+  ): Promise<TResponse> {
+    await this.ensureConnection();
+
+    const $response = this.client.emit<TResponse>(pattern, data);
+
+    return await firstValueFrom($response);
+  }
+
   /**
    * Ensure client connection
    */

@@ -125,6 +125,8 @@ export const MESSAGE_PATTERNS = {
   },
 } as const;
 
+export const LOAN_ROUTING_KEY = 'loan.*.created';
+
 // Enhanced type exports for better IDE support
 export type MessagePattern = typeof MESSAGE_PATTERNS;
 export type AuthPatterns = keyof typeof MESSAGE_PATTERNS.AUTH;

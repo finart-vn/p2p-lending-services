@@ -1,5 +1,6 @@
 import { IsNumber, IsOptional } from 'class-validator';
 
+import { RmqQueue } from '../../enums/rbmq.enum';
 import { BaseServiceConfig } from '../base.config';
 import { ConfigFactory } from '../config.factory';
 import { RmqConfig } from '../rmq.config';
@@ -22,12 +23,10 @@ export class LoanServiceConfig extends BaseServiceConfig {
   minLoanTermMonths?: number = 6;
 }
 export const loanRmqConfig = new RmqConfig({
-  exchange: 'loan_exchange',
-  exchangeType: 'topic',
+  queue: RmqQueue.LOAN,
   queueOptions: {
     durable: true,
   },
-  noAck: true,
   persistent: true,
 });
 export const createLoanServiceConfig = (): LoanServiceConfig => {

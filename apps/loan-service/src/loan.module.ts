@@ -6,7 +6,7 @@ import { createLoanServiceConfig } from '@p2p-lending/common/config/services/loa
 import { LoanServiceConfig } from '@p2p-lending/common/config/services/loan-service.config';
 
 import { LoanServiceController } from './loan.controller';
-import { LoanServiceService } from './loan.service';
+import { LoanService } from './loan.service';
 import { PrismaService } from './prisma/prisma.service';
 
 @Module({
@@ -33,7 +33,7 @@ import { PrismaService } from './prisma/prisma.service';
     ]),
   ],
   controllers: [LoanServiceController],
-  providers: [LoanServiceService, PrismaService],
+  providers: [LoanService, PrismaService],
   exports: [PrismaService],
 })
 export class LoanServiceModule {}
