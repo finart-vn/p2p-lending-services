@@ -19,4 +19,7 @@ enum RmqQueue {
   REPORT = 'report_queue',
 }
 
-export { RmqQueue, RmqService };
+enum RmqExchange {
+  LOAN = 'loan_exchange',
+}
+export { RmqExchange, RmqQueue, RmqService };
