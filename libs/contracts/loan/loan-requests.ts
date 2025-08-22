@@ -9,6 +9,7 @@ interface CreateLoanRequest {
   monthlyPayment: number;
   purpose: LoanPurpose;
   description: string | null;
+  listingDate: Date | null;
   fundingDeadline: Date | null;
 }
 export { CreateLoanRequest };

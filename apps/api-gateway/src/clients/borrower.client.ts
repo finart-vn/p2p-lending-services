@@ -18,6 +18,7 @@ export class BorrowerClient extends BaseClient {
     return await this.send<CreateLoanRequest, Loan>(
       { cmd: MESSAGE_PATTERNS.LOAN.CREATE },
       {
+        borrowerId: '12345', // TODO: get borrowerId from auth service
         ...loan,
       },
     );
