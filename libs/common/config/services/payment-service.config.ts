@@ -1,4 +1,5 @@
-import { RmqExchange } from '../../enums/rbmq.enum';
+import { RmqExchange, RmqQueue } from '@p2p-lending/common/enums';
+
 import { BaseServiceConfig } from '../base.config';
 import { ConfigFactory } from '../config.factory';
 import { RmqConfig } from '../rmq.config';
@@ -8,12 +9,11 @@ export class PaymentServiceConfig extends BaseServiceConfig {}
 export const paymentRmqConfig = new RmqConfig({
   exchange: RmqExchange.LOAN,
   exchangeType: 'topic',
+  queue: RmqQueue.PAYMENT,
   queueOptions: {
     durable: true,
   },
-  persistent: true,
 });
-
 export const createPaymentServiceConfig = (): PaymentServiceConfig => {
   const config = ConfigFactory.createConfig(PaymentServiceConfig, {
     serviceName: 'payment-service',

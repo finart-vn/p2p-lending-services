@@ -5,10 +5,11 @@ import {
   CONFIG_TOKENS,
   ConfigModule,
   createApiGatewayConfig,
+  paymentRmqConfig,
   userRmqConfig,
 } from '@p2p-lending/common/config';
 import { loanRmqConfig } from '@p2p-lending/common/config/services/loan-service.config';
-import { RmqService } from '@p2p-lending/common/enums';
+import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 
 import { AuthClient } from './clients/auth.client';
 import { BorrowerClient } from './clients/borrower.client';
@@ -34,6 +35,10 @@ import { UserController } from './routes/user/user.route';
       {
         name: RmqService.LOAN,
         useFactory: () => loanRmqConfig,
+      },
+      {
+        name: RmqExchange.LOAN,
+        useFactory: () => paymentRmqConfig,
       },
     ]),
   ],

@@ -125,7 +125,15 @@ export const MESSAGE_PATTERNS = {
   },
 } as const;
 
-export const LOAN_ROUTING_KEY = 'loan.*.created';
+export const ROUTING_KEYS = {
+  LOAN: 'loan.*',
+  INVESTMENT: 'investment.*',
+  REPAYMENT: 'repayment.*',
+  PAYMENT: 'payment.*',
+  NOTIFICATION: 'notification.*',
+  REPORT: 'report.*',
+  EVENT: 'event.*',
+};
 
 // Enhanced type exports for better IDE support
 export type MessagePattern = typeof MESSAGE_PATTERNS;

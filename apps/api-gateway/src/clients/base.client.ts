@@ -24,7 +24,7 @@ export abstract class BaseClient {
     // options?: RmqOptions['options'],
   ): Promise<TResponse> {
     try {
-      await this.ensureConnection();
+      await this.ensureConnection(this.client);
       const $response = this.client.send<TResponse>(pattern, data).pipe(
         catchError((error: unknown) => {
           this.logger.error(
@@ -50,7 +50,7 @@ export abstract class BaseClient {
     pattern: string,
     data: TRequest,
   ): Promise<TResponse> {
-    await this.ensureConnection();
+    await this.ensureConnection(this.client);
 
     const $response = this.client.emit<TResponse>(pattern, data);
 
@@ -60,12 +60,20 @@ export abstract class BaseClient {
   /**
    * Ensure client connection
    */
-  protected async ensureConnection(): Promise<void> {
+  protected async ensureConnection(
+    client: ClientProxy,
+    fnCallback?: () => Promise<void> | void,
+  ): Promise<void> {
     try {
-      await this.client.connect();
-      this.logger.log(`Connected to ${this.serviceName}`);
+      await client.connect();
+      this.logger.log(`Connected to ${client.options.queue}`);
+      if (fnCallback) {
+        await fnCallback();
+      }
     } catch (error) {
-      this.logger.error(`Failed to connect to ${this.serviceName}: ${error}`);
+      this.logger.error(
+        `Failed to connect to ${client.options.queue}: ${error}`,
+      );
       throw error;
     }
   }

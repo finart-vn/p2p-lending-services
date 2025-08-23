@@ -29,6 +29,7 @@ export const loanRmqConfig = new RmqConfig({
   },
   persistent: true,
 });
+
 export const createLoanServiceConfig = (): LoanServiceConfig => {
   const config = ConfigFactory.createConfig(LoanServiceConfig, {
     serviceName: 'loan-service',
