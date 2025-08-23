@@ -1,5 +1,5 @@
 import { HttpException, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, ClientRMQ } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
 import { BrokerError } from '@p2p-lending/common/interfaces/message-payloads/broker.interface';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
@@ -64,15 +64,19 @@ export abstract class BaseClient {
     client: ClientProxy,
     fnCallback?: () => Promise<void> | void,
   ): Promise<void> {
+    const rmqClient = client as ClientRMQ;
+    const options = rmqClient['options'];
     try {
       await client.connect();
-      this.logger.log(`Connected to ${client.options.queue}`);
+      this.logger.log(
+        `Connected to exchange-name: ${options?.exchange || 'DEFAULT'}, queue: ${options?.queue || 'DEFAULT'}`,
+      );
       if (fnCallback) {
         await fnCallback();
       }
     } catch (error) {
       this.logger.error(
-        `Failed to connect to ${client.options.queue}: ${error}`,
+        `Failed to connect to exchange-name: ${options?.exchange || 'DEFAULT'}, queue: ${options?.queue || 'DEFAULT'}: ${error}`,
       );
       throw error;
     }

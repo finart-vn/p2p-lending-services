@@ -8,8 +8,8 @@ import {
   PaymentServiceConfig,
 } from '@p2p-lending/common/config';
 
-import { PaymentServiceController } from './payment-service.controller';
-import { PaymentServiceService } from './payment-service.service';
+import { PaymentServiceController } from './payment.controller';
+import { PaymentServiceService } from './payment.service';
 
 @Module({
   imports: [

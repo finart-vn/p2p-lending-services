@@ -13,6 +13,9 @@ export class BorrowerController {
   async createLoan(
     @Body(new ValidationPipe()) loanDto: ApiLoanCreateRequestDto,
   ) {
-    return await this.borrowerClient.createLoan(loanDto);
+    return await this.borrowerClient.createLoan(
+      '095d68c7-0438-4c22-a45e-c14a6a685bf9', // TODO: get borrowerId from auth service
+      loanDto,
+    );
   }
 }

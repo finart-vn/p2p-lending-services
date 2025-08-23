@@ -4,7 +4,7 @@ import { MicroserviceOptions } from '@nestjs/microservices';
 import { CONFIG_TOKENS } from '@p2p-lending/common/config';
 import { PaymentServiceConfig } from '@p2p-lending/common/config/services/payment-service.config';
 
-import { PaymentServiceModule } from './payment-service.module';
+import { PaymentServiceModule } from './payment.module';
 
 async function bootstrap() {
   const logger = new ConsoleLogger({

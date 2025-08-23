@@ -1,7 +1,7 @@
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { MESSAGE_PATTERNS, ROUTING_KEYS } from '@p2p-lending/common';
+import { MESSAGE_PATTERNS } from '@p2p-lending/common';
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 import { CreateLoanRequest } from '@p2p-lending/contracts/loan';
 import { Loan } from '@p2p-lending/loan-service/generated/prisma';
@@ -28,14 +28,17 @@ export class BorrowerClient extends BaseClient {
     );
 
     await this.ensureConnection(this.exchange, () => {
-      this.exchange.emit(ROUTING_KEYS.LOAN, loanCreated).pipe(
-        catchError((error: unknown) => {
-          this.logger.error(
-            `Error sending message to ${this.serviceName}: ${JSON.stringify(error)}`,
-          );
-          return throwError(() => error);
-        }),
-      );
+      this.logger.log('Emitting loan created event to exchange');
+      this.exchange
+        .emit(MESSAGE_PATTERNS.EVENTS.LOAN_CREATED, loanCreated)
+        .pipe(
+          catchError((error: unknown) => {
+            this.logger.error(
+              `Error sending message to ${this.serviceName}: ${JSON.stringify(error)}`,
+            );
+            return throwError(() => error);
+          }),
+        );
     });
 
     return loanCreated;
