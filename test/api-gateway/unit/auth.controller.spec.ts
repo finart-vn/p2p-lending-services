@@ -1,7 +1,7 @@
 import { AuthClient } from '@api-gateway/clients/auth.client';
 import { UserClient } from '@api-gateway/clients/user.client';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '@p2p-lending/api-gateway/src/routes/auth/auth.route';
+import { AuthController } from '@p2p-lending/api-gateway/src/routes/v1/auth/auth.route';
 
 describe('AuthController', () => {
   let controller: AuthController;

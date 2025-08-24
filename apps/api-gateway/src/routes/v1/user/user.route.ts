@@ -1,14 +1,13 @@
+import { UserClient } from '@api-gateway/clients/user.client';
+import { Roles } from '@api-gateway/decorators/roles.decorator';
+import { AuthGuard } from '@api-gateway/guards/auth.guard';
+import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
 import { Controller, Get, Logger, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-import { UserClient } from '../../clients/user.client';
-import { Roles } from '../../decorators/roles.decorator';
-import { AuthGuard } from '../../guards/auth.guard';
-import { RequestWithUser } from '../../interfaces/auth.interface';
-
 @ApiTags('User')
-@Controller('user')
+@Controller('v1/user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private readonly userClient: UserClient) {}

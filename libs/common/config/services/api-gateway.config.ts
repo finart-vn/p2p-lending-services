@@ -89,7 +89,7 @@ export class SwaggerConfig {
 export class ApiGatewayConfig extends BaseServiceConfig {
   @IsString()
   @IsOptional()
-  globalPrefix?: string = 'api/v1';
+  globalPrefix?: string = 'api';
 
   @Type(() => CorsConfig)
   @ValidateNested()
@@ -136,7 +136,7 @@ export const createApiGatewayConfig = (): ApiGatewayConfig => {
   });
 
   // API Gateway specific configuration
-  config.globalPrefix = process.env.GLOBAL_PREFIX || 'api/v1';
+  config.globalPrefix = process.env.GLOBAL_PREFIX || 'api';
   config.requestTimeoutMs = ConfigFactory.parseNumber(
     process.env.REQUEST_TIMEOUT_MS,
     30000,

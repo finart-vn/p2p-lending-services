@@ -15,10 +15,13 @@ import { AuthClient } from './clients/auth.client';
 import { BorrowerClient } from './clients/borrower.client';
 import { UserClient } from './clients/user.client';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
-import { AuthController } from './routes/auth/auth.route';
-import { BorrowerController } from './routes/borrower/borrower.route';
-import { LenderController } from './routes/lender/lender.route';
-import { UserController } from './routes/user/user.route';
+import {
+  AuthController,
+  LenderController,
+  LoanController,
+  UserController,
+} from './routes/v1';
+import { MarketplaceController } from './routes/v1/marketplace/marketplace.route';
 
 @Module({
   imports: [
@@ -46,7 +49,8 @@ import { UserController } from './routes/user/user.route';
     AuthController,
     UserController,
     LenderController,
-    BorrowerController,
+    LoanController,
+    MarketplaceController,
   ],
   providers: [UserClient, AuthClient, BorrowerClient],
 })
