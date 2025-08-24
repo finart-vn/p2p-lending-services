@@ -15,7 +15,7 @@ export interface AppConfig {
 export const appConfig: AppConfig = {
   // TODO: Configure application settings
   port: parseInt(process.env.PORT_API_GATEWAY || process.env.PORT || '3005'),
-  globalPrefix: process.env.GLOBAL_PREFIX || 'api/v1',
+  globalPrefix: process.env.GLOBAL_PREFIX || 'api',
 
   // CORS configuration
   corsEnabled: process.env.CORS_ENABLED === 'true' || true,

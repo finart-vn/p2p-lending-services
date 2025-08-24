@@ -7,6 +7,7 @@ import {
   UserAuthResponseDto,
 } from '@api-gateway/dtos/auth';
 import { ApiErrorResponseDto } from '@api-gateway/dtos/common.dto';
+import { AuthGuard } from '@api-gateway/guards/auth.guard';
 import {
   Body,
   Controller,
@@ -27,10 +28,8 @@ import {
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
-import { AuthGuard } from '../../guards/auth.guard';
-
 @ApiTags('Authentication')
-@Controller('auth')
+@Controller('v1/auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
