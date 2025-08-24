@@ -12,7 +12,7 @@ import { loanRmqConfig } from '@p2p-lending/common/config/services/loan-service.
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 
 import { AuthClient } from './clients/auth.client';
-import { BorrowerClient } from './clients/borrower.client';
+import { LoanClient } from './clients/loan.client';
 import { UserClient } from './clients/user.client';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import {
@@ -52,7 +52,7 @@ import { MarketplaceController } from './routes/v1/marketplace/marketplace.route
     LoanController,
     MarketplaceController,
   ],
-  providers: [UserClient, AuthClient, BorrowerClient],
+  providers: [UserClient, AuthClient, LoanClient],
 })
 export class ApiGatewayModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -1,4 +1,4 @@
-import { BorrowerClient } from '@api-gateway/clients/borrower.client';
+import { LoanClient } from '@api-gateway/clients/loan.client';
 import { Roles } from '@api-gateway/decorators/roles.decorator';
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
 import { AuthGuard } from '@api-gateway/guards/auth.guard';
@@ -16,10 +16,10 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-@Controller('v1/loan')
+@Controller('v1/borrower/loan')
 @ApiTags('Loan')
-export class LoanController {
-  constructor(private readonly borrowerClient: BorrowerClient) {}
+export class BorrowerLoanController {
+  constructor(private readonly borrowerClient: LoanClient) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a loan' })

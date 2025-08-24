@@ -41,6 +41,8 @@ export const MESSAGE_PATTERNS = {
     CALCULATE_INTEREST: 'loan.calculate_interest',
     GET_MARKETPLACE: 'loan.get_marketplace',
     FUND: 'loan.fund',
+    GET_ACTIVE: 'loan.get_active',
+    DELETE: 'loan.delete',
   },
 
   // Investment Service

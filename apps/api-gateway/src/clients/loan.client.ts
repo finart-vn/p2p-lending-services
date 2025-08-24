@@ -10,7 +10,7 @@ import { catchError, throwError } from 'rxjs';
 import { BaseClient } from './base.client';
 
 @Injectable()
-export class BorrowerClient extends BaseClient {
+export class LoanClient extends BaseClient {
   constructor(
     @Inject(RmqService.LOAN) protected readonly client: ClientProxy,
     @Inject(RmqExchange.LOAN) private readonly exchange: ClientProxy,
