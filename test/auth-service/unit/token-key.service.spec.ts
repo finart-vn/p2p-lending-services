@@ -1,6 +1,7 @@
-import { ForbiddenException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { RpcException } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@p2p-lending/auth-service/src/prisma/prisma.service';
 import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
@@ -155,7 +156,7 @@ describe('TokenKeyService', () => {
       });
     });
 
-    it('should throw ForbiddenException when user not found', async () => {
+    it('should throw RpcException when user not found', async () => {
       // Arrange
       const refreshToken = 'valid-refresh-token';
       const mockPayload = { tid: 'auth-456', sub: 'user-123' };
@@ -165,11 +166,14 @@ describe('TokenKeyService', () => {
 
       // Act & Assert
       await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
-        ForbiddenException,
+        new RpcException({
+          message: 'User not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        }),
       );
     });
 
-    it('should throw ForbiddenException when refresh token does not match', async () => {
+    it('should throw RpcException when refresh token does not match', async () => {
       // Arrange
       const refreshToken = 'valid-refresh-token';
       const userAuthId = 'auth-456';
@@ -185,11 +189,11 @@ describe('TokenKeyService', () => {
 
       // Act & Assert
       await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
-        ForbiddenException,
+        RpcException,
       );
     });
 
-    it('should throw ForbiddenException when user is inactive', async () => {
+    it('should throw RpcException when user is inactive', async () => {
       // Arrange
       const refreshToken = 'valid-refresh-token';
       const userAuthId = 'auth-456';
@@ -205,7 +209,7 @@ describe('TokenKeyService', () => {
 
       // Act & Assert
       await expect(service.validateRefreshToken(refreshToken)).rejects.toThrow(
-        ForbiddenException,
+        RpcException,
       );
     });
   });
@@ -235,14 +239,14 @@ describe('TokenKeyService', () => {
       });
     });
 
-    it('should throw ForbiddenException when token validation fails', async () => {
+    it('should throw RpcException when token validation fails', async () => {
       // Arrange
       const refreshToken = 'invalid-refresh-token';
       mockJwtService.verifyAsync.mockRejectedValue(new Error('Invalid token'));
 
       // Act & Assert
       await expect(service.revokeToken(refreshToken)).rejects.toThrow(
-        ForbiddenException,
+        RpcException,
       );
     });
   });
@@ -269,7 +273,7 @@ describe('TokenKeyService', () => {
       });
     });
 
-    it('should throw ForbiddenException when user is inactive', async () => {
+    it('should throw RpcException when user is inactive', async () => {
       // Arrange
       const accessToken = 'valid-access-token';
       const userAuthId = 'auth-456';
@@ -281,11 +285,11 @@ describe('TokenKeyService', () => {
 
       // Act & Assert
       await expect(service.validateAccessToken(accessToken)).rejects.toThrow(
-        ForbiddenException,
+        RpcException,
       );
     });
 
-    it('should throw ForbiddenException when user not found', async () => {
+    it('should throw RpcException when user not found', async () => {
       // Arrange
       const accessToken = 'valid-access-token';
       const userAuthId = 'auth-456';
@@ -296,7 +300,7 @@ describe('TokenKeyService', () => {
 
       // Act & Assert
       await expect(service.validateAccessToken(accessToken)).rejects.toThrow(
-        ForbiddenException,
+        RpcException,
       );
     });
   });
