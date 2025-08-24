@@ -1,7 +1,9 @@
+import { RmqQueue } from '@p2p-lending/common/enums';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { BaseServiceConfig } from '../base.config';
 import { ConfigFactory } from '../config.factory';
+import { RmqConfig } from '../rmq.config';
 
 export class AuthServiceConfig extends BaseServiceConfig {
   @IsNumber()
@@ -41,6 +43,12 @@ export class AuthServiceConfig extends BaseServiceConfig {
   sessionTimeoutMinutes?: number = 30;
 }
 
+export const authRmqConfig = new RmqConfig({
+  queue: RmqQueue.AUTH,
+  queueOptions: {
+    durable: true,
+  },
+});
 export const createAuthServiceConfig = (): AuthServiceConfig => {
   const config = ConfigFactory.createConfig(AuthServiceConfig, {
     serviceName: 'auth-service',
@@ -48,9 +56,9 @@ export const createAuthServiceConfig = (): AuthServiceConfig => {
     enableDatabase: true,
     enableJwt: true,
     enableRedis: true,
-    enableRabbitMQ: true,
   });
-
+  // RMQ Config
+  config.rabbitmq = authRmqConfig;
   // Auth-specific environment variables
   config.jwtSecretRotationDays = ConfigFactory.parseNumber(
     process.env.JWT_SECRET_ROTATION_DAYS,

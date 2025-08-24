@@ -1,17 +1,16 @@
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, RmqOptions } from '@nestjs/microservices';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { CONFIG_TOKENS, UserServiceConfig } from '@p2p-lending/common/config';
-import { RmqQueue } from '@p2p-lending/common/enums';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
 
 import { AppModule } from './user.module';
 
 async function bootstrap() {
+  const logger = new ConsoleLogger({
+    prefix: 'UserService',
+  });
   const app = await NestFactory.create(AppModule, {
-    logger: new ConsoleLogger({
-      prefix: 'UserService',
-    }),
+    logger,
   });
 
   const config = app.get<UserServiceConfig>(CONFIG_TOKENS.USER_SERVICE);
@@ -30,31 +29,36 @@ async function bootstrap() {
 
   // Connect to RabbitMQ
   if (config.rabbitmq) {
-    const rmqConfig: RmqOptions = getRmqOptions(RmqQueue.USER);
-    app.connectMicroservice<MicroserviceOptions>(rmqConfig);
+    app.connectMicroservice<MicroserviceOptions>(config.rabbitmq);
+    logger.log(
+      `🔗 Connected to RabbitMQ, exchange: ${JSON.stringify(
+        config.rabbitmq.options?.exchange || 'DEFAULT',
+      )} - queue: ${config.rabbitmq.options?.queue} - queue_options: ${JSON.stringify(
+        config.rabbitmq.options?.queueOptions,
+      )}`,
+    );
   }
 
   // Start all microservices
   await app.startAllMicroservices();
-
   await app.listen(config.port);
 
-  console.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
-  console.log(`🌍 Environment: ${config.environment}`);
-  console.log(`📊 Log Level: ${config.logLevel}`);
+  logger.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  logger.log(`🌍 Environment: ${config.environment}`);
+  logger.log(`📊 Log Level: ${config.logLevel}`);
 
   if (config.enableEmailVerification) {
-    console.log('📧 Email verification enabled');
+    logger.log('📧 Email verification enabled');
   }
 
   if (config.enableProfilePictures) {
-    console.log(
+    logger.log(
       `📷 Profile pictures enabled - Upload dir: ${config.uploadDirectory}`,
     );
   }
 
   if (config.database) {
-    console.log('🗄️  Database connection configured');
+    logger.log('🗄️  Database connection configured');
   }
 }
 void bootstrap();

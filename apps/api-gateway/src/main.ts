@@ -9,10 +9,11 @@ import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
+  const logger = new ConsoleLogger({
+    prefix: 'ApiGateway',
+  });
   const app = await NestFactory.create(ApiGatewayModule, {
-    logger: new ConsoleLogger({
-      prefix: 'ApiGateway',
-    }),
+    logger,
   });
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -67,26 +68,26 @@ async function bootstrap() {
 
   await app.listen(config.port);
 
-  console.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
-  console.log(`🌍 Environment: ${config.environment}`);
-  console.log(`📊 Log Level: ${config.logLevel}`);
+  logger.log(`🚀 ${config.serviceName} is running on port ${config.port}`);
+  logger.log(`🌍 Environment: ${config.environment}`);
+  logger.log(`📊 Log Level: ${config.logLevel}`);
 
   if (config.globalPrefix) {
-    console.log(`🔗 Global Prefix: ${config.globalPrefix}`);
+    logger.log(`🔗 Global Prefix: ${config.globalPrefix}`);
   }
 
   if (config.cors?.enabled) {
-    console.log(
+    logger.log(
       `🌐 CORS enabled for origins: ${config.cors.origins?.join(', ')}`,
     );
   }
 
   if (config.swagger?.enabled) {
-    console.log(`📚 Swagger docs available at: /${config.swagger.path}`);
+    logger.log(`📚 Swagger docs available at: /${config.swagger.path}`);
   }
 
   if (config.rateLimit?.enabled) {
-    console.log(
+    logger.log(
       `⏱️  Rate limiting: ${config.rateLimit.max} requests per ${config.rateLimit.windowMs}ms`,
     );
   }

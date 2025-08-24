@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { HttpException, Logger } from '@nestjs/common';
+import { ClientProxy, ClientRMQ } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
+import { BrokerError } from '@p2p-lending/common/interfaces/message-payloads/broker.interface';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
 
 export interface MessagePattern {
@@ -23,31 +24,60 @@ export abstract class BaseClient {
     // options?: RmqOptions['options'],
   ): Promise<TResponse> {
     try {
-      await this.ensureConnection();
+      await this.ensureConnection(this.client);
       const $response = this.client.send<TResponse>(pattern, data).pipe(
         catchError((error: unknown) => {
+          this.logger.error(
+            `Error sending message to ${this.serviceName}: ${JSON.stringify(error)}`,
+          );
           return throwError(() => error);
         }),
       );
 
       return await firstValueFrom($response);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `${this.serviceName} request failed for pattern ${JSON.stringify(pattern)}: ${JSON.stringify(error)}`,
       );
-      throw error;
+      throw new HttpException(
+        (error as BrokerError).message,
+        (error as BrokerError).statusCode,
+      );
     }
+  }
+
+  protected async emit<TRequest, TResponse>(
+    pattern: string,
+    data: TRequest,
+  ): Promise<TResponse> {
+    await this.ensureConnection(this.client);
+
+    const $response = this.client.emit<TResponse>(pattern, data);
+
+    return await firstValueFrom($response);
   }
 
   /**
    * Ensure client connection
    */
-  protected async ensureConnection(): Promise<void> {
+  protected async ensureConnection(
+    client: ClientProxy,
+    fnCallback?: () => Promise<void> | void,
+  ): Promise<void> {
+    const rmqClient = client as ClientRMQ;
+    const options = rmqClient['options'];
     try {
-      await this.client.connect();
-      this.logger.log(`Connected to ${this.serviceName}`);
+      await client.connect();
+      this.logger.log(
+        `Connected to exchange-name: ${options?.exchange || 'DEFAULT'}, queue: ${options?.queue || 'DEFAULT'}`,
+      );
+      if (fnCallback) {
+        await fnCallback();
+      }
     } catch (error) {
-      this.logger.error(`Failed to connect to ${this.serviceName}: ${error}`);
+      this.logger.error(
+        `Failed to connect to exchange-name: ${options?.exchange || 'DEFAULT'}, queue: ${options?.queue || 'DEFAULT'}: ${error}`,
+      );
       throw error;
     }
   }

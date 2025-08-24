@@ -1,4 +1,5 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { Role, UserRole } from '@p2p-lending/user-service/generated/prisma';
 
 import { PrismaService } from '../prisma/prisma.service';
@@ -26,7 +27,10 @@ export class RolesService {
       });
       if (!role) {
         this.logger.error(`User ${userId}: ${roleId} not found`);
-        throw new NotFoundException(`Role ${roleId} not found`);
+        throw new RpcException({
+          message: `Role ${roleId} not found`,
+          statusCode: HttpStatus.NOT_FOUND,
+        });
       }
 
       const existingUserRole = await this.prisma.userRole.findUnique({

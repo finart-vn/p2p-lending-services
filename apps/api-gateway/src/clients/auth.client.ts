@@ -39,17 +39,12 @@ export class AuthClient extends BaseClient {
     super(client, RmqService.AUTH);
   }
   async login(loginRequest: LoginDto): Promise<LoginResponse> {
-    try {
-      this.logger.log(`Login request for email: ${loginRequest.email}`);
-      const result = await this.send<LoginRequest, LoginResponse>(
-        { cmd: MESSAGE_PATTERNS.AUTH.LOGIN },
-        loginRequest,
-      );
-      return result;
-    } catch (error) {
-      this.logger.error(`Login failed:`, error);
-      throw error;
-    }
+    this.logger.log(`Login request for email: ${loginRequest.email}`);
+    const result = await this.send<LoginRequest, LoginResponse>(
+      { cmd: MESSAGE_PATTERNS.AUTH.LOGIN },
+      loginRequest,
+    );
+    return result;
   }
 
   async register(

@@ -1,9 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import {
   CreateUserRequest,
   UserResponse,
@@ -29,10 +25,9 @@ export class AppService {
         },
       });
       if (existingUser)
-        throw new BadRequestException('User already exists', {
-          cause: {
-            email: user.email,
-          },
+        throw new RpcException({
+          message: 'User already exists',
+          statusCode: HttpStatus.CONFLICT,
         });
       //2. Check if role exists
       const role = await this.prisma.role.findUnique({
@@ -41,10 +36,9 @@ export class AppService {
 
       if (!role) {
         this.logger.error(`User ${user.email}: ${user.role} not found`);
-        throw new BadRequestException('Role not found', {
-          cause: {
-            role: user.role,
-          },
+        throw new RpcException({
+          message: 'Role not found',
+          statusCode: HttpStatus.NOT_FOUND,
         });
       }
       //3. Create new user and assign role
@@ -90,7 +84,10 @@ export class AppService {
       });
       if (!userRole) {
         this.logger.error(`User ${user.email} has no role`);
-        throw new NotFoundException(`User ${user.email} has no role`);
+        throw new RpcException({
+          message: `User ${user.email} has no role`,
+          statusCode: HttpStatus.NOT_FOUND,
+        });
       }
       return {
         ...user,
@@ -116,7 +113,10 @@ export class AppService {
       });
       if (!userRole) {
         this.logger.error(`User ${user.email} has no role`);
-        throw new NotFoundException(`User ${user.email} has no role`);
+        throw new RpcException({
+          message: `User ${user.email} has no role`,
+          statusCode: HttpStatus.NOT_FOUND,
+        });
       }
       return {
         ...user,

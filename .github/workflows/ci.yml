@@ -40,7 +40,10 @@ jobs:
       
       - name: Generate Auth Prisma Client
         run: npx prisma generate --schema=apps/auth-service/src/prisma/schema.prisma
-        
+      
+      - name: Generate Loan Prisma Client
+        run: npx prisma generate --schema=apps/loan-service/src/prisma/schema.prisma
+
       - name: Run lint
         run: npm run lint
   test:

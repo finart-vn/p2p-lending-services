@@ -37,7 +37,6 @@ export default registerAs(
   'app',
   (): AppConfig => ({
     NODE_ENV: process.env.NODE_ENV || 'development',
-    PORT: parseInt(process.env.PORT || '3000', 10),
     APP_NAME: process.env.APP_NAME || 'P2P Lending Service',
     APP_VERSION: process.env.APP_VERSION || '1.0.0',
     APP_DESCRIPTION: process.env.APP_DESCRIPTION || 'P2P Lending Platform API',

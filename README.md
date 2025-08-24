@@ -169,18 +169,81 @@ To develop the **core features** of your **P2P Lending Platform** step by step, 
 
 ---
 
-Let me know if you want:
+## 📚 **Documentation**
 
-* A **backend API structure**
-* A **full database schema**
-* Or a **Figma UI layout for all user roles**
+### 📖 **Architecture & Design**
+- [**Development Rules & Guidelines**](./docs/p2p-lending-services.rules.md) - Complete coding standards, architecture principles, and best practices
+- [**API Gateway Structure**](./docs/api-gateway-structure.md) - Clean implementation guide for API Gateway architecture
+- [**RabbitMQ Interface Best Practices**](./docs/rmq-interface-best-practices.md) - Guidelines for microservice communication
+- [**Project Plans & Roadmap**](./docs/plans.md) - Detailed development phases and feature breakdown
 
-I can help build those next.
+### 🏗️ **System Design**
+- [**Authentication Flow**](./docs/bussiness-logic/auth-architecture.md) - Complete auth service architecture and user flow
+- [**Database Schema (Physical)**](./docs/ERD-diagram/physical-diagram.drawio) - Physical database design
+- [**Database Schema (Conceptual)**](./docs/ERD-diagram/conceptual-diagram.drawio) - Conceptual database model
+- [**Loan System Schema**](./docs/ERD-diagram/loan-physical-diagram.drawio) - Loan service database design
+
+### 📊 **Visual Documentation**
+- [**Order Flow Diagram**](./docs/order-flow.png) - Complete order processing flow visualization
+
+### 🚀 **Quick Start**
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd p2p-lending-services
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Start services**
+   ```bash
+   # Start RabbitMQ and databases
+   docker-compose up -d
+   
+   # Start all services
+   npm run start:dev
+   ```
+
+### 🛠️ **Tech Stack**
+
+| **Category** | **Technology** | **Purpose** |
+|--------------|----------------|-------------|
+| **Backend** | NestJS | Microservices framework |
+| **Database** | PostgreSQL, MongoDB, Redis | Data persistence and caching |
+| **Message Queue** | RabbitMQ | Inter-service communication |
+| **Authentication** | JWT | Secure token-based auth |
+| **API Documentation** | Swagger | API documentation |
+| **Testing** | Jest, Supertest | Unit and integration testing |
+| **Containerization** | Docker | Development and deployment |
+
+---
+
+### 🏦 **Service Architecture**
 
 | 🧩 Service           | 📦 Tables                         | 🔁 Events Emitted                        | 🔄 Events Consumed                 |
 | -------------------- | --------------------------------- | ---------------------------------------- | ---------------------------------- |
-| **Auth Service**     | `users`, `user_roles`, `sessions` | `user.created`, `user.updated`           | *N/A*                              |
-| **User Service**     | `user_profiles`, `addresses`      | `user.profile.updated`                   | `user.created`                     |
-| **Order Service**    | `orders`, `order_items`, `cart`   | `order.created`, `order.cancelled`       | `user.created`, `payment.success`  |
-| **Payment Service**  | `payments`, `transactions`        | `payment.success`, `payment.failed`      | `order.created`                    |
-| **Shipping Service** | `shipments`, `tracking_events`    | `shipment.created`, `shipment.delivered` | `payment.success`, `order.created` |
+| **Auth Service**     | `user_auth`, `token_keys` | `user.authenticated`, `token.validated`           | *N/A*                              |
+| **User Service**     | `users`, `user_profiles`, `addresses`      | `user.created`, `user.profile.updated`                   | `user.authenticated`                     |
+| **Loan Service**    | `loans`, `loan_applications`, `loan_terms`   | `loan.created`, `loan.approved`, `loan.funded`       | `user.created`, `payment.success`  |
+| **Investment Service**  | `investments`, `portfolios`, `returns`        | `investment.created`, `investment.completed`      | `loan.created`, `loan.approved`                    |
+| **Payment Service** | `payments`, `transactions`, `repayments`    | `payment.processed`, `repayment.completed` | `loan.funded`, `investment.created` |
+
+---
+
+## 🤝 **Contributing**
+
+Please read our [Development Rules](./docs/p2p-lending-services.rules.md) before contributing to ensure code quality and consistency.
+
+## 📄 **License**
+
+This project is licensed under the MIT License.

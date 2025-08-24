@@ -13,6 +13,7 @@
     "start:dev:api-gateway": "nest start api-gateway --watch",
     "start:dev:auth-service": "nest start auth-service --watch",
     "start:dev:user-service": "nest start user-service --watch",
+    "start:dev:loan-service": "nest start loan-service --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/user-service/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -20,7 +21,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest test/e2e",
+    "test:e2e": "jest apps/user-service/test/e2e",
     "test:unit": "jest test/*/unit",
     "test:integration": "jest test/*/integration",
     "test:api-gateway": "jest test/api-gateway",
@@ -29,7 +30,15 @@
     "prisma:user:generate": "cd apps/user-service && prisma generate",
     "prisma:user:migrate": "cd apps/user-service && prisma migrate dev",
     "prisma:user:studio": "cd apps/user-service && prisma studio",
-    "prisma:user:push": "cd apps/user-service && prisma db push"
+    "prisma:user:push": "cd apps/user-service && prisma db push",
+    "prisma:auth:generate": "cd apps/auth-service && prisma generate --schema=src/prisma/schema.prisma",
+    "prisma:auth:migrate": "cd apps/auth-service && prisma migrate dev --schema=src/prisma/schema.prisma",
+    "prisma:auth:studio": "cd apps/auth-service && prisma studio --schema=src/prisma/schema.prisma",
+    "prisma:auth:push": "cd apps/auth-service && prisma db push --schema=src/prisma/schema.prisma",
+    "prisma:loan:generate": "cd apps/loan-service && prisma generate --schema=src/prisma/schema.prisma",
+    "prisma:loan:migrate": "cd apps/loan-service && prisma migrate dev --schema=src/prisma/schema.prisma",
+    "prisma:loan:studio": "cd apps/loan-service && prisma studio --schema=src/prisma/schema.prisma",
+    "prisma:loan:push": "cd apps/loan-service && prisma db push --schema=src/prisma/schema.prisma"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -51,7 +60,6 @@
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
     "ioredis": "^5.7.0",
-    "prisma": "^6.12.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "s": "^1.0.0"
@@ -77,6 +85,7 @@
     "globals": "^16.0.0",
     "jest": "^29.7.0",
     "prettier": "^3.4.2",
+    "prisma": "^6.14.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",

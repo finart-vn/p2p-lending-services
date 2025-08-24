@@ -1,11 +1,21 @@
 FROM node:20-alpine
 
-WORKDIR /apps/api-gateway
+WORKDIR /app
 
-COPY package.json .
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
+# Install the application dependencies
 RUN npm install
 
+# Copy the rest of the application files
 COPY . .
 
-CMD ["npm", "run", "start:dev"]
+# Build the NestJS application
+RUN npm run build 
+
+# Expose the application port
+EXPOSE 3005
+
+# Command to run the application
+CMD ["node", "dist/apps/api-gateway/main"]

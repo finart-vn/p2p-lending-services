@@ -7,8 +7,7 @@ import {
   ConfigModule,
   createAuthServiceConfig,
 } from '@p2p-lending/common/config';
-import { RmqQueue, RmqService } from '@p2p-lending/common/enums';
-import { getRmqOptions } from '@p2p-lending/config/rmq.config';
+import { RmqService } from '@p2p-lending/common/enums';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -25,22 +24,26 @@ import { TokenKeyModule } from './token-key/token-key.module';
       global: true,
       inject: [CONFIG_TOKENS.AUTH_SERVICE],
       useFactory: (config: AuthServiceConfig) => ({
-        secret: config.jwt?.secret || 'DefaultSecret',
+        secret: config.jwt?.secret,
         signOptions: {
-          expiresIn: config.jwt?.accessTokenExpiresIn || '15m',
-          issuer: config.jwt?.issuer || config.serviceName,
+          expiresIn: config.jwt?.accessTokenExpiresIn,
+          issuer: config.jwt?.issuer,
           audience: config.jwt?.audience,
         },
       }),
     }),
     ClientsModule.registerAsync([
       {
-        name: RmqService.AUTH,
-        useFactory: () => getRmqOptions(RmqQueue.AUTH),
-      },
-      {
         name: RmqService.USER,
-        useFactory: () => getRmqOptions(RmqQueue.USER),
+        useFactory: (config: AuthServiceConfig) => {
+          if (!config.rabbitmq) {
+            throw new Error(
+              'RabbitMQ configuration is required for USER service',
+            );
+          }
+          return config.rabbitmq;
+        },
+        inject: [CONFIG_TOKENS.AUTH_SERVICE],
       },
       {
         name: 'REDIS_SERVICE',
@@ -51,18 +54,7 @@ import { TokenKeyModule } from './token-key/token-key.module';
           }
           return {
             transport: Transport.REDIS,
-            options: {
-              host: config.redis.host,
-              port: config.redis.port,
-              password: config.redis.password,
-              username: config.redis.username,
-              db: config.redis.db,
-              retryDelay: config.redis.retryDelay,
-              retryAttempts: config.redis.retryAttempts,
-              connectTimeout: config.redis.connectTimeout,
-              commandTimeout: config.redis.commandTimeout,
-              lazyConnect: true,
-            },
+            ...config.redis,
           };
         },
       },

@@ -24,7 +24,7 @@ export class ConfigFactory {
 
     // Base service configuration
     config.serviceName = options.serviceName;
-    config.port = this.parseNumber(process.env.PORT, options.defaultPort);
+    config.port = options.defaultPort;
     config.environment = this.parseEnum(
       Environment,
       process.env.NODE_ENV,
@@ -87,23 +87,6 @@ export class ConfigFactory {
         enableOfflineQueue: this.parseBoolean(
           process.env.REDIS_OFFLINE_QUEUE,
           true,
-        ),
-      };
-    }
-
-    // RabbitMQ configuration
-    if (options.enableRabbitMQ) {
-      config.rabbitmq = {
-        url: process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672',
-        heartbeat: this.parseNumber(process.env.RABBITMQ_HEARTBEAT, 60),
-        connectionTimeout: this.parseNumber(
-          process.env.RABBITMQ_CONNECTION_TIMEOUT,
-          10000,
-        ),
-        durable: this.parseBoolean(process.env.RABBITMQ_DURABLE, true),
-        prefetchCount: this.parseNumber(
-          process.env.RABBITMQ_PREFETCH_COUNT,
-          10,
         ),
       };
     }

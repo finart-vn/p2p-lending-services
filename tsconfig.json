@@ -18,8 +18,13 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@p2p-lending/*": ["./libs/*", "./apps/*"],
-      "@api-gateway/*": ["./apps/api-gateway/src/*"],
+      "@api-gateway/*": [
+        "./apps/api-gateway/src/*"
+      ],
+      "@p2p-lending/*": [
+        "./libs/*",
+        "./apps/*"
+      ]
     }
   }
 }

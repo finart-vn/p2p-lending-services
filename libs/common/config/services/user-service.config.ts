@@ -1,7 +1,9 @@
+import { RmqQueue } from '@p2p-lending/common/enums';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { BaseServiceConfig } from '../base.config';
 import { ConfigFactory } from '../config.factory';
+import { RmqConfig } from '../rmq.config';
 
 export class UserServiceConfig extends BaseServiceConfig {
   @IsNumber()
@@ -53,14 +55,23 @@ export class UserServiceConfig extends BaseServiceConfig {
   maxBioLength?: number = 500;
 }
 
+export const userRmqConfig = new RmqConfig({
+  queue: RmqQueue.USER,
+  queueOptions: {
+    durable: true,
+  },
+});
+
 export const createUserServiceConfig = (): UserServiceConfig => {
   const config = ConfigFactory.createConfig(UserServiceConfig, {
     serviceName: 'user-service',
-    defaultPort: 3006,
+    defaultPort: parseInt(process.env.PORT_USER_SERVICE || '3006', 10),
     enableDatabase: true,
     enableRabbitMQ: true,
     enableRedis: false, // Optional for user service
   });
+  //
+  config.rabbitmq = userRmqConfig;
 
   // User service specific configuration
   config.maxProfileImageSize = ConfigFactory.parseNumber(
