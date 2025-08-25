@@ -40,6 +40,8 @@ export const MESSAGE_PATTERNS = {
     LIST: 'loan.list',
     CALCULATE_INTEREST: 'loan.calculate_interest',
     GET_MARKETPLACE: 'loan.get_marketplace',
+    SEARCH_MARKETPLACE: 'loan.search_marketplace',
+    GET_MARKETPLACE_FILTERS: 'loan.get_marketplace_filters',
     FUND: 'loan.fund',
     GET_ACTIVE: 'loan.get_active',
     DELETE: 'loan.delete',

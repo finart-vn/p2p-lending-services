@@ -1,5 +1,6 @@
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
 import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
+import { MarketplaceSearchDto } from '@api-gateway/dtos/marketplace/marketplace-search.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';
@@ -8,6 +9,11 @@ import {
   CreateLoanRequest,
   UpdateLoanRequest,
 } from '@p2p-lending/contracts/loan';
+import {
+  MarketplaceFilters,
+  MarketplaceSearchRequest,
+  MarketplaceSearchResponse,
+} from '@p2p-lending/contracts/loan/marketplace-requests';
 import { Loan } from '@p2p-lending/loan-service/generated/prisma';
 import { catchError, throwError } from 'rxjs';
 
@@ -48,12 +54,66 @@ export class LoanClient extends BaseClient {
     return loanCreated;
   }
 
-  async updateLoan(loan: ApiLoanUpdateRequestDto) {
+  async updateLoan(borrowerId: string, loan: ApiLoanUpdateRequestDto) {
     const loanUpdated = await this.send<UpdateLoanRequest, Loan>(
       { cmd: MESSAGE_PATTERNS.LOAN.UPDATE },
       loan,
     );
 
     return loanUpdated;
+  }
+
+  async getLoansByBorrower(borrowerId: string) {
+    return this.send<string, Loan[]>(
+      { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_USER },
+      borrowerId,
+    );
+  }
+
+  async getLoanById(loanId: string) {
+    return this.send<string, Loan>(
+      { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_ID },
+      loanId,
+    );
+  }
+
+  async deleteLoan(loanId: string) {
+    return this.send<string, { message: string }>(
+      { cmd: MESSAGE_PATTERNS.LOAN.DELETE },
+      loanId,
+    );
+  }
+
+  async searchMarketplaceLoans(searchDto: MarketplaceSearchDto) {
+    const searchRequest: MarketplaceSearchRequest = {
+      search: searchDto.search,
+      minAmount: searchDto.minAmount,
+      maxAmount: searchDto.maxAmount,
+      minInterestRate: searchDto.minInterestRate,
+      maxInterestRate: searchDto.maxInterestRate,
+      minTermMonths: searchDto.minTermMonths,
+      maxTermMonths: searchDto.maxTermMonths,
+      experienceLevels: searchDto.experienceLevels,
+      loanTypes: searchDto.loanTypes,
+      countries: searchDto.countries,
+      ratings: searchDto.ratings,
+      statuses: searchDto.statuses,
+      page: searchDto.page,
+      limit: searchDto.limit,
+      sortBy: searchDto.sortBy,
+      sortOrder: searchDto.sortOrder,
+    };
+
+    return await this.send<MarketplaceSearchRequest, MarketplaceSearchResponse>(
+      { cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE },
+      searchRequest,
+    );
+  }
+
+  async getMarketplaceFilters() {
+    return await this.send<void, MarketplaceFilters>(
+      { cmd: MESSAGE_PATTERNS.LOAN.GET_MARKETPLACE_FILTERS },
+      undefined,
+    );
   }
 }

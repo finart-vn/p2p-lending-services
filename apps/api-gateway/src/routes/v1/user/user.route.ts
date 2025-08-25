@@ -20,7 +20,7 @@ export class UserController {
   async getUser(@Req() req: RequestWithUser) {
     const user = req.user;
     this.logger.log(`Getting own profile for user: ${user?.sub}`);
-    const userExisted = await this.userClient.getUserById(user?.sub as string);
+    const userExisted = await this.userClient.getUserById(user?.sub);
     return userExisted;
   }
 }

@@ -5,6 +5,7 @@ import {
   CreateLoanRequest,
   UpdateLoanRequest,
 } from '@p2p-lending/contracts/loan';
+import { MarketplaceSearchRequest } from '@p2p-lending/contracts/loan/marketplace-requests';
 
 import { LoanService } from './loan.service';
 
@@ -64,5 +65,39 @@ export class LoanServiceController {
   @MessagePattern(MESSAGE_PATTERNS.LOAN.DELETE)
   async deleteLoan(@Payload() payload: string) {
     return await this.loanServiceService.deleteLoan(payload);
+  }
+
+  /**
+   * Search marketplace loans with filters
+   * @param payload - The search request payload
+   * @returns The search results with loans and filters
+   */
+  @MessagePattern(MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE)
+  searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
+    // return await this.loanServiceService.searchMarketplaceLoans(payload);
+    console.log(payload);
+
+    return {
+      total: 10,
+      page: 1,
+      limit: 10,
+      totalPages: 1,
+      loans: [],
+    };
+  }
+
+  /**
+   * Get marketplace filters and statistics
+   * @returns The available filters and their counts
+   */
+  @MessagePattern(MESSAGE_PATTERNS.LOAN.GET_MARKETPLACE_FILTERS)
+  getMarketplaceFilters() {
+    return {
+      experienceLevels: [],
+      loanTypes: [],
+      countries: [],
+      ratings: [],
+    };
+    // return await this.loanServiceService.getMarketplaceFilters();
   }
 }

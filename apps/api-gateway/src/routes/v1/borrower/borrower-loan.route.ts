@@ -1,14 +1,17 @@
 import { LoanClient } from '@api-gateway/clients/loan.client';
 import { Roles } from '@api-gateway/decorators/roles.decorator';
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
+import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
 import { AuthGuard } from '@api-gateway/guards/auth.guard';
 import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
   ValidationPipe,
@@ -17,7 +20,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
 @Controller('v1/borrower/loan')
-@ApiTags('Loan')
+@ApiTags('Borrower Loan')
 export class BorrowerLoanController {
   constructor(private readonly borrowerClient: LoanClient) {}
 
@@ -28,41 +31,73 @@ export class BorrowerLoanController {
   @Roles(RoleEnum.BORROWER)
   async createLoan(
     @Body(new ValidationPipe()) loanDto: ApiLoanCreateRequestDto,
+    @Req() req: RequestWithUser,
   ) {
-    console.log('Creating loan with data:', loanDto);
-    return await this.borrowerClient.createLoan(
-      '095d68c7-0438-4c22-a45e-c14a6a685bf9', // TODO: get borrowerId from auth service
-      loanDto,
-    );
+    return await this.borrowerClient.createLoan(req.user.sub, loanDto);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update a loan' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(RoleEnum.BORROWER)
+  async updateLoan(
+    @Param('id') id: string,
+    @Body(new ValidationPipe()) loanDto: ApiLoanUpdateRequestDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return await this.borrowerClient.updateLoan(req.user.sub, loanDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get loans for authenticated user' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER, RoleEnum.LENDER)
+  @Roles(RoleEnum.BORROWER)
   getLoans(@Req() req: RequestWithUser) {
+    if (!req.user || !req.user.sub) {
+      throw new Error('User not authenticated');
+    }
     console.log('Get loans for user:', req.user);
-    // TODO: Implement get loans for authenticated user
-    return {
-      message: 'Get loans for authenticated user',
-      user: req.user,
-      data: [],
-    };
+    return this.borrowerClient.getLoansByBorrower(req.user.sub);
+  }
+
+  @Get('borrower')
+  @ApiOperation({ summary: 'Get loans by borrower for authenticated user' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(RoleEnum.BORROWER)
+  getLoansByBorrower(@Req() req: RequestWithUser) {
+    if (!req.user || !req.user.sub) {
+      throw new Error('User not authenticated');
+    }
+    console.log('Get loans by borrower for user:', req.user);
+    return this.borrowerClient.getLoansByBorrower(req.user.sub);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a loan by id for authenticated user' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER, RoleEnum.LENDER)
+  @Roles(RoleEnum.BORROWER)
   getLoanById(@Param('id') id: string, @Req() req: RequestWithUser) {
+    if (!req.user || !req.user.sub) {
+      throw new Error('User not authenticated');
+    }
     console.log('Get loan by id:', id, 'for user:', req.user);
-    // TODO: Implement get loan by id for authenticated user
-    return {
-      message: `Get loan by id: ${id}`,
-      user: req.user,
-      data: null,
-    };
+    return this.borrowerClient.getLoanById(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a loan by id for authenticated user' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(RoleEnum.BORROWER)
+  deleteLoan(@Param('id') id: string, @Req() req: RequestWithUser) {
+    if (!req.user || !req.user.sub) {
+      throw new Error('User not authenticated');
+    }
+    console.log('Delete loan by id:', id, 'for user:', req.user);
+    return this.borrowerClient.deleteLoan(id);
   }
 }
