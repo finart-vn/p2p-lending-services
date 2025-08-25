@@ -17,8 +17,8 @@ import { UserClient } from './clients/user.client';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import {
   AuthController,
+  BorrowerLoanController,
   LenderController,
-  LoanController,
   UserController,
 } from './routes/v1';
 import { MarketplaceController } from './routes/v1/marketplace/marketplace.route';
@@ -49,7 +49,7 @@ import { MarketplaceController } from './routes/v1/marketplace/marketplace.route
     AuthController,
     UserController,
     LenderController,
-    LoanController,
+    BorrowerLoanController,
     MarketplaceController,
   ],
   providers: [UserClient, AuthClient, LoanClient],

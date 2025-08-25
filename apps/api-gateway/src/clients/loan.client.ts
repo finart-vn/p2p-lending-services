@@ -1,9 +1,13 @@
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
+import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
-import { CreateLoanRequest } from '@p2p-lending/contracts/loan';
+import {
+  CreateLoanRequest,
+  UpdateLoanRequest,
+} from '@p2p-lending/contracts/loan';
 import { Loan } from '@p2p-lending/loan-service/generated/prisma';
 import { catchError, throwError } from 'rxjs';
 
@@ -42,5 +46,14 @@ export class LoanClient extends BaseClient {
     });
 
     return loanCreated;
+  }
+
+  async updateLoan(loan: ApiLoanUpdateRequestDto) {
+    const loanUpdated = await this.send<UpdateLoanRequest, Loan>(
+      { cmd: MESSAGE_PATTERNS.LOAN.UPDATE },
+      loan,
+    );
+
+    return loanUpdated;
   }
 }

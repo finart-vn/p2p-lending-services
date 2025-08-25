@@ -1,1 +1,1 @@
-export { BorrowerLoanController as LoanController } from './borrower-loan.route';
+export { BorrowerLoanController } from './borrower-loan.route';
