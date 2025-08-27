@@ -38,7 +38,6 @@ export class LenderController {
   // @Roles(RoleEnum.LENDER)
   fundLoan(@Req() req: RequestWithUser, @Body() body: any) {
     this.logger.log('Funding a loan', body);
-
     return {
       message: 'Funding a loan',
     };

@@ -36,39 +36,12 @@ model Loan {
   createdAt       DateTime    @default(now()) @map("created_at")
   updatedAt       DateTime    @default(now()) @updatedAt @map("updated_at")
 
-  investments Investment[]
-
   @@index([borrowerId])
   @@index([status])
   @@index([purpose])
   @@index([listingDate])
   @@index([createdAt])
   @@map("loans")
-}
-
-// ================================
-// Investments Models
-// ================================
-
-model Investment {
-  id             String           @id @default(uuid())
-  lenderId       String           @map("lender_id")
-  loanId         String           @map("loan_id")
-  amount         Decimal          @map("amount") @db.Decimal(15, 2)
-  percentage     Decimal          @map("percentage") @db.Decimal(5, 2)
-  expectedReturn Decimal          @map("expected_return") @db.Decimal(15, 2)
-  totalReceived  Decimal          @map("total_received") @db.Decimal(15, 2)
-  status         InvestmentStatus @default(DEFAULTED)
-  investedAt     DateTime         @default(now()) @map("invested_at")
-  completedAt    DateTime?        @map("completed_at")
-  Loan           Loan             @relation(fields: [loanId], references: [id])
-
-  @@index([loanId])
-  @@index([lenderId])
-  @@index([status])
-  @@index([investedAt])
-  @@index([completedAt])
-  @@map("investments")
 }
 
 // ================================
@@ -93,11 +66,4 @@ enum LoanStatus {
   COMPLETED
   DEFAULTED
   REJECTED
-}
-
-enum InvestmentStatus {
-  PENDING
-  ACTIVE
-  COMPLETED
-  DEFAULTED
 }

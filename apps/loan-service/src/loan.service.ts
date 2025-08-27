@@ -80,11 +80,7 @@ export class LoanService {
   }
 
   async getAllLoans() {
-    return await this.prisma.loan.findMany({
-      include: {
-        investments: true,
-      },
-    });
+    return await this.prisma.loan.findMany();
   }
 
   async updateLoan(@Payload() payload: UpdateLoanRequest) {
