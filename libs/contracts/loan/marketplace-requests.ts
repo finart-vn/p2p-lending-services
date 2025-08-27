@@ -3,26 +3,12 @@ import {
   LoanStatus,
 } from '@p2p-lending/loan-service/generated/prisma';
 
-export enum ExperienceLevel {
-  ENTRY = 'ENTRY',
-  INTERMEDIATE = 'INTERMEDIATE',
-  EXPERT = 'EXPERT',
-}
-
 export enum LoanType {
   BUSINESS = 'BUSINESS',
   PERSONAL = 'PERSONAL',
   CAR = 'CAR',
   REAL_ESTATE = 'REAL_ESTATE',
   CONSUMER = 'CONSUMER',
-}
-
-export enum Country {
-  LATVIA = 'LATVIA',
-  ESTONIA = 'ESTONIA',
-  LITHUANIA = 'LITHUANIA',
-  POLAND = 'POLAND',
-  CZECH_REPUBLIC = 'CZECH_REPUBLIC',
 }
 
 export enum CreditRating {
@@ -42,9 +28,7 @@ export interface MarketplaceSearchRequest {
   maxInterestRate?: number;
   minTermMonths?: number;
   maxTermMonths?: number;
-  experienceLevels?: ExperienceLevel[];
   loanTypes?: LoanType[];
-  countries?: Country[];
   ratings?: CreditRating[];
   statuses?: LoanStatus[];
   page?: number;
@@ -54,16 +38,19 @@ export interface MarketplaceSearchRequest {
 }
 
 export interface MarketplaceSearchResponse {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
   loans: MarketplaceLoan[];
-  filters: MarketplaceFilters;
+  facets: MarketplaceFilters;
+  paging: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface MarketplaceLoan {
   id: string;
+  borrowerName: string;
   loanNumber: number;
   requestedAmount: number;
   fundedAmount: number;
@@ -76,9 +63,7 @@ export interface MarketplaceLoan {
   status: LoanStatus;
   listingDate: Date | null;
   fundingDeadline: Date | null;
-  experienceLevel: ExperienceLevel;
   creditRating: CreditRating;
-  country: Country;
   daysRemaining: number;
   investorCount: number;
   expectedReturn: number;

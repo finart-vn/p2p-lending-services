@@ -79,6 +79,14 @@ export class LoanService {
     return loans;
   }
 
+  async getAllLoans() {
+    return await this.prisma.loan.findMany({
+      include: {
+        investments: true,
+      },
+    });
+  }
+
   async updateLoan(@Payload() payload: UpdateLoanRequest) {
     try {
       const loan = await this.prisma.loan.findUnique({

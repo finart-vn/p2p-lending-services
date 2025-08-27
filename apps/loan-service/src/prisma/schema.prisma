@@ -22,7 +22,7 @@ model Loan {
   id              String      @id @default(uuid())
   borrowerId      String      @map("borrower_id") @db.VarChar(255)
   loanNumber      Int         @unique @default(autoincrement()) @map("loan_number")
-  requestedAmount Decimal      @map("requested_amount") @db.Decimal(15, 2)
+  requestedAmount Decimal     @map("requested_amount") @db.Decimal(15, 2)
   fundedAmount    Decimal     @default(0) @map("funded_amount") @db.Decimal(15, 2)
   interestRate    Decimal     @map("interest_rate") @db.Decimal(5, 2)
   termMonths      Int         @map("term_months")

@@ -3,6 +3,7 @@ import { Roles } from '@api-gateway/decorators/roles.decorator';
 import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
 import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
 import { AuthGuard } from '@api-gateway/guards/auth.guard';
+import { RolesGuard } from '@api-gateway/guards/roles.guard';
 import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
 import {
   Body,
@@ -21,14 +22,14 @@ import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
 @Controller('v1/borrower/loan')
 @ApiTags('Borrower Loan')
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(RoleEnum.BORROWER)
 export class BorrowerLoanController {
   constructor(private readonly borrowerClient: LoanClient) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a loan' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   async createLoan(
     @Body(new ValidationPipe()) loanDto: ApiLoanCreateRequestDto,
     @Req() req: RequestWithUser,
@@ -38,9 +39,6 @@ export class BorrowerLoanController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a loan' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   async updateLoan(
     @Param('id') id: string,
     @Body(new ValidationPipe()) loanDto: ApiLoanUpdateRequestDto,
@@ -51,9 +49,6 @@ export class BorrowerLoanController {
 
   @Get()
   @ApiOperation({ summary: 'Get loans for authenticated user' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   getLoans(@Req() req: RequestWithUser) {
     if (!req.user || !req.user.sub) {
       throw new Error('User not authenticated');
@@ -64,9 +59,6 @@ export class BorrowerLoanController {
 
   @Get('borrower')
   @ApiOperation({ summary: 'Get loans by borrower for authenticated user' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   getLoansByBorrower(@Req() req: RequestWithUser) {
     if (!req.user || !req.user.sub) {
       throw new Error('User not authenticated');
@@ -77,9 +69,6 @@ export class BorrowerLoanController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a loan by id for authenticated user' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   getLoanById(@Param('id') id: string, @Req() req: RequestWithUser) {
     if (!req.user || !req.user.sub) {
       throw new Error('User not authenticated');
@@ -90,9 +79,6 @@ export class BorrowerLoanController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a loan by id for authenticated user' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Roles(RoleEnum.BORROWER)
   deleteLoan(@Param('id') id: string, @Req() req: RequestWithUser) {
     if (!req.user || !req.user.sub) {
       throw new Error('User not authenticated');

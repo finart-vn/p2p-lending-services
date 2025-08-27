@@ -188,6 +188,13 @@ export class PaginationMetaDto {
   hasPrevious: boolean;
 }
 
+export class FacetsResponseDto {
+  @ApiProperty({
+    description: 'Facets data',
+    type: Object,
+  })
+  facets: Record<string, any>;
+}
 export class PaginatedApiResponseDto<T = any> extends ApiResponseDto<T[]> {
   data: T[];
 
@@ -197,15 +204,25 @@ export class PaginatedApiResponseDto<T = any> extends ApiResponseDto<T[]> {
   })
   pagination: PaginationMetaDto;
 
+  @ApiProperty({
+    description: 'Facets data',
+    type: FacetsResponseDto,
+  })
+  facets?: FacetsResponseDto;
+
   constructor(
     data: T[],
     pagination: PaginationMetaDto,
     message?: string,
     path?: string,
+    facets?: FacetsResponseDto,
   ) {
     super(message, path);
     this.data = data;
     this.pagination = pagination;
+    if (facets) {
+      this.facets = facets;
+    }
   }
 }
 

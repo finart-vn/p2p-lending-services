@@ -2,7 +2,15 @@ import { Roles } from '@api-gateway/decorators/roles.decorator';
 import { AuthGuard } from '@api-gateway/guards/auth.guard';
 import { RolesGuard } from '@api-gateway/guards/roles.guard';
 import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
-import { Controller, Get, Logger, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
@@ -21,6 +29,18 @@ export class LenderController {
     return {
       message: 'All loans',
       user: req.user,
+    };
+  }
+
+  @Post('fund-loan')
+  @ApiOperation({ summary: 'Fund a loan' })
+  // @ApiBearerAuth()
+  // @Roles(RoleEnum.LENDER)
+  fundLoan(@Req() req: RequestWithUser, @Body() body: any) {
+    this.logger.log('Funding a loan', body);
+
+    return {
+      message: 'Funding a loan',
     };
   }
 }

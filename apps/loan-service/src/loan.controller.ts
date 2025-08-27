@@ -27,7 +27,7 @@ export class LoanServiceController {
    * @param payload - The loan id
    * @returns The loan
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.GET_BY_ID)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_ID })
   async getLoanById(@Payload() payload: string) {
     return await this.loanServiceService.getLoanById(payload);
   }
@@ -37,12 +37,12 @@ export class LoanServiceController {
    * @param payload - The borrower id
    * @returns The loans
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.GET_BY_USER)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_USER })
   async getLoansByBorrower(@Payload() payload: string) {
     return await this.loanServiceService.getLoansByBorrower(payload);
   }
 
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.GET_ACTIVE)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_ACTIVE })
   async getActiveLoans(@Payload() payload: string) {
     return await this.loanServiceService.getActiveLoans(payload);
   }
@@ -52,7 +52,7 @@ export class LoanServiceController {
    * @param payload - The loan request payload
    * @returns The updated loan
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.UPDATE)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.UPDATE })
   async updateLoan(@Payload() payload: UpdateLoanRequest) {
     return await this.loanServiceService.updateLoan(payload);
   }
@@ -62,7 +62,7 @@ export class LoanServiceController {
    * @param payload - The loan id
    * @returns The deleted loan
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.DELETE)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.DELETE })
   async deleteLoan(@Payload() payload: string) {
     return await this.loanServiceService.deleteLoan(payload);
   }
@@ -72,17 +72,23 @@ export class LoanServiceController {
    * @param payload - The search request payload
    * @returns The search results with loans and filters
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE)
-  searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
-    // return await this.loanServiceService.searchMarketplaceLoans(payload);
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE })
+  async searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
     console.log(payload);
+    const loans = await this.loanServiceService.getAllLoans();
 
     return {
       total: 10,
       page: 1,
       limit: 10,
       totalPages: 1,
-      loans: [],
+      loans,
+      filters: {
+        experienceLevels: [],
+        loanTypes: [],
+        countries: [],
+        ratings: [],
+      },
     };
   }
 
@@ -90,7 +96,7 @@ export class LoanServiceController {
    * Get marketplace filters and statistics
    * @returns The available filters and their counts
    */
-  @MessagePattern(MESSAGE_PATTERNS.LOAN.GET_MARKETPLACE_FILTERS)
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_MARKETPLACE_FILTERS })
   getMarketplaceFilters() {
     return {
       experienceLevels: [],

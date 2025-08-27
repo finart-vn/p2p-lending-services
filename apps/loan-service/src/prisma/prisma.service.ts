@@ -17,6 +17,7 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private readonly logger = new Logger(PrismaService.name);
+
   constructor(private configService: ConfigService) {
     super({
       log: [
@@ -50,6 +51,7 @@ export class PrismaService
       this.logger.error('Prisma error:', event);
     });
   }
+
   async onModuleInit() {
     try {
       await this.$connect();
