@@ -21,7 +21,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
 @Controller('v1/borrower/loan')
-@ApiTags('Borrower Loan')
+@ApiTags('Borrower')
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
 @Roles(RoleEnum.BORROWER)

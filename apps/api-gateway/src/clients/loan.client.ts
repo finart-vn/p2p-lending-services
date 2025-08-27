@@ -70,6 +70,13 @@ export class LoanClient extends BaseClient {
     );
   }
 
+  async getLoansByLender(lenderId: string) {
+    return this.send<string, Loan[]>(
+      { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_USER },
+      lenderId,
+    );
+  }
+
   async getLoanById(loanId: string) {
     return this.send<string, Loan>(
       { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_ID },
