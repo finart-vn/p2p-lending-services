@@ -36,6 +36,7 @@ export const MESSAGE_PATTERNS = {
     REJECT: 'loan.reject',
     DISBURSE: 'loan.disburse',
     GET_BY_ID: 'loan.get_by_id',
+    GET_BY_IDS: 'loan.get_by_ids',
     GET_BY_USER: 'loan.get_by_user',
     LIST: 'loan.list',
     CALCULATE_INTEREST: 'loan.calculate_interest',

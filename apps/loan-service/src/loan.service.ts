@@ -57,6 +57,22 @@ export class LoanService {
     }
   }
 
+  async getLoanByIds(@Payload() payload: string[]) {
+    try {
+      const loans = await this.prisma.loan.findMany({
+        where: {
+          id: { in: payload },
+        },
+      });
+      return loans;
+    } catch (error) {
+      this.logger.error(`Failed to get loan by id: ${error}`);
+      throw new RpcException({
+        message: 'Failed to get loan by id',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
   async getLoansByBorrower(@Payload() payload: string) {
     try {
       const loans = await this.prisma.loan.findMany({

@@ -33,6 +33,16 @@ export class LoanServiceController {
   }
 
   /**
+   * Get loans by ids
+   * @param payload - The loan ids
+   * @returns The loans
+   */
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_IDS })
+  async getLoanByIds(@Payload() payload: string[]) {
+    return await this.loanServiceService.getLoanByIds(payload);
+  }
+
+  /**
    * Get loans by borrower
    * @param payload - The borrower id
    * @returns The loans

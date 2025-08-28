@@ -77,13 +77,18 @@ export class LoanClient extends BaseClient {
     );
   }
 
-  async getLoanById(loanId: string) {
-    return this.send<string, Loan>(
+  async getLoanById(loanId: string | string[]) {
+    return this.send<string | string[], Loan>(
       { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_ID },
       loanId,
     );
   }
-
+  async getLoanByIds(ids: string[]) {
+    return this.send<string[], Loan[]>(
+      { cmd: MESSAGE_PATTERNS.LOAN.GET_BY_IDS },
+      ids,
+    );
+  }
   async deleteLoan(loanId: string) {
     return this.send<string, { message: string }>(
       { cmd: MESSAGE_PATTERNS.LOAN.DELETE },

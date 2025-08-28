@@ -50,7 +50,23 @@ export class LenderController {
   @ApiOperation({ summary: 'Get all investments for the lender' })
   async getInvestments(@Req() req: RequestWithUser) {
     this.logger.log('Getting investments for lender:', req.user.sub);
-    return await this.investmentClient.getInvestmentsByUser(req.user.sub);
+    const loanIds = new Set<string>();
+    const investments = await this.investmentClient.getInvestmentsByUser(
+      req.user.sub,
+    );
+
+    investments.forEach((investment) => {
+      loanIds.add(investment.loanId);
+    });
+
+    if (!loanIds.size) {
+      return [];
+    }
+    const loans = await this.loanClient.getLoanByIds(Array.from(loanIds));
+    return {
+      investments,
+      loans,
+    };
   }
 
   @Get('investment/:id')
