@@ -43,7 +43,9 @@ jobs:
       
       - name: Generate Loan Prisma Client
         run: npx prisma generate --schema=apps/loan-service/src/prisma/schema.prisma
-
+      
+      - name: Generate Investment Prisma Client
+        run: npx prisma generate --schema=apps/investment-service/src/prisma/schema.prisma
       - name: Run lint
         run: npm run lint
   test:
