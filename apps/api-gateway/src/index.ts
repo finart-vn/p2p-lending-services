@@ -21,17 +21,17 @@ export * from './clients/auth.client';
 export * from './clients/user.client';
 
 // Configuration
-export * from './config/app.config';
-export * from './config/jwt.config';
+export * from './applications/config/app.config';
+export * from './applications/config/jwt.config';
 
 // DTOs
-export * from './dtos/common.dto';
+export * from './applications/DTOs/common.dto';
 
 // Constants
-export * from './constants';
+export * from './shared/constants';
 
 // Utilities
-export * from './utils';
+export * from './shared/utils';
 
 // Types
-export * from './types/express.d';
+export * from './shared/types/express';

@@ -3,7 +3,7 @@ import {
   UserResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { ApiUserDto, LoginDto } from '../dtos/auth';
+import { ApiUserDto, LoginDto } from '../../applications/DTOs/auth';
 
 // ===== DTO MAPPING UTILITIES =====
 

@@ -1,6 +1,6 @@
-import { ApiInvestmentCancelRequestDto } from '@api-gateway/dtos/investment/investment-cancel.dto';
-import { ApiInvestmentCreateRequestDto } from '@api-gateway/dtos/investment/investment-create.dto';
-import { ApiInvestmentUpdateRequestDto } from '@api-gateway/dtos/investment/investment-update.dto';
+import { ApiInvestmentCancelRequestDto } from '@api-gateway/applications/DTOs/investment/investment-cancel.dto';
+import { ApiInvestmentCreateRequestDto } from '@api-gateway/applications/DTOs/investment/investment-create.dto';
+import { ApiInvestmentUpdateRequestDto } from '@api-gateway/applications/DTOs/investment/investment-update.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';

@@ -4,7 +4,7 @@ import {
   MarketplaceFiltersResponseDto,
   MarketplaceSearchDto,
   MarketplaceSearchResponseDto,
-} from '@api-gateway/dtos/marketplace/marketplace-search.dto';
+} from '@api-gateway/applications/DTOs/marketplace/marketplace-search.dto';
 import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 

@@ -14,7 +14,7 @@ import {
   RegisterResponseMQ,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { LoginDto, RegisterDto } from '../dtos';
+import { LoginDto, RegisterDto } from '../applications/DTOs';
 import { BaseClient } from './base.client';
 
 export interface AuthValidationRequest {

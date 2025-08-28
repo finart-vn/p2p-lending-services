@@ -1,4 +1,4 @@
-import { RegisterDto } from '@p2p-lending/api-gateway/src/dtos';
+import { RegisterDto } from '@api-gateway/applications/DTOs';
 
 import { CreateUserRequest } from './user-requests';
 

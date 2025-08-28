@@ -6,8 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { AuthClient } from '../clients/auth.client';
-import { RequestWithUser } from '../interfaces/auth.interface';
+import { AuthClient } from '../../clients/auth.client';
+import { RequestWithUser } from '../../shared/interfaces/auth.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

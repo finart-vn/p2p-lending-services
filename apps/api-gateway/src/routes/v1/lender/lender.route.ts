@@ -1,14 +1,14 @@
+import { Roles } from '@api-gateway/applications/decorators/roles.decorator';
+import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
+import { RolesGuard } from '@api-gateway/applications/guards/roles.guard';
 import { InvestmentClient } from '@api-gateway/clients/investment.client';
 import { LoanClient } from '@api-gateway/clients/loan.client';
-import { Roles } from '@api-gateway/decorators/roles.decorator';
 import {
   ApiInvestmentCancelRequestDto,
   ApiInvestmentCreateRequestDto,
   ApiInvestmentUpdateRequestDto,
-} from '@api-gateway/dtos';
-import { AuthGuard } from '@api-gateway/guards/auth.guard';
-import { RolesGuard } from '@api-gateway/guards/roles.guard';
-import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
+} from '@api-gateway/applications/DTOs';
+import { RequestWithUser } from '@api-gateway/shared/interfaces/auth.interface';
 import {
   Body,
   Controller,

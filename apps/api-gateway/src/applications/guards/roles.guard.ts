@@ -8,9 +8,9 @@ import {
 import { Reflector } from '@nestjs/core';
 import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
 
-import { UserClient } from '../clients/user.client';
+import { UserClient } from '../../clients/user.client';
+import { RequestWithUser } from '../../shared/interfaces/auth.interface';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { RequestWithUser } from '../interfaces/auth.interface';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
