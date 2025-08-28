@@ -36,11 +36,16 @@ export const MESSAGE_PATTERNS = {
     REJECT: 'loan.reject',
     DISBURSE: 'loan.disburse',
     GET_BY_ID: 'loan.get_by_id',
+    GET_BY_IDS: 'loan.get_by_ids',
     GET_BY_USER: 'loan.get_by_user',
     LIST: 'loan.list',
     CALCULATE_INTEREST: 'loan.calculate_interest',
     GET_MARKETPLACE: 'loan.get_marketplace',
+    SEARCH_MARKETPLACE: 'loan.search_marketplace',
+    GET_MARKETPLACE_FILTERS: 'loan.get_marketplace_filters',
     FUND: 'loan.fund',
+    GET_ACTIVE: 'loan.get_active',
+    DELETE: 'loan.delete',
   },
 
   // Investment Service

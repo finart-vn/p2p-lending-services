@@ -5,6 +5,7 @@ import {
   CONFIG_TOKENS,
   ConfigModule,
   createApiGatewayConfig,
+  investmentRmqConfig,
   paymentRmqConfig,
   userRmqConfig,
 } from '@p2p-lending/common/config';
@@ -12,13 +13,14 @@ import { loanRmqConfig } from '@p2p-lending/common/config/services/loan-service.
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 
 import { AuthClient } from './clients/auth.client';
-import { BorrowerClient } from './clients/borrower.client';
+import { InvestmentClient } from './clients/investment.client';
+import { LoanClient } from './clients/loan.client';
 import { UserClient } from './clients/user.client';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import {
   AuthController,
+  BorrowerLoanController,
   LenderController,
-  LoanController,
   UserController,
 } from './routes/v1';
 import { MarketplaceController } from './routes/v1/marketplace/marketplace.route';
@@ -43,16 +45,20 @@ import { MarketplaceController } from './routes/v1/marketplace/marketplace.route
         name: RmqExchange.LOAN,
         useFactory: () => paymentRmqConfig,
       },
+      {
+        name: RmqService.INVESTMENT,
+        useFactory: () => investmentRmqConfig,
+      },
     ]),
   ],
   controllers: [
     AuthController,
     UserController,
     LenderController,
-    LoanController,
+    BorrowerLoanController,
     MarketplaceController,
   ],
-  providers: [UserClient, AuthClient, BorrowerClient],
+  providers: [UserClient, AuthClient, LoanClient, InvestmentClient],
 })
 export class ApiGatewayModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

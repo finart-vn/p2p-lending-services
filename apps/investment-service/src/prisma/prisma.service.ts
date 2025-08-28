@@ -5,8 +5,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-import { Prisma, PrismaClient } from '../../generated/prisma';
+import {
+  Prisma,
+  PrismaClient,
+} from '@p2p-lending/investment-service/generated/prisma';
 
 @Injectable()
 export class PrismaService
@@ -42,7 +44,6 @@ export class PrismaService
 
     // Log queries in development
     this.$on('query', (event: Prisma.QueryEvent) => {
-      // this.logger.debug(`Query: ${event.query}`);
       this.logger.debug(`Params: ${event.params}`);
       this.logger.debug(`Duration: ${event.duration}ms`);
     });

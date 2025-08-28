@@ -25,6 +25,7 @@ export class RolesGuard implements CanActivate {
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
+
     // If no roles are required, allow access
     if (!requiredRoles) {
       return true;
@@ -39,6 +40,8 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User not found');
     }
     const userExisted = await this.userClient.getUserById(user?.sub);
+
+    this.logger.debug(`User existed: ${JSON.stringify(userExisted)}`);
 
     if (!userExisted) {
       throw new ForbiddenException('User not found');

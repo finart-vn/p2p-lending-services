@@ -25,12 +25,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       | string
       | Record<string, unknown>;
 
-    const message =
-      typeof responseError === 'string'
-        ? responseError
-        : Array.isArray(responseError.message)
-          ? responseError.message
-          : 'Unknown error occurred';
+    const message = this.extractErrorMessage(responseError);
 
     const errorResponse: ApiErrorResponseDto = {
       success: false,
@@ -41,5 +36,39 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     response.status(status).json(errorResponse);
+  }
+
+  private extractErrorMessage(
+    responseError: string | Record<string, unknown>,
+  ): string | string[] {
+    // If the response is a string, return it directly
+    if (typeof responseError === 'string') {
+      return responseError;
+    }
+
+    // If the response is an object, extract the message property
+    if (responseError && typeof responseError === 'object') {
+      const { message } = responseError;
+
+      // Handle different message types
+      if (typeof message === 'string') {
+        return message;
+      }
+
+      if (Array.isArray(message)) {
+        return message.length > 0 ? message : 'Unknown error occurred';
+      }
+      // Handle object
+      if (message && typeof message === 'object') {
+        try {
+          return JSON.stringify(message);
+        } catch {
+          return 'Error occurred (unable to serialize message)';
+        }
+      }
+    }
+
+    // Fallback for cases where no valid message is found
+    return 'Unknown error occurred';
   }
 }

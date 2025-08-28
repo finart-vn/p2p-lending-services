@@ -17,7 +17,7 @@ export const paymentRmqConfig = new RmqConfig({
 export const createPaymentServiceConfig = (): PaymentServiceConfig => {
   const config = ConfigFactory.createConfig(PaymentServiceConfig, {
     serviceName: 'payment-service',
-    defaultPort: parseInt(process.env.PORT_PAYMENT_SERVICE || '3009', 10),
+    defaultPort: parseInt(process.env.PORT_PAYMENT_SERVICE || '3010', 10),
     enableDatabase: true,
     enableRabbitMQ: true,
     enableRedis: false, // Optional for payment service

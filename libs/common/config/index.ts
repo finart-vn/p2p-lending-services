@@ -6,6 +6,7 @@ export * from './config.module';
 // Service-specific configurations
 export * from './services/api-gateway.config';
 export * from './services/auth-service.config';
+export * from './services/investment-service.config';
 export * from './services/payment-service.config';
 export * from './services/user-service.config';
 
@@ -24,4 +25,5 @@ export const CONFIG_TOKENS = {
   USER_SERVICE: 'USER_SERVICE_CONFIG',
   LOAN_SERVICE: 'LOAN_SERVICE_CONFIG',
   PAYMENT_SERVICE: 'PAYMENT_SERVICE_CONFIG',
+  INVESTMENT_SERVICE: 'INVESTMENT_SERVICE_CONFIG',
 } as const;

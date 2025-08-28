@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("INVESTMENT_SERVICE_DATABASE_URL")
+}
+
+// ================================
+// Investment Models
+// ================================
+
+model Investment {
+  id             String           @id @default(uuid())
+  lenderId       String           @map("lender_id")
+  loanId         String           @map("loan_id")
+  amount         Decimal          @map("amount") @db.Decimal(15, 2)
+  percentage     Decimal          @map("percentage") @db.Decimal(5, 2)
+  expectedReturn Decimal          @map("expected_return") @db.Decimal(15, 2)
+  totalReceived  Decimal          @map("total_received") @db.Decimal(15, 2)
+  status         InvestmentStatus @default(PENDING)
+  investedAt     DateTime         @default(now()) @map("invested_at")
+  completedAt    DateTime?        @map("completed_at")
+
+  @@index([loanId])
+  @@index([lenderId])
+  @@index([status])
+  @@index([investedAt])
+  @@index([completedAt])
+  @@map("investments")
+}
+
+// ================================
+// Enums
+// ================================
+
+enum InvestmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  CANCELLED
+}
