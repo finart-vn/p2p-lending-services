@@ -3,7 +3,7 @@ import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
 import { UserResponse } from '@p2p-lending/common/interfaces/message-payloads';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { ApiResponseDto } from '../common.dto';
+import { ApiResponseDto } from '../common/common-response.dto';
 
 // ===== API AUTH RESPONSE DTOs (External Interface) =====
 

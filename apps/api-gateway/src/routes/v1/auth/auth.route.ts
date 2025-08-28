@@ -4,7 +4,7 @@ import {
   RegisterDto,
   UserAuthResponseDto,
 } from '@api-gateway/applications/DTOs/auth';
-import { ApiErrorResponseDto } from '@api-gateway/applications/DTOs/common.dto';
+import { ApiErrorResponseDto } from '@api-gateway/applications/DTOs/common/common-response.dto';
 import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
 import { AuthClient } from '@api-gateway/clients/auth.client';
 import { UserClient } from '@api-gateway/clients/user.client';
