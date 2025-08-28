@@ -1,9 +1,9 @@
 import { Roles } from '@api-gateway/applications/decorators/roles.decorator';
+import { ApiLoanCreateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-create.dto';
+import { ApiLoanUpdateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-update.dto';
 import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
 import { RolesGuard } from '@api-gateway/applications/guards/roles.guard';
 import { LoanClient } from '@api-gateway/clients/loan.client';
-import { ApiLoanCreateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-create.dto';
-import { ApiLoanUpdateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-update.dto';
 import { RequestWithUser } from '@api-gateway/shared/interfaces/auth.interface';
 import {
   Body,

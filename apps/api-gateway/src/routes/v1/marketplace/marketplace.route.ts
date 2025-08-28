@@ -1,10 +1,10 @@
-import { LoanClient } from '@api-gateway/clients/loan.client';
 import {
   CreditRating,
   MarketplaceFiltersResponseDto,
   MarketplaceSearchDto,
   MarketplaceSearchResponseDto,
 } from '@api-gateway/applications/DTOs/marketplace/marketplace-search.dto';
+import { LoanClient } from '@api-gateway/clients/loan.client';
 import { Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
