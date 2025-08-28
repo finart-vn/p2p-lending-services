@@ -1,6 +1,6 @@
-import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
-import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
-import { MarketplaceSearchDto } from '@api-gateway/dtos/marketplace/marketplace-search.dto';
+import { ApiLoanCreateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-create.dto';
+import { ApiLoanUpdateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-update.dto';
+import { MarketplaceSearchDto } from '@api-gateway/applications/DTOs/marketplace/marketplace-search.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';

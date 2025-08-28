@@ -1,6 +1,6 @@
+import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
 import { UserClient } from '@api-gateway/clients/user.client';
-import { AuthGuard } from '@api-gateway/guards/auth.guard';
-import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
+import { RequestWithUser } from '@api-gateway/shared/interfaces/auth.interface';
 import { Controller, Get, Logger, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 

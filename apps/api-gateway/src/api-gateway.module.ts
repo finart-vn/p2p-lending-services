@@ -12,11 +12,11 @@ import {
 import { loanRmqConfig } from '@p2p-lending/common/config/services/loan-service.config';
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 
+import { RequestLoggingMiddleware } from './applications/middlewares/request-logging.middleware';
 import { AuthClient } from './clients/auth.client';
 import { InvestmentClient } from './clients/investment.client';
 import { LoanClient } from './clients/loan.client';
 import { UserClient } from './clients/user.client';
-import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
 import {
   AuthController,
   BorrowerLoanController,

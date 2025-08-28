@@ -8,7 +8,7 @@ import {
   UserResponse,
 } from '@p2p-lending/common/interfaces/message-payloads';
 
-import { RegisterDto } from '../dtos';
+import { RegisterDto } from '../applications/DTOs';
 import { BaseClient } from './base.client';
 
 @Injectable()

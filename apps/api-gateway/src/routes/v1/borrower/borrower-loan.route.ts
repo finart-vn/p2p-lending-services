@@ -1,10 +1,10 @@
+import { Roles } from '@api-gateway/applications/decorators/roles.decorator';
+import { ApiLoanCreateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-create.dto';
+import { ApiLoanUpdateRequestDto } from '@api-gateway/applications/DTOs/loan/loan-update.dto';
+import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
+import { RolesGuard } from '@api-gateway/applications/guards/roles.guard';
 import { LoanClient } from '@api-gateway/clients/loan.client';
-import { Roles } from '@api-gateway/decorators/roles.decorator';
-import { ApiLoanCreateRequestDto } from '@api-gateway/dtos/loan/loan-create.dto';
-import { ApiLoanUpdateRequestDto } from '@api-gateway/dtos/loan/loan-update.dto';
-import { AuthGuard } from '@api-gateway/guards/auth.guard';
-import { RolesGuard } from '@api-gateway/guards/roles.guard';
-import { RequestWithUser } from '@api-gateway/interfaces/auth.interface';
+import { RequestWithUser } from '@api-gateway/shared/interfaces/auth.interface';
 import {
   Body,
   Controller,

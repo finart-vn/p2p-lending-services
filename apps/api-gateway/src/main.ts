@@ -5,8 +5,8 @@ import { ApiGatewayConfig, CONFIG_TOKENS } from '@p2p-lending/common/config';
 import * as cookieParser from 'cookie-parser';
 
 import { ApiGatewayModule } from './api-gateway.module';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { HttpExceptionFilter } from './applications/filters/http-exception.filter';
+import { ResponseInterceptor } from './applications/interceptors/response.interceptor';
 
 async function bootstrap() {
   const logger = new ConsoleLogger({

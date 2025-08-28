@@ -1,13 +1,13 @@
-import { AuthClient } from '@api-gateway/clients/auth.client';
-import { UserClient } from '@api-gateway/clients/user.client';
 import {
   ApiUserAuthResponseDto,
   LoginDto,
   RegisterDto,
   UserAuthResponseDto,
-} from '@api-gateway/dtos/auth';
-import { ApiErrorResponseDto } from '@api-gateway/dtos/common.dto';
-import { AuthGuard } from '@api-gateway/guards/auth.guard';
+} from '@api-gateway/applications/DTOs/auth';
+import { ApiErrorResponseDto } from '@api-gateway/applications/DTOs/common/common-response.dto';
+import { AuthGuard } from '@api-gateway/applications/guards/auth.guard';
+import { AuthClient } from '@api-gateway/clients/auth.client';
+import { UserClient } from '@api-gateway/clients/user.client';
 import {
   Body,
   Controller,

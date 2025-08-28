@@ -11,7 +11,7 @@ import {
   Min,
 } from 'class-validator';
 
-import { IApiResponse } from '../interfaces/auth.interface';
+import { IApiResponse } from '../../../shared/interfaces/auth.interface';
 
 // ===== PAGINATION DTO =====
 

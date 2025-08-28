@@ -1,5 +1,5 @@
 // ===== AUTH SERVICE REQUEST INTERFACES =====
-import { LoginDto, RegisterDto } from '@p2p-lending/api-gateway/src/dtos';
+import { LoginDto, RegisterDto } from '@api-gateway/applications/DTOs';
 
 export type LoginRequest = LoginDto;
 
