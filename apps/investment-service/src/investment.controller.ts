@@ -1,7 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';
-import { CreateInvestmentRequest } from '@p2p-lending/contracts/investment';
+import {
+  CancelInvestmentRequest,
+  CreateInvestmentRequest,
+  UpdateInvestmentRequest,
+} from '@p2p-lending/contracts/investment';
 
 import { InvestmentService } from './investment.service';
 
@@ -49,25 +53,25 @@ export class InvestmentServiceController {
     return await this.investmentService.getInvestmentsByLoan(payload);
   }
 
-  // /**
-  //  * Update an investment
-  //  * @param payload - The investment update payload
-  //  * @returns The updated investment
-  //  */
-  // @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.UPDATE })
-  // async updateInvestment(@Payload() payload: UpdateInvestmentRequest) {
-  //   return await this.investmentService.updateInvestment(payload);
-  // }
+  /**
+   * Update an investment
+   * @param payload - The investment update payload
+   * @returns The updated investment
+   */
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.UPDATE })
+  async updateInvestment(@Payload() payload: UpdateInvestmentRequest) {
+    return await this.investmentService.updateInvestment(payload);
+  }
 
-  // /**
-  //  * Cancel an investment
-  //  * @param payload - The investment cancellation payload
-  //  * @returns The cancelled investment
-  //  */
-  // @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.CANCEL })
-  // async cancelInvestment(@Payload() payload: CancelInvestmentRequest) {
-  //   return await this.investmentService.cancelInvestment(payload);
-  // }
+  /**
+   * Cancel an investment
+   * @param payload - The investment cancellation payload
+   * @returns The cancelled investment
+   */
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.CANCEL })
+  async cancelInvestment(@Payload() payload: CancelInvestmentRequest) {
+    return await this.investmentService.cancelInvestment(payload);
+  }
 
   // /**
   //  * Get investment portfolio for a user

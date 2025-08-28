@@ -1,7 +1,15 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Payload, RpcException } from '@nestjs/microservices';
-import { CreateInvestmentRequest } from '@p2p-lending/contracts/investment';
-import { Prisma } from '@p2p-lending/investment-service/generated/prisma';
+import {
+  CancelInvestmentRequest,
+  CreateInvestmentRequest,
+  UpdateInvestmentRequest,
+} from '@p2p-lending/contracts/investment';
+import {
+  Investment,
+  InvestmentStatus,
+  Prisma,
+} from '@p2p-lending/investment-service/generated/prisma';
 
 import { PrismaService } from './prisma/prisma.service';
 
@@ -85,88 +93,86 @@ export class InvestmentService {
     }
   }
 
-  // async updateInvestment(@Payload() payload: UpdateInvestmentRequest) {
-  //   try {
-  //     const investment = await this.prisma.investment.findUnique({
-  //       where: { id: payload.id },
-  //     });
-  //     if (!investment) {
-  //       throw new RpcException({
-  //         message: 'Investment not found',
-  //         statusCode: HttpStatus.NOT_FOUND,
-  //       });
-  //     }
+  async updateInvestment(@Payload() payload: UpdateInvestmentRequest) {
+    try {
+      const investment = await this.prisma.investment.findUnique({
+        where: { id: payload.id },
+      });
+      if (!investment) {
+        throw new RpcException({
+          message: 'Investment not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        });
+      }
 
-  //     const updateData: any = {};
-  //     if (payload.amount !== undefined) {
-  //       updateData.amount = Prisma.Decimal(payload.amount.toString());
-  //     }
-  //     if (payload.percentage !== undefined) {
-  //       updateData.percentage = Prisma.Decimal(payload.percentage.toString());
-  //     }
-  //     if (payload.expectedReturn !== undefined) {
-  //       updateData.expectedReturn = Prisma.Decimal(
-  //         payload.expectedReturn.toString(),
-  //       );
-  //     }
-  //     if (payload.totalReceived !== undefined) {
-  //       updateData.totalReceived = Prisma.Decimal(
-  //         payload.totalReceived.toString(),
-  //       );
-  //     }
-  //     if (payload.status !== undefined) {
-  //       updateData.status = payload.status;
-  //     }
-  //     if (payload.completedAt !== undefined) {
-  //       updateData.completedAt = payload.completedAt;
-  //     }
+      const updateData: Partial<Investment> = {};
 
-  //     const updatedInvestment = await this.prisma.investment.update({
-  //       where: { id: payload.id },
-  //       data: updateData,
-  //     });
-  //     return updatedInvestment;
-  //   } catch (error) {
-  //     this.logger.error(`Failed to update investment: ${error}`);
-  //     throw new RpcException({
-  //       message: 'Failed to update investment',
-  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-  //     });
-  //   }
-  // }
+      if (payload.amount !== undefined) {
+        updateData.amount = Prisma.Decimal(payload.amount.toString());
+      }
+      if (payload.percentage !== undefined) {
+        updateData.percentage = Prisma.Decimal(payload.percentage.toString());
+      }
+      if (payload.expectedReturn !== undefined) {
+        updateData.expectedReturn = Prisma.Decimal(
+          payload.expectedReturn.toString(),
+        );
+      }
+      if (payload.totalReceived !== undefined) {
+        updateData.totalReceived = Prisma.Decimal(
+          payload.totalReceived.toString(),
+        );
+      }
+      if (payload.status !== undefined) {
+        updateData.status = payload.status;
+      }
+      if (payload.completedAt !== undefined) {
+        updateData.completedAt = payload.completedAt;
+      }
 
-  // async cancelInvestment(@Payload() payload: CancelInvestmentRequest) {
-  //   try {
-  //     const investment = await this.prisma.investment.findUnique({
-  //       where: { id: payload.id },
-  //     });
-  //     if (!investment) {
-  //       throw new RpcException({
-  //         message: 'Investment not found',
-  //         statusCode: HttpStatus.NOT_FOUND,
-  //       });
-  //     }
+      const updatedInvestment = await this.prisma.investment.update({
+        where: { id: payload.id },
+        data: updateData,
+      });
+      return updatedInvestment;
+    } catch (error) {
+      this.logger.error(`Failed to update investment: ${error}`);
+      throw new RpcException({
+        message: 'Failed to update investment',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 
-  //     if (investment.status !== InvestmentStatus.PENDING) {
-  //       throw new RpcException({
-  //         message: 'Only pending investments can be cancelled',
-  //         statusCode: HttpStatus.BAD_REQUEST,
-  //       });
-  //     }
+  async cancelInvestment(@Payload() payload: CancelInvestmentRequest) {
+    try {
+      const investment = await this.prisma.investment.findUnique({
+        where: { id: payload.id },
+      });
+      if (!investment) {
+        throw new RpcException({
+          message: 'Investment not found',
+          statusCode: HttpStatus.NOT_FOUND,
+        });
+      }
 
-  //     const cancelledInvestment = await this.prisma.investment.update({
-  //       where: { id: payload.id },
-  //       data: { status: InvestmentStatus.CANCELLED },
-  //     });
-  //     return cancelledInvestment;
-  //   } catch (error) {
-  //     this.logger.error(`Failed to cancel investment: ${error}`);
-  //     throw new RpcException({
-  //       message: 'Failed to cancel investment',
-  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-  //     });
-  //   }
-  // }
+      if (investment.status !== InvestmentStatus.PENDING) {
+        throw new RpcException({
+          message: 'Only pending investments can be cancelled',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+
+      const cancelledInvestment = await this.prisma.investment.update({
+        where: { id: payload.id },
+        data: { status: InvestmentStatus.CANCELLED },
+      });
+      return cancelledInvestment;
+    } catch (error) {
+      this.logger.error(`Failed to cancel investment: ${error}`);
+      throw error;
+    }
+  }
 
   // async getInvestmentPortfolio(@Payload() payload: string) {
   //   try {

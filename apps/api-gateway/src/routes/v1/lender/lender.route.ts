@@ -16,8 +16,8 @@ import {
   Get,
   Logger,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   ValidationPipe,
@@ -53,28 +53,24 @@ export class LenderController {
     return await this.investmentClient.getInvestmentsByUser(req.user.sub);
   }
 
-  @Get('investments/:id')
+  @Get('investment/:id')
   @ApiOperation({ summary: 'Get investment by ID' })
   async getInvestmentById(@Param('id') id: string) {
     this.logger.log('Getting investment by ID:', id);
     return await this.investmentClient.getInvestmentById(id);
   }
 
-  @Put('investments/:id')
+  @Patch('investment')
   @ApiOperation({ summary: 'Update investment information' })
   async updateInvestment(
-    @Param('id') id: string,
     @Body(new ValidationPipe()) body: ApiInvestmentUpdateRequestDto,
   ) {
-    this.logger.log('Updating investment:', id);
-
     return await this.investmentClient.updateInvestment(body);
   }
 
-  @Delete('investments/:id')
+  @Delete('investment')
   @ApiOperation({ summary: 'Cancel investment' })
   async cancelInvestment(
-    @Param('id') id: string,
     @Body(new ValidationPipe()) body: ApiInvestmentCancelRequestDto,
   ) {
     return await this.investmentClient.cancelInvestment(body);
