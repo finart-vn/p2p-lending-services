@@ -171,7 +171,7 @@ sequenceDiagram
     participant GW as API Gateway
     participant CREDIT as Credit Service
     participant BUREAU as Credit Bureau
-    parameter RISK as Risk Engine
+    participant RISK as Risk Engine
     participant LOAN as Loan Service
     participant COMPLIANCE as Compliance Service
     
@@ -311,7 +311,7 @@ sequenceDiagram
     participant PAYMENT as Payment Service
     participant BANK as Banking API
     participant LOAN as Loan Service
-    parameter INVEST as Investment Service
+    participant INVEST as Investment Service
     participant NOTIFY as Notification Service
     participant COMPLIANCE as Compliance Service
     
