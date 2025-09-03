@@ -12,10 +12,10 @@ import { PrismaService } from './prisma/prisma.service';
 import { LoanCqrsService } from './application/loan-cqrs.service';
 
 // Command Handlers
-import { CreateLoanHandler } from './application/commands/create-loan.handler';
-import { UpdateLoanHandler } from './application/commands/update-loan.handler';
-import { DeleteLoanHandler } from './application/commands/delete-loan.handler';
-import { ChangeLoanStatusHandler } from './application/commands/change-loan-status.handler';
+import { CreateLoanHandler } from './application/commands/handler/create-loan.handler';
+import { UpdateLoanHandler } from './application/commands/handler/update-loan.handler';
+import { DeleteLoanHandler } from './application/commands/handler/delete-loan.handler';
+import { ChangeLoanStatusHandler } from './application/commands/handler/change-loan-status.handler';
 
 // Query Handlers
 import { GetLoanByIdHandler } from './application/queries/handlers/get-loan-by-id.handler';

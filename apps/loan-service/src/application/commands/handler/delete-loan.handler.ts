@@ -4,9 +4,9 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
 import { Loan } from '@p2p-lending/loan-service/generated/prisma';
 
-import { LoanDeletedEvent } from '../../domain/events/loan-deleted.event';
-import { LoanRepository } from '../../domain/repositories/loan.repository.interface';
-import { DeleteLoanCommand } from './delete-loan.command';
+import { LoanDeletedEvent } from '../../../domain/events/loan-deleted.event';
+import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';
+import { DeleteLoanCommand } from '../delete-loan.command';
 
 @Injectable()
 @CommandHandler(DeleteLoanCommand)

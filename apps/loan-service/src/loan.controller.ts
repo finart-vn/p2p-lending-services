@@ -66,11 +66,7 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.UPDATE })
   async updateLoan(@Payload() payload: UpdateLoanRequest) {
-    const { id, ...updates } = payload;
-    return await this.loanCqrsService.updateLoan(id, {
-      ...updates,
-      description: updates.description || undefined,
-    });
+    return await this.loanCqrsService.updateLoan(payload);
   }
 
   /**

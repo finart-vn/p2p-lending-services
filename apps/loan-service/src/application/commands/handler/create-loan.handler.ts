@@ -7,9 +7,9 @@ import {
   Prisma,
 } from '@p2p-lending/loan-service/generated/prisma';
 
-import { LoanCreatedEvent } from '../../domain/events/loan-created.event';
-import { LoanRepository } from '../../domain/repositories/loan.repository.interface';
-import { CreateLoanCommand } from './create-loan.command';
+import { LoanCreatedEvent } from '../../../domain/events/loan-created.event';
+import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';
+import { CreateLoanCommand } from '../create-loan.command';
 
 @Injectable()
 @CommandHandler(CreateLoanCommand)
