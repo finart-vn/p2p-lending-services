@@ -7,11 +7,11 @@ import {
 } from '@p2p-lending/contracts/loan';
 import { MarketplaceSearchRequest } from '@p2p-lending/contracts/loan/marketplace-requests';
 
-import { LoanService } from './loan.service';
+import { LoanCqrsService } from './application/loan-cqrs.service';
 
 @Controller()
 export class LoanServiceController {
-  constructor(private readonly loanServiceService: LoanService) {}
+  constructor(private readonly loanCqrsService: LoanCqrsService) {}
   /**
    * Create a new loan
    * @param payload - The loan request payload
@@ -19,7 +19,10 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.CREATE })
   async createLoan(@Payload() payload: CreateLoanRequest) {
-    return await this.loanServiceService.createLoan(payload);
+    return await this.loanCqrsService.createLoan({
+      ...payload,
+      description: payload.description || undefined,
+    });
   }
 
   /**
@@ -29,7 +32,7 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_ID })
   async getLoanById(@Payload() payload: string) {
-    return await this.loanServiceService.getLoanById(payload);
+    return await this.loanCqrsService.getLoanById(payload);
   }
 
   /**
@@ -39,7 +42,7 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_IDS })
   async getLoanByIds(@Payload() payload: string[]) {
-    return await this.loanServiceService.getLoanByIds(payload);
+    return await this.loanCqrsService.getLoansByIds(payload);
   }
 
   /**
@@ -49,12 +52,12 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_BY_USER })
   async getLoansByBorrower(@Payload() payload: string) {
-    return await this.loanServiceService.getLoansByBorrower(payload);
+    return await this.loanCqrsService.getLoansByBorrower(payload);
   }
 
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_ACTIVE })
   async getActiveLoans(@Payload() payload: string) {
-    return await this.loanServiceService.getActiveLoans(payload);
+    return await this.loanCqrsService.getActiveLoans(payload);
   }
 
   /**
@@ -64,7 +67,11 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.UPDATE })
   async updateLoan(@Payload() payload: UpdateLoanRequest) {
-    return await this.loanServiceService.updateLoan(payload);
+    const { id, ...updates } = payload;
+    return await this.loanCqrsService.updateLoan(id, {
+      ...updates,
+      description: updates.description || undefined,
+    });
   }
 
   /**
@@ -74,7 +81,7 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.DELETE })
   async deleteLoan(@Payload() payload: string) {
-    return await this.loanServiceService.deleteLoan(payload);
+    return await this.loanCqrsService.deleteLoan(payload);
   }
 
   /**
@@ -85,7 +92,7 @@ export class LoanServiceController {
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE })
   async searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
     console.log(payload);
-    const loans = await this.loanServiceService.getAllLoans();
+    const loans = await this.loanCqrsService.getAllLoans();
 
     return {
       total: 10,
