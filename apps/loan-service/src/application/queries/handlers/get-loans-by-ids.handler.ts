@@ -1,7 +1,8 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
-import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Loan } from '@p2p-lending/loan-service/generated/prisma';
-import { LoanRepository } from '../../domain/repositories/loan.repository.interface';
+import { LoanRepository } from '@p2p-lending/loan-service/src/infrastructure/repositories/loan.repository';
+
 import { GetLoansByIdsQuery } from '../get-loans-by-ids.query';
 
 @Injectable()

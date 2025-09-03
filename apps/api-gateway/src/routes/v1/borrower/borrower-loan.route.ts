@@ -37,10 +37,9 @@ export class BorrowerLoanController {
     return await this.borrowerClient.createLoan(req.user.sub, loanDto);
   }
 
-  @Put(':id')
+  @Put()
   @ApiOperation({ summary: 'Update a loan' })
   async updateLoan(
-    @Param('id') id: string,
     @Body(new ValidationPipe()) loanDto: ApiLoanUpdateRequestDto,
     @Req() req: RequestWithUser,
   ) {

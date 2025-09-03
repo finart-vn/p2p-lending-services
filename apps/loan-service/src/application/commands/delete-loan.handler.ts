@@ -1,11 +1,12 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Loan } from '@p2p-lending/loan-service/generated/prisma';
-import { LoanRepository } from '../../domain/repositories/loan.repository.interface';
-import { DeleteLoanCommand } from '../delete-loan.command';
-import { LoanDeletedEvent } from '../../domain/events/loan-deleted.event';
-import { RpcException } from '@nestjs/microservices';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { RpcException } from '@nestjs/microservices';
+import { Loan } from '@p2p-lending/loan-service/generated/prisma';
+
+import { LoanDeletedEvent } from '../../domain/events/loan-deleted.event';
+import { LoanRepository } from '../../domain/repositories/loan.repository.interface';
+import { DeleteLoanCommand } from './delete-loan.command';
 
 @Injectable()
 @CommandHandler(DeleteLoanCommand)

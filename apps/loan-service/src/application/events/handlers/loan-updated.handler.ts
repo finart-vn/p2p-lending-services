@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { LoanUpdatedEvent } from '../../domain/events/loan-updated.event';
+import { LoanUpdatedEvent } from '@p2p-lending/loan-service/src/domain/events/loan-updated.event';
 
 @Injectable()
 @EventsHandler(LoanUpdatedEvent)
@@ -9,7 +9,11 @@ export class LoanUpdatedHandler implements IEventHandler<LoanUpdatedEvent> {
 
   async handle(event: LoanUpdatedEvent): Promise<void> {
     this.logger.log(`Loan updated event handled: ${event.data.loanId}`);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    this.logger.log(
+      `Sent notification Updated to borrower: ${event.data.loanId}`,
+    );
     // Here you can add side effects like:
     // - Update read models
     // - Send notifications about changes

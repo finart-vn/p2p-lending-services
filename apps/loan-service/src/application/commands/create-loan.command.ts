@@ -8,6 +8,6 @@ export class CreateLoanCommand {
     public readonly termMonths: number,
     public readonly monthlyPayment: number,
     public readonly purpose: LoanPurpose,
-    public readonly description?: string,
+    public readonly description?: string | null,
   ) {}
 }

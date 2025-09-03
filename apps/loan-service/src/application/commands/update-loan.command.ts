@@ -1,16 +1,7 @@
-import { LoanPurpose } from '@p2p-lending/loan-service/generated/prisma';
+import { UpdateLoanRequest } from '@p2p-lending/contracts/loan/loan-requests';
 
-export interface UpdateLoanCommandData {
-  description?: string;
-  purpose?: LoanPurpose;
-  termMonths?: number;
-  interestRate?: number;
-  monthlyPayment?: number;
-}
+export type UpdateLoanCommandData = UpdateLoanRequest;
 
 export class UpdateLoanCommand {
-  constructor(
-    public readonly loanId: string,
-    public readonly updates: UpdateLoanCommandData,
-  ) {}
+  constructor(public readonly updates: UpdateLoanCommandData) {}
 }

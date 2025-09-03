@@ -45,5 +45,11 @@ export class ApiLoanUpdateRequestDto {
   @IsString()
   description: string;
 
+  @ApiProperty({
+    description: 'Loan status',
+    enum: LoanStatus,
+    example: LoanStatus.ACTIVE,
+  })
+  @IsEnum(LoanStatus)
   status: LoanStatus;
 }

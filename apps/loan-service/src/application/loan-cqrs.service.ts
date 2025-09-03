@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import {
-  Loan,
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
-import { CreateLoanCommand } from './commands/create-loan.command';
-import { UpdateLoanCommand } from './commands/update-loan.command';
-import { DeleteLoanCommand } from './commands/delete-loan.command';
+import { CreateLoanRequest } from '@p2p-lending/contracts/loan';
+import { Loan, LoanStatus } from '@p2p-lending/loan-service/generated/prisma';
+
 import { ChangeLoanStatusCommand } from './commands/change-loan-status.command';
-import { GetLoanByIdQuery } from './queries/get-loan-by-id.query';
-import { GetLoansByIdsQuery } from './queries/get-loans-by-ids.query';
-import { GetLoansByBorrowerQuery } from './queries/get-loans-by-borrower.query';
+import { CreateLoanCommand } from './commands/create-loan.command';
+import { DeleteLoanCommand } from './commands/delete-loan.command';
+import { UpdateLoanCommand } from './commands/update-loan.command';
 import { GetActiveLoansQuery } from './queries/get-active-loans.query';
 import { GetAllLoansQuery } from './queries/get-all-loans.query';
+import { GetLoanByIdQuery } from './queries/get-loan-by-id.query';
+import { GetLoansByBorrowerQuery } from './queries/get-loans-by-borrower.query';
+import { GetLoansByIdsQuery } from './queries/get-loans-by-ids.query';
 
 @Injectable()
 export class LoanCqrsService {
@@ -23,15 +21,7 @@ export class LoanCqrsService {
   ) {}
 
   // Command methods
-  async createLoan(data: {
-    borrowerId: string;
-    requestedAmount: number;
-    interestRate: number;
-    termMonths: number;
-    monthlyPayment: number;
-    purpose: LoanPurpose;
-    description?: string;
-  }): Promise<Loan> {
+  async createLoan(data: CreateLoanRequest): Promise<Loan> {
     const command = new CreateLoanCommand(
       data.borrowerId,
       data.requestedAmount,
@@ -44,17 +34,8 @@ export class LoanCqrsService {
     return this.commandBus.execute(command);
   }
 
-  async updateLoan(
-    loanId: string,
-    updates: {
-      description?: string;
-      purpose?: LoanPurpose;
-      termMonths?: number;
-      interestRate?: number;
-      monthlyPayment?: number;
-    },
-  ): Promise<Loan> {
-    const command = new UpdateLoanCommand(loanId, updates);
+  async updateLoan(updates): Promise<Loan> {
+    const command = new UpdateLoanCommand(updates);
     return this.commandBus.execute(command);
   }
 

@@ -1,18 +1,9 @@
-import {
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
+import { UpdateLoanRequest } from '@p2p-lending/contracts/loan/loan-requests';
 
 export interface LoanUpdatedEventData {
   loanId: string;
   borrowerId: string;
-  changes: {
-    description?: string;
-    purpose?: LoanPurpose;
-    termMonths?: number;
-    interestRate?: number;
-    monthlyPayment?: number;
-  };
+  changes: UpdateLoanRequest;
   updatedAt: Date;
 }
 

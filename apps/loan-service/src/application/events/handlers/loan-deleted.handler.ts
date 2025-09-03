@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { LoanDeletedEvent } from '../../domain/events/loan-deleted.event';
+import { LoanDeletedEvent } from '@p2p-lending/loan-service/src/domain/events/loan-deleted.event';
 
 @Injectable()
 @EventsHandler(LoanDeletedEvent)

@@ -21,7 +21,6 @@ export class LoanServiceController {
   async createLoan(@Payload() payload: CreateLoanRequest) {
     return await this.loanCqrsService.createLoan({
       ...payload,
-      description: payload.description || undefined,
     });
   }
 
