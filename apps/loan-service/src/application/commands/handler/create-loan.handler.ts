@@ -1,6 +1,7 @@
-import { Loan, LoanPurpose, LoanStatus, Prisma } from '@loan-service/prisma';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Loan, LoanStatus, Prisma } from '@loan-service/prisma';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { RpcException } from '@nestjs/microservices';
 
 import { LoanCreatedEvent } from '../../../domain/events/loan-created.event';
 import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';
@@ -36,30 +37,33 @@ export class CreateLoanHandler implements ICommandHandler<CreateLoanCommand> {
       // Save to repository
       const savedLoan = await this.loanRepository.save(loanData);
 
-      // Publish domain event
+      // Publish domain event with actual loan data
       const event = new LoanCreatedEvent({
-        loanId: '123',
-        borrowerId: '123',
-        loanNumber: 1,
-        requestedAmount: 1000,
-        interestRate: 10,
-        termMonths: 12,
-        monthlyPayment: 100,
-        purpose: LoanPurpose.PERSONAL,
-        description: 'Test',
-        status: LoanStatus.DRAFT,
-        createdAt: new Date(),
+        loanId: savedLoan.id,
+        borrowerId: savedLoan.borrowerId,
+        loanNumber: savedLoan.loanNumber,
+        requestedAmount: savedLoan.requestedAmount.toNumber(),
+        interestRate: savedLoan.interestRate.toNumber(),
+        termMonths: savedLoan.termMonths,
+        monthlyPayment: savedLoan.monthlyPayment.toNumber(),
+        purpose: savedLoan.purpose,
+        description: savedLoan.description || undefined,
+        status: savedLoan.status,
+        createdAt: savedLoan.createdAt,
       });
 
       this.eventBus.publish(event);
 
       this.logger.log(
-        `Loan created successfully with ID: ${command.borrowerId}`,
+        `Loan created successfully with ID: ${savedLoan.id} and loan number: ${savedLoan.loanNumber}`,
       );
       return savedLoan;
     } catch (error) {
-      this.logger.error(`Failed to create loan: ${command.borrowerId}`, error);
-      throw error;
+      this.logger.error(`Failed to create loan:`, error);
+      throw new RpcException({
+        message: 'Failed to create loan',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 }

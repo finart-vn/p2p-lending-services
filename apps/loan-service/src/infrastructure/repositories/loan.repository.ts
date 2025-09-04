@@ -2,19 +2,47 @@ import { Loan, LoanPurpose, LoanStatus, Prisma } from '@loan-service/prisma';
 import { Injectable } from '@nestjs/common';
 
 import { LoanRepository as ILoanRepository } from '../../domain/repositories/loan.repository.interface';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class LoanRepository implements ILoanRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(loan: Partial<Loan>): Promise<Loan> {
-    const savedLoan = await this.prisma.loan.upsert({
-      where: { id: loan.id || '' },
-      create: {
-        id: loan.id || crypto.randomUUID(),
+    // If loan has an ID, it's an update operation
+    if (loan.id) {
+      return await this.prisma.loan.update({
+        where: { id: loan.id },
+        data: {
+          borrowerId: loan.borrowerId,
+          requestedAmount: loan.requestedAmount
+            ? Prisma.Decimal(loan.requestedAmount.toString())
+            : undefined,
+          fundedAmount: loan.fundedAmount
+            ? Prisma.Decimal(loan.fundedAmount.toString())
+            : undefined,
+          interestRate: loan.interestRate
+            ? Prisma.Decimal(loan.interestRate.toString())
+            : undefined,
+          termMonths: loan.termMonths,
+          monthlyPayment: loan.monthlyPayment
+            ? Prisma.Decimal(loan.monthlyPayment.toString())
+            : undefined,
+          purpose: loan.purpose,
+          description: loan.description,
+          status: loan.status,
+          listingDate: loan.listingDate,
+          fundingDeadline: loan.fundingDeadline,
+          disbursedAt: loan.disbursedAt,
+        },
+      });
+    }
+
+    // For new loans, use create and let the database auto-generate loanNumber
+    return await this.prisma.loan.create({
+      data: {
         borrowerId: loan.borrowerId || '',
-        loanNumber: loan.loanNumber || 0,
+        // Don't set loanNumber - let the database auto-generate it
         requestedAmount: loan.requestedAmount
           ? Prisma.Decimal(loan.requestedAmount.toString())
           : Prisma.Decimal(0),
@@ -34,34 +62,8 @@ export class LoanRepository implements ILoanRepository {
         listingDate: loan.listingDate,
         fundingDeadline: loan.fundingDeadline,
         disbursedAt: loan.disbursedAt,
-        createdAt: loan.createdAt || new Date(),
-        updatedAt: loan.updatedAt || new Date(),
-      },
-      update: {
-        borrowerId: loan.borrowerId,
-        requestedAmount: loan.requestedAmount
-          ? Prisma.Decimal(loan.requestedAmount.toString())
-          : undefined,
-        fundedAmount: loan.fundedAmount
-          ? Prisma.Decimal(loan.fundedAmount.toString())
-          : undefined,
-        interestRate: loan.interestRate
-          ? Prisma.Decimal(loan.interestRate.toString())
-          : undefined,
-        termMonths: loan.termMonths,
-        monthlyPayment: loan.monthlyPayment
-          ? Prisma.Decimal(loan.monthlyPayment.toString())
-          : undefined,
-        purpose: loan.purpose,
-        description: loan.description,
-        status: loan.status,
-        listingDate: loan.listingDate,
-        fundingDeadline: loan.fundingDeadline,
-        disbursedAt: loan.disbursedAt,
       },
     });
-
-    return savedLoan;
   }
 
   async findById(id: string): Promise<Loan | null> {

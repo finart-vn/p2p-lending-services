@@ -23,11 +23,11 @@ import { GetAllLoansHandler } from './application/queries/handlers/get-all-loans
 import { GetLoanByIdHandler } from './application/queries/handlers/get-loan-by-id.handler';
 import { GetLoansByBorrowerHandler } from './application/queries/handlers/get-loans-by-borrower.handler';
 import { GetLoansByIdsHandler } from './application/queries/handlers/get-loans-by-ids.handler';
+import { PrismaService } from './infrastructure/database/prisma.service';
 // Repository
 import { LoanRepository } from './infrastructure/repositories/loan.repository';
 import { LoanServiceController } from './loan.controller';
 import { LoanService } from './loan.service';
-import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
