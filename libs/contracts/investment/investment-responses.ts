@@ -1,4 +1,4 @@
-import { InvestmentStatus } from '@p2p-lending/investment-service/generated/prisma';
+import { InvestmentStatus } from '@investment-service/prisma';
 
 interface InvestmentResponse {
   id: string;

@@ -1,8 +1,5 @@
+import { LoanPurpose, LoanStatus } from '@loan-service/prisma';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 
 export class ApiLoanUpdateRequestDto {

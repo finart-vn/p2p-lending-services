@@ -1,6 +1,6 @@
+import { AuthModule } from '@auth-service/auth.module';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthModule } from '@p2p-lending/auth-service/src/auth.module';
 import * as request from 'supertest';
 
 describe('AuthController (e2e)', () => {

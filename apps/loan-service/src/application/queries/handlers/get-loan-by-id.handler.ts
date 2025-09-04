@@ -1,9 +1,9 @@
+import { LoanRepository } from '@loan-service/infrastructure/repositories/loan.repository';
+import { Loan } from '@loan-service/prisma';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
-import { Loan } from '@p2p-lending/loan-service/generated/prisma';
-import { LoanRepository } from '@p2p-lending/loan-service/src/infrastructure/repositories/loan.repository';
 
 import { GetLoanByIdQuery } from '../get-loan-by-id.query';
 

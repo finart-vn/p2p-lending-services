@@ -1,10 +1,5 @@
+import { Loan, LoanPurpose, LoanStatus, Prisma } from '@loan-service/prisma';
 import { Injectable } from '@nestjs/common';
-import {
-  Loan,
-  LoanPurpose,
-  LoanStatus,
-  Prisma,
-} from '@p2p-lending/loan-service/generated/prisma';
 
 import { LoanRepository as ILoanRepository } from '../../domain/repositories/loan.repository.interface';
 import { PrismaService } from '../../prisma/prisma.service';

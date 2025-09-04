@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KeyTokenService } from '@p2p-lending/user-service/src/key-token/key-token.service';
-import { PrismaService } from '@p2p-lending/user-service/src/prisma/prisma.service';
+import { KeyTokenService } from '@user-service/key-token/key-token.service';
+import { PrismaService } from '@user-service/prisma/prisma.service';
 
 // Mock PrismaService
 const mockPrismaService = {

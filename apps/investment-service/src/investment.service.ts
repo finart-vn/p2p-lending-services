@@ -1,3 +1,8 @@
+import {
+  Investment,
+  InvestmentStatus,
+  Prisma,
+} from '@investment-service/prisma';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Payload, RpcException } from '@nestjs/microservices';
 import {
@@ -5,11 +10,6 @@ import {
   CreateInvestmentRequest,
   UpdateInvestmentRequest,
 } from '@p2p-lending/contracts/investment';
-import {
-  Investment,
-  InvestmentStatus,
-  Prisma,
-} from '@p2p-lending/investment-service/generated/prisma';
 
 import { PrismaService } from './prisma/prisma.service';
 

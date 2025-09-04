@@ -18,7 +18,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 @Controller('v1/borrower/loan')
 @ApiTags('Borrower')

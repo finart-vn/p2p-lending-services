@@ -1,5 +1,5 @@
+import { UserAuth } from '@auth-service/prisma';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
 import { UserResponse } from '@p2p-lending/common/interfaces/message-payloads';
 import { IsNotEmpty, IsString } from 'class-validator';
 

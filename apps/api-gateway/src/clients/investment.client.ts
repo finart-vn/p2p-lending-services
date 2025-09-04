@@ -1,6 +1,7 @@
 import { ApiInvestmentCancelRequestDto } from '@api-gateway/applications/DTOs/investment/investment-cancel.dto';
 import { ApiInvestmentCreateRequestDto } from '@api-gateway/applications/DTOs/investment/investment-create.dto';
 import { ApiInvestmentUpdateRequestDto } from '@api-gateway/applications/DTOs/investment/investment-update.dto';
+import { Investment } from '@investment-service/prisma';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';
@@ -12,7 +13,6 @@ import {
   InvestmentPortfolioResponse,
   UpdateInvestmentRequest,
 } from '@p2p-lending/contracts/investment';
-import { Investment } from '@p2p-lending/investment-service/generated/prisma';
 import { catchError, throwError } from 'rxjs';
 
 import { BaseClient } from './base.client';

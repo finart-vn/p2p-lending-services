@@ -1,8 +1,4 @@
-import {
-  Loan,
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
+import { Loan, LoanPurpose, LoanStatus } from '@loan-service/prisma';
 
 export interface LoanRepository {
   save(loan: Partial<Loan>): Promise<Loan>;

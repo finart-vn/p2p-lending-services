@@ -1,7 +1,4 @@
-import {
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
+import { LoanPurpose, LoanStatus } from '@loan-service/prisma';
 
 interface CreateLoanRequest {
   borrowerId: string;

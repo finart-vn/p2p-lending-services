@@ -5,10 +5,8 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  Prisma,
-  PrismaClient,
-} from '@p2p-lending/investment-service/generated/prisma';
+
+import { Prisma, PrismaClient } from '../../generated/prisma';
 
 @Injectable()
 export class PrismaService

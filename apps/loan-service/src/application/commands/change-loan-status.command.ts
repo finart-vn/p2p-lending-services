@@ -1,4 +1,4 @@
-import { LoanStatus } from '@p2p-lending/loan-service/generated/prisma';
+import { LoanStatus } from '@loan-service/prisma';
 
 export class ChangeLoanStatusCommand {
   constructor(

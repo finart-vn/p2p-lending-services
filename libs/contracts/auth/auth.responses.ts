@@ -1,6 +1,6 @@
 // ===== AUTH SERVICE RESPONSE INTERFACES =====
 
-import { UserAuth } from '@p2p-lending/auth-service/generated/prisma';
+import { UserAuth } from '@auth-service/prisma';
 
 import { UserResponse } from '../user';
 

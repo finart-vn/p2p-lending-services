@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@p2p-lending/user-service/src/user.module';
+import { AppModule } from '@user-service/user.module';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 

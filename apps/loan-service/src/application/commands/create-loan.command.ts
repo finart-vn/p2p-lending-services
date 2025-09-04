@@ -1,4 +1,4 @@
-import { LoanPurpose } from '@p2p-lending/loan-service/generated/prisma';
+import { LoanPurpose } from '@loan-service/prisma';
 
 export class CreateLoanCommand {
   constructor(

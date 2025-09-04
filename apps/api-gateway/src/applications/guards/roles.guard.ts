@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 import { UserClient } from '../../clients/user.client';
 import { RequestWithUser } from '../../shared/interfaces/auth.interface';

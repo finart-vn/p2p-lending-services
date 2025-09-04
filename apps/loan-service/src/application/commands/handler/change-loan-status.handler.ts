@@ -1,11 +1,11 @@
+import { LoanStatusChangedEvent } from '@loan-service/domain/events/loan-status-changed.event';
+import { LoanRepository } from '@loan-service/domain/repositories/loan.repository.interface';
+import { Loan, LoanStatus } from '@loan-service/prisma';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
-import { Loan, LoanStatus } from '@p2p-lending/loan-service/generated/prisma';
 
-import { LoanStatusChangedEvent } from '../../../domain/events/loan-status-changed.event';
-import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';
 import { ChangeLoanStatusCommand } from '../change-loan-status.command';
 
 @Injectable()

@@ -1,7 +1,7 @@
+import { AuthController } from '@auth-service/auth.controller';
+import { AuthService } from '@auth-service/auth.service';
+import { TokenKeyService } from '@auth-service/token-key/token-key.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '@p2p-lending/auth-service/src/auth.controller';
-import { AuthService } from '@p2p-lending/auth-service/src/auth.service';
-import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
 
 describe('AuthController', () => {
   let authController: AuthController;

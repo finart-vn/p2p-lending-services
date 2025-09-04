@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
-import { Prisma } from '@p2p-lending/user-service/generated/prisma';
+import { Prisma } from '@user-service/prisma';
 
 import { LoanUpdatedEvent } from '../../../domain/events/loan-updated.event';
 import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';

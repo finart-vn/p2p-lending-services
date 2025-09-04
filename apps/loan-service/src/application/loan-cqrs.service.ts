@@ -1,7 +1,7 @@
+import { Loan, LoanStatus } from '@loan-service/prisma';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateLoanRequest } from '@p2p-lending/contracts/loan';
-import { Loan, LoanStatus } from '@p2p-lending/loan-service/generated/prisma';
 
 import { ChangeLoanStatusCommand } from './commands/change-loan-status.command';
 import { CreateLoanCommand } from './commands/create-loan.command';

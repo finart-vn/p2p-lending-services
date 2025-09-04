@@ -1,11 +1,6 @@
+import { Loan, LoanPurpose, LoanStatus, Prisma } from '@loan-service/prisma';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import {
-  Loan,
-  LoanPurpose,
-  LoanStatus,
-  Prisma,
-} from '@p2p-lending/loan-service/generated/prisma';
 
 import { LoanCreatedEvent } from '../../../domain/events/loan-created.event';
 import { LoanRepository } from '../../../domain/repositories/loan.repository.interface';
