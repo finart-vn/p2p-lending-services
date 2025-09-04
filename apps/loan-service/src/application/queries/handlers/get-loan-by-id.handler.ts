@@ -32,10 +32,7 @@ export class GetLoanByIdHandler implements IQueryHandler<GetLoanByIdQuery> {
 
       return loan;
     } catch (error) {
-      this.logger.error(
-        `Failed to get loan by ID: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to get loan by ID: ${query.loanId}`, error);
       throw error;
     }
   }

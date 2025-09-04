@@ -28,8 +28,8 @@ export class GetActiveLoansHandler
       return loans;
     } catch (error) {
       this.logger.error(
-        `Failed to get active loans: ${error.message}`,
-        error.stack,
+        `Failed to get active loans: ${query.borrowerId}`,
+        error,
       );
       throw error;
     }

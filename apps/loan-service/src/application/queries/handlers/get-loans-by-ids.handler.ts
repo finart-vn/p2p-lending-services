@@ -23,8 +23,8 @@ export class GetLoansByIdsHandler implements IQueryHandler<GetLoansByIdsQuery> {
       return loans;
     } catch (error) {
       this.logger.error(
-        `Failed to get loans by IDs: ${error.message}`,
-        error.stack,
+        `Failed to get loans by IDs: ${query.loanIds.join(', ')}`,
+        error,
       );
       throw error;
     }

@@ -27,8 +27,8 @@ export class GetLoansByBorrowerHandler
       return loans;
     } catch (error) {
       this.logger.error(
-        `Failed to get loans by borrower: ${error.message}`,
-        error.stack,
+        `Failed to get loans by borrower: ${query.borrowerId}`,
+        error,
       );
       throw error;
     }
