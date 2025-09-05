@@ -42,7 +42,7 @@ jobs:
         run: npx prisma generate --schema=apps/auth-service/src/prisma/schema.prisma
       
       - name: Generate Loan Prisma Client
-        run: npx prisma generate --schema=apps/loan-service/infrastructure/database/schema.prisma
+        run: npx prisma generate --schema=apps/loan-service/src/infrastructure/database/schema.prisma
       
       - name: Generate Investment Prisma Client
         run: npx prisma generate --schema=apps/investment-service/src/prisma/schema.prisma
