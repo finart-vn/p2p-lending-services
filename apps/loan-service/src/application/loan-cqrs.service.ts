@@ -1,7 +1,10 @@
 import { Loan, LoanStatus } from '@loan-service/prisma';
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateLoanRequest } from '@p2p-lending/contracts/loan';
+import {
+  CreateLoanRequest,
+  UpdateLoanRequest,
+} from '@p2p-lending/contracts/loan';
 
 import { ChangeLoanStatusCommand } from './commands/change-loan-status.command';
 import { CreateLoanCommand } from './commands/create-loan.command';
@@ -34,7 +37,7 @@ export class LoanCqrsService {
     return this.commandBus.execute(command);
   }
 
-  async updateLoan(updates): Promise<Loan> {
+  async updateLoan(updates: UpdateLoanRequest): Promise<Loan> {
     const command = new UpdateLoanCommand(updates);
     return this.commandBus.execute(command);
   }

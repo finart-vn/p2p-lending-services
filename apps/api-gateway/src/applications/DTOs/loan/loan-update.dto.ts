@@ -1,4 +1,4 @@
-import { LoanPurpose, LoanStatus } from '@loan-service/prisma';
+import { LoanPurpose } from '@loan-service/prisma';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 
@@ -41,12 +41,4 @@ export class ApiLoanUpdateRequestDto {
   })
   @IsString()
   description: string;
-
-  @ApiProperty({
-    description: 'Loan status',
-    enum: LoanStatus,
-    example: LoanStatus.ACTIVE,
-  })
-  @IsEnum(LoanStatus)
-  status: LoanStatus;
 }
