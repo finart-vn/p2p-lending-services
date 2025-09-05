@@ -7,7 +7,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 export class LoanDeletedHandler implements IEventHandler<LoanDeletedEvent> {
   private readonly logger = new Logger(LoanDeletedHandler.name);
 
-  async handle(event: LoanDeletedEvent): Promise<void> {
+  handle(event: LoanDeletedEvent) {
     this.logger.log(`Loan deleted event handled: ${event.data.loanId}`);
 
     // Here you can add side effects like:

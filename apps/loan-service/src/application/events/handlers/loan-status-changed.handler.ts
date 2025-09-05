@@ -9,7 +9,7 @@ export class LoanStatusChangedHandler
 {
   private readonly logger = new Logger(LoanStatusChangedHandler.name);
 
-  async handle(event: LoanStatusChangedEvent): Promise<void> {
+  handle(event: LoanStatusChangedEvent) {
     this.logger.log(
       `Loan status changed event handled: ${event.data.loanId} from ${event.data.previousStatus} to ${event.data.newStatus}`,
     );
