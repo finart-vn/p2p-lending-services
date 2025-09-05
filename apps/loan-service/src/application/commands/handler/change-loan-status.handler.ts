@@ -86,10 +86,12 @@ export class ChangeLoanStatusHandler
       return updatedLoan;
     } catch (error) {
       this.logger.error(
-        `Failed to change loan status: ${error.message}`,
-        error.stack,
+        `Failed to change loan status: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
-      throw error;
+      throw new RpcException({
+        message: 'Failed to change loan status',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 
