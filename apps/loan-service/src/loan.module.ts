@@ -23,11 +23,12 @@ import { GetAllLoansHandler } from './application/queries/handlers/get-all-loans
 import { GetLoanByIdHandler } from './application/queries/handlers/get-loan-by-id.handler';
 import { GetLoansByBorrowerHandler } from './application/queries/handlers/get-loans-by-borrower.handler';
 import { GetLoansByIdsHandler } from './application/queries/handlers/get-loans-by-ids.handler';
+import { LoanValidationService } from './application/services/loan-validation.service';
 import { PrismaService } from './infrastructure/database/prisma.service';
 // Repository
 import { LoanRepository } from './infrastructure/repositories/loan.repository';
-import { LoanServiceController } from './loan.controller';
 import { LoanService } from './loan.service';
+import { LoanServiceController } from './presentation/controllers/loan.controller';
 
 @Module({
   imports: [
@@ -60,6 +61,9 @@ import { LoanService } from './loan.service';
 
     // CQRS Service
     LoanCqrsService,
+
+    // Application Services
+    LoanValidationService,
 
     // Database
     PrismaService,

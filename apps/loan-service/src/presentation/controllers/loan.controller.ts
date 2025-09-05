@@ -7,11 +7,12 @@ import {
 } from '@p2p-lending/contracts/loan';
 import { MarketplaceSearchRequest } from '@p2p-lending/contracts/loan/marketplace-requests';
 
-import { LoanCqrsService } from './application/loan-cqrs.service';
+import { LoanCqrsService } from '../../application/loan-cqrs.service';
 
 @Controller()
 export class LoanServiceController {
   constructor(private readonly loanCqrsService: LoanCqrsService) {}
+
   /**
    * Create a new loan
    * @param payload - The loan request payload
@@ -54,6 +55,11 @@ export class LoanServiceController {
     return await this.loanCqrsService.getLoansByBorrower(payload);
   }
 
+  /**
+   * Get active loans for a borrower
+   * @param payload - The borrower id
+   * @returns The active loans
+   */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_ACTIVE })
   async getActiveLoans(@Payload() payload: string) {
     return await this.loanCqrsService.getActiveLoans(payload);
@@ -86,14 +92,13 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE })
   async searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
-    console.log(payload);
     const loans = await this.loanCqrsService.getAllLoans();
 
     return {
-      total: 10,
-      page: 1,
-      limit: 10,
-      totalPages: 1,
+      total: loans.length,
+      page: payload.page || 1,
+      limit: payload.limit || 10,
+      totalPages: Math.ceil(loans.length / (payload.limit || 10)),
       loans,
       filters: {
         experienceLevels: [],
@@ -116,6 +121,5 @@ export class LoanServiceController {
       countries: [],
       ratings: [],
     };
-    // return await this.loanServiceService.getMarketplaceFilters();
   }
 }

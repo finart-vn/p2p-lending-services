@@ -73,15 +73,15 @@ export class InvestmentServiceController {
     return await this.investmentService.cancelInvestment(payload);
   }
 
-  // /**
-  //  * Get investment portfolio for a user
-  //  * @param payload - The user id
-  //  * @returns The investment portfolio
-  //  */
-  // @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.GET_PORTFOLIO })
-  // async getInvestmentPortfolio(@Payload() payload: string) {
-  //   return await this.investmentService.getInvestmentPortfolio(payload);
-  // }
+  /**
+   * Get investment portfolio for a user
+   * @param payload - The user id
+   * @returns The investment portfolio
+   */
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.GET_PORTFOLIO })
+  async getInvestmentPortfolio(@Payload() payload: string) {
+    return await this.investmentService.getInvestmentPortfolio(payload);
+  }
 
   // /**
   //  * Calculate investment returns
