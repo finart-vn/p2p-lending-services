@@ -1,5 +1,5 @@
+import { LoanPurpose } from '@loan-service/prisma';
 import { ApiProperty } from '@nestjs/swagger';
-import { LoanPurpose } from '@p2p-lending/loan-service/generated/prisma';
 import { IsEnum, IsISO8601, IsNumber, IsString } from 'class-validator';
 
 export class ApiLoanCreateRequestDto {

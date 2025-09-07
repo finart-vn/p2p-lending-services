@@ -133,5 +133,55 @@ sequenceDiagram
   U->>IS: Lenders Invest in Loan
   IS-->>LS: Publish `investment.confirmed`
   LS-->>NS: Notify Borrower & Investors
+```
+
+---
+
+## **4. Database Schema**
+
+### **4.1 Core Tables**
+- **users**: User profiles and KYC information
+- **loans**: Loan applications and status
+- **investments**: Lender commitments to loans
+- **repayments**: Payment schedules and history
+- **notifications**: Communication logs
+
+### **4.2 Key Relationships**
+- User → Loans (One-to-Many)
+- Loan → Investments (One-to-Many)
+- Loan → Repayments (One-to-Many)
+- User → Notifications (One-to-Many)
+
+---
+
+## **5. Security & Compliance**
+
+### **5.1 Data Protection**
+- Encrypted storage for sensitive information
+- Role-based access control
+- Audit logging for all operations
+
+### **5.2 Financial Security**
+- Transaction signing for high-value operations
+- Rate limiting on financial endpoints
+- Fraud detection patterns
+
+---
+
+## **6. Performance & Scalability**
+
+### **6.1 Caching Strategy**
+- Redis for session management
+- Database query optimization
+- Connection pooling
+
+### **6.2 Monitoring**
+- Health checks for all services
+- Performance metrics tracking
+- Error rate monitoring
+
+---
+
+This architecture provides a robust foundation for a P2P lending platform with clear service boundaries, event-driven communication, and comprehensive security measures.
 
   

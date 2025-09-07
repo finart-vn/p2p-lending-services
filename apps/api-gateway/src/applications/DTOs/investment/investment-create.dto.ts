@@ -1,5 +1,5 @@
+import { InvestmentStatus } from '@investment-service/prisma';
 import { ApiProperty } from '@nestjs/swagger';
-import { InvestmentStatus } from '@p2p-lending/investment-service/generated/prisma';
 import {
   IsEnum,
   IsNumber,

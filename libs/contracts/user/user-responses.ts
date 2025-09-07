@@ -1,5 +1,5 @@
 // ===== USER SERVICE RESPONSE INTERFACES =====
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 export interface UserResponse {
   id: string;

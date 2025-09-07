@@ -1,6 +1,6 @@
+import { TokenPayloadDto } from '@auth-service/dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { TokenPayloadDto } from '@p2p-lending/auth-service/src/dto';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
 import {

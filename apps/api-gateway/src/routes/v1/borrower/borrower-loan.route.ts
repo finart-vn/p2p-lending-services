@@ -18,7 +18,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 @Controller('v1/borrower/loan')
 @ApiTags('Borrower')
@@ -37,10 +37,9 @@ export class BorrowerLoanController {
     return await this.borrowerClient.createLoan(req.user.sub, loanDto);
   }
 
-  @Put(':id')
+  @Put()
   @ApiOperation({ summary: 'Update a loan' })
   async updateLoan(
-    @Param('id') id: string,
     @Body(new ValidationPipe()) loanDto: ApiLoanUpdateRequestDto,
     @Req() req: RequestWithUser,
   ) {

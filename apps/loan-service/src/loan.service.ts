@@ -15,7 +15,7 @@ import {
 //   MarketplaceSearchResponse,
 // } from '@p2p-lending/contracts/loan/marketplace-requests';
 import { LoanStatus, Prisma } from '../generated/prisma';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService } from './infrastructure/database/prisma.service';
 
 @Injectable()
 export class LoanService {

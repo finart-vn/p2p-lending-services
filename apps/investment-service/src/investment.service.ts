@@ -1,3 +1,8 @@
+import {
+  Investment,
+  InvestmentStatus,
+  Prisma,
+} from '@investment-service/prisma';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Payload, RpcException } from '@nestjs/microservices';
 import {
@@ -5,11 +10,6 @@ import {
   CreateInvestmentRequest,
   UpdateInvestmentRequest,
 } from '@p2p-lending/contracts/investment';
-import {
-  Investment,
-  InvestmentStatus,
-  Prisma,
-} from '@p2p-lending/investment-service/generated/prisma';
 
 import { PrismaService } from './prisma/prisma.service';
 
@@ -174,55 +174,55 @@ export class InvestmentService {
     }
   }
 
-  // async getInvestmentPortfolio(@Payload() payload: string) {
-  //   try {
-  //     const investments = await this.prisma.investment.findMany({
-  //       where: { lenderId: payload },
-  //       orderBy: { investedAt: 'desc' },
-  //     });
+  async getInvestmentPortfolio(@Payload() payload: string) {
+    try {
+      const investments = await this.prisma.investment.findMany({
+        where: { lenderId: payload },
+        orderBy: { investedAt: 'desc' },
+      });
 
-  //     const totalInvestments = investments.length;
-  //     const totalAmount = investments.reduce(
-  //       (sum, inv) => sum + Number(inv.amount),
-  //       0,
-  //     );
-  //     const totalExpectedReturn = investments.reduce(
-  //       (sum, inv) => sum + Number(inv.expectedReturn),
-  //       0,
-  //     );
-  //     const totalReceived = investments.reduce(
-  //       (sum, inv) => sum + Number(inv.totalReceived),
-  //       0,
-  //     );
+      const totalInvestments = investments.length;
+      const totalAmount = investments.reduce(
+        (sum, inv) => sum + Number(inv.amount),
+        0,
+      );
+      const totalExpectedReturn = investments.reduce(
+        (sum, inv) => sum + Number(inv.expectedReturn),
+        0,
+      );
+      const totalReceived = investments.reduce(
+        (sum, inv) => sum + Number(inv.totalReceived),
+        0,
+      );
 
-  //     const activeInvestments = investments.filter(
-  //       (inv) => inv.status === InvestmentStatus.ACTIVE,
-  //     ).length;
-  //     const completedInvestments = investments.filter(
-  //       (inv) => inv.status === InvestmentStatus.COMPLETED,
-  //     ).length;
-  //     const defaultedInvestments = investments.filter(
-  //       (inv) => inv.status === InvestmentStatus.DEFAULTED,
-  //     ).length;
+      const activeInvestments = investments.filter(
+        (inv) => inv.status === InvestmentStatus.ACTIVE,
+      ).length;
+      const completedInvestments = investments.filter(
+        (inv) => inv.status === InvestmentStatus.COMPLETED,
+      ).length;
+      const defaultedInvestments = investments.filter(
+        (inv) => inv.status === InvestmentStatus.DEFAULTED,
+      ).length;
 
-  //     return {
-  //       totalInvestments,
-  //       totalAmount,
-  //       totalExpectedReturn,
-  //       totalReceived,
-  //       activeInvestments,
-  //       completedInvestments,
-  //       defaultedInvestments,
-  //       investments,
-  //     };
-  //   } catch (error) {
-  //     this.logger.error(`Failed to get investment portfolio: ${error}`);
-  //     throw new RpcException({
-  //       message: 'Failed to get investment portfolio',
-  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-  //     });
-  //   }
-  // }
+      return {
+        totalInvestments,
+        totalAmount,
+        totalExpectedReturn,
+        totalReceived,
+        activeInvestments,
+        completedInvestments,
+        defaultedInvestments,
+        investments,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get investment portfolio: ${error}`);
+      throw new RpcException({
+        message: 'Failed to get investment portfolio',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 
   // async calculateInvestmentReturns(@Payload() payload: string) {
   //   try {

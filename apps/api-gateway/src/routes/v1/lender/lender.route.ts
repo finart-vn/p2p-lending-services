@@ -23,7 +23,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 @ApiTags('Lender')
 @Controller('v1/lender')
@@ -46,6 +46,7 @@ export class LenderController {
     return await this.investmentClient.createInvestment(req.user.sub, body);
   }
 
+  // Will be improve get loans by cached or CQRS + Event Sourcing
   @Get('my-investments')
   @ApiOperation({ summary: 'Get all investments for the lender' })
   async getInvestments(@Req() req: RequestWithUser) {
@@ -63,9 +64,12 @@ export class LenderController {
       return [];
     }
     const loans = await this.loanClient.getLoanByIds(Array.from(loanIds));
+
     return {
-      investments,
-      loans,
+      loans: loans.map((loan) => ({
+        ...loan,
+        investment: investments.find((inv) => inv.loanId === loan.id),
+      })),
     };
   }
 

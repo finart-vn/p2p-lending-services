@@ -1,6 +1,6 @@
 // ===== USER SERVICE REQUEST INTERFACES =====
 
-import { RoleEnum } from '@p2p-lending/user-service/generated/prisma';
+import { RoleEnum } from '@user-service/prisma';
 
 export interface CreateUserRequest {
   email: string;

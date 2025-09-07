@@ -1,10 +1,10 @@
+import { PrismaService } from '@auth-service/prisma/prisma.service';
+import { TokenKeyService } from '@auth-service/token-key/token-key.service';
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '@p2p-lending/auth-service/src/prisma/prisma.service';
-import { TokenKeyService } from '@p2p-lending/auth-service/src/token-key/token-key.service';
 
 describe('TokenKeyService', () => {
   let service: TokenKeyService;

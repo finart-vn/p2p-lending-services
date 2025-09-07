@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KeyTokenController } from '@p2p-lending/user-service/src/key-token/key-token.controller';
-import { KeyTokenService } from '@p2p-lending/user-service/src/key-token/key-token.service';
+import { KeyTokenController } from '@user-service/key-token/key-token.controller';
+import { KeyTokenService } from '@user-service/key-token/key-token.service';
 
 // Mock KeyTokenService
 const mockKeyTokenService = {

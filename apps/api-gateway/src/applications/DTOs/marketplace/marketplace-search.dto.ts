@@ -1,8 +1,5 @@
+import { LoanPurpose, LoanStatus } from '@loan-service/prisma';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  LoanPurpose,
-  LoanStatus,
-} from '@p2p-lending/loan-service/generated/prisma';
 import { Type } from 'class-transformer';
 import {
   IsArray,
