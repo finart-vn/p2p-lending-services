@@ -55,6 +55,7 @@ export const MESSAGE_PATTERNS = {
     CANCEL: 'investment.cancel',
     GET_BY_ID: 'investment.get_by_id',
     GET_BY_USER: 'investment.get_by_user',
+    GET_BY_LOAN: 'investment.get_by_loan',
     GET_PORTFOLIO: 'investment.get_portfolio',
     CALCULATE_RETURNS: 'investment.calculate_returns',
   },

@@ -97,26 +97,9 @@ export class LoanClient extends BaseClient {
   }
 
   async searchMarketplaceLoans(searchDto: MarketplaceSearchDto) {
-    const searchRequest: MarketplaceSearchRequest = {
-      search: searchDto.search,
-      minAmount: searchDto.minAmount,
-      maxAmount: searchDto.maxAmount,
-      minInterestRate: searchDto.minInterestRate,
-      maxInterestRate: searchDto.maxInterestRate,
-      minTermMonths: searchDto.minTermMonths,
-      maxTermMonths: searchDto.maxTermMonths,
-      loanTypes: searchDto.loanTypes,
-      ratings: searchDto.ratings,
-      statuses: searchDto.statuses,
-      page: searchDto.page,
-      limit: searchDto.limit,
-      sortBy: searchDto.sortBy,
-      sortOrder: searchDto.sortOrder,
-    };
-
     return await this.send<MarketplaceSearchRequest, MarketplaceSearchResponse>(
       { cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE },
-      searchRequest,
+      searchDto,
     );
   }
 
