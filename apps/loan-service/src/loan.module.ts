@@ -23,7 +23,10 @@ import { GetAllLoansHandler } from './application/queries/handlers/get-all-loans
 import { GetLoanByIdHandler } from './application/queries/handlers/get-loan-by-id.handler';
 import { GetLoansByBorrowerHandler } from './application/queries/handlers/get-loans-by-borrower.handler';
 import { GetLoansByIdsHandler } from './application/queries/handlers/get-loans-by-ids.handler';
+import { GetMarketplaceLoansHandler } from './application/queries/handlers/get-market-loans.handler';
 import { LoanValidationService } from './application/services/loan-validation.service';
+// Clients
+import { InvestmentClient } from './infrastructure/clients/investment.client';
 import { PrismaService } from './infrastructure/database/prisma.service';
 // Repository
 import { LoanRepository } from './infrastructure/repositories/loan.repository';
@@ -46,6 +49,18 @@ import { LoanServiceController } from './presentation/controllers/loan.controlle
           if (!config.rabbitmq) {
             throw new Error(
               'RabbitMQ configuration is required for LOAN service',
+            );
+          }
+          return config.rabbitmq;
+        },
+        inject: [CONFIG_TOKENS.LOAN_SERVICE],
+      },
+      {
+        name: RmqService.INVESTMENT,
+        useFactory: (config: LoanServiceConfig) => {
+          if (!config.rabbitmq) {
+            throw new Error(
+              'RabbitMQ configuration is required for INVESTMENT service',
             );
           }
           return config.rabbitmq;
@@ -86,6 +101,10 @@ import { LoanServiceController } from './presentation/controllers/loan.controlle
     GetLoansByBorrowerHandler,
     GetActiveLoansHandler,
     GetAllLoansHandler,
+    GetMarketplaceLoansHandler,
+
+    // Clients
+    InvestmentClient,
 
     // Event Handlers
     LoanCreatedHandler,

@@ -48,7 +48,7 @@ export class InvestmentServiceController {
    * @param payload - The loan id
    * @returns The investments
    */
-  @MessagePattern({ cmd: 'investment.get_by_loan' })
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.GET_BY_LOAN })
   async getInvestmentsByLoan(@Payload() payload: string) {
     return await this.investmentService.getInvestmentsByLoan(payload);
   }

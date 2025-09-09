@@ -5,6 +5,7 @@ import { Loan } from '@loan-service/prisma';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common';
+import { BaseClient } from '@p2p-lending/common/brokers/base.client';
 import { RmqExchange, RmqService } from '@p2p-lending/common/enums';
 import {
   CreateLoanRequest,
@@ -16,8 +17,6 @@ import {
   MarketplaceSearchResponse,
 } from '@p2p-lending/contracts/loan/marketplace-requests';
 import { catchError, throwError } from 'rxjs';
-
-import { BaseClient } from './base.client';
 
 @Injectable()
 export class LoanClient extends BaseClient {

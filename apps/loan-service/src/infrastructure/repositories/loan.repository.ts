@@ -121,4 +121,20 @@ export class LoanRepository implements ILoanRepository {
     });
     return count > 0;
   }
+
+  async findMarketplaceLoans(params: {
+    where: Prisma.LoanWhereInput;
+    page: number;
+    limit: number;
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+  }): Promise<Loan[]> {
+    return await this.prisma.loan.findMany({
+      where: params.where,
+    });
+  }
+
+  async countMarketplaceLoans(where: Prisma.LoanWhereInput): Promise<number> {
+    return await this.prisma.loan.count({ where });
+  }
 }

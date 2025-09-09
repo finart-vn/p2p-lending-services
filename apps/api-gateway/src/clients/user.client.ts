@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { BaseClient } from '@p2p-lending/common/brokers/base.client';
 import { MESSAGE_PATTERNS } from '@p2p-lending/common/constants/message-patterns';
 import { RmqService } from '@p2p-lending/common/enums';
 import {
@@ -9,7 +10,6 @@ import {
 } from '@p2p-lending/common/interfaces/message-payloads';
 
 import { RegisterDto } from '../applications/DTOs';
-import { BaseClient } from './base.client';
 
 @Injectable()
 export class UserClient extends BaseClient {

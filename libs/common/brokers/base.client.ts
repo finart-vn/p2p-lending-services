@@ -1,8 +1,9 @@
 import { HttpException, Logger } from '@nestjs/common';
 import { ClientProxy, ClientRMQ } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
-import { BrokerError } from '@p2p-lending/common/interfaces/message-payloads/broker.interface';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
+
+import { BrokerError } from '../interfaces/message-payloads/broker.interface';
 
 export interface MessagePattern {
   cmd: string;

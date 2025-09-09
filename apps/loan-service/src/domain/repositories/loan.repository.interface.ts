@@ -14,4 +14,12 @@ export interface LoanRepository {
   findAll(): Promise<Loan[]>;
   delete(id: string): Promise<void>;
   exists(id: string): Promise<boolean>;
+  findMarketplaceLoans(params: {
+    where: any;
+    page: number;
+    limit: number;
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+  }): Promise<Loan[]>;
+  countMarketplaceLoans(where: any): Promise<number>;
 }

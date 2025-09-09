@@ -92,21 +92,7 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.SEARCH_MARKETPLACE })
   async searchMarketplaceLoans(@Payload() payload: MarketplaceSearchRequest) {
-    const loans = await this.loanCqrsService.getAllLoans();
-
-    return {
-      total: loans.length,
-      page: payload.page || 1,
-      limit: payload.limit || 10,
-      totalPages: Math.ceil(loans.length / (payload.limit || 10)),
-      loans,
-      filters: {
-        experienceLevels: [],
-        loanTypes: [],
-        countries: [],
-        ratings: [],
-      },
-    };
+    return await this.loanCqrsService.searchMarketplaceLoans(payload);
   }
 
   /**
@@ -115,11 +101,33 @@ export class LoanServiceController {
    */
   @MessagePattern({ cmd: MESSAGE_PATTERNS.LOAN.GET_MARKETPLACE_FILTERS })
   getMarketplaceFilters() {
+    // This would typically return aggregated filter data
+    // For now, return basic structure
     return {
-      experienceLevels: [],
-      loanTypes: [],
-      countries: [],
-      ratings: [],
+      experienceLevels: [
+        { value: 'beginner', label: 'Beginner', count: 0 },
+        { value: 'intermediate', label: 'Intermediate', count: 0 },
+        { value: 'expert', label: 'Expert', count: 0 },
+      ],
+      loanTypes: [
+        { value: 'PERSONAL', label: 'Personal', count: 0 },
+        { value: 'BUSINESS', label: 'Business', count: 0 },
+        { value: 'CAR', label: 'Car', count: 0 },
+        { value: 'REAL_ESTATE', label: 'Real Estate', count: 0 },
+        { value: 'CONSUMER', label: 'Consumer', count: 0 },
+      ],
+      countries: [{ value: 'US', label: 'United States', count: 0 }],
+      ratings: [
+        { value: 'A+', label: 'A+', count: 0 },
+        { value: 'A', label: 'A', count: 0 },
+        { value: 'A-', label: 'A-', count: 0 },
+        { value: 'B+', label: 'B+', count: 0 },
+        { value: 'B', label: 'B', count: 0 },
+        { value: 'B-', label: 'B-', count: 0 },
+      ],
+      amountRange: { min: 1000, max: 50000, average: 15000 },
+      interestRateRange: { min: 3, max: 25, average: 12 },
+      termRange: { min: 12, max: 60, average: 36 },
     };
   }
 }

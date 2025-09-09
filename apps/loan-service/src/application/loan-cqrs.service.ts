@@ -5,6 +5,10 @@ import {
   CreateLoanRequest,
   UpdateLoanRequest,
 } from '@p2p-lending/contracts/loan';
+import {
+  MarketplaceSearchRequest,
+  MarketplaceSearchResponse,
+} from '@p2p-lending/contracts/loan/marketplace-requests';
 
 import { ChangeLoanStatusCommand } from './commands/change-loan-status.command';
 import { CreateLoanCommand } from './commands/create-loan.command';
@@ -15,6 +19,7 @@ import { GetAllLoansQuery } from './queries/get-all-loans.query';
 import { GetLoanByIdQuery } from './queries/get-loan-by-id.query';
 import { GetLoansByBorrowerQuery } from './queries/get-loans-by-borrower.query';
 import { GetLoansByIdsQuery } from './queries/get-loans-by-ids.query';
+import { GetMarketplaceLoansQuery } from './queries/get-market-loans.query';
 
 @Injectable()
 export class LoanCqrsService {
@@ -85,6 +90,13 @@ export class LoanCqrsService {
 
   async getAllLoans(): Promise<Loan[]> {
     const query = new GetAllLoansQuery();
+    return this.queryBus.execute(query);
+  }
+
+  async searchMarketplaceLoans(
+    searchRequest: MarketplaceSearchRequest,
+  ): Promise<MarketplaceSearchResponse> {
+    const query = new GetMarketplaceLoansQuery(searchRequest);
     return this.queryBus.execute(query);
   }
 }
