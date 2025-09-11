@@ -1,9 +1,9 @@
+import { InvestmentClient } from '@loan-service/infrastructure/clients/investment.client';
 import { LoanRepository } from '@loan-service/infrastructure/repositories/loan.repository';
 import { Loan, LoanStatus, Prisma } from '@loan-service/prisma';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ClientProxy } from '@nestjs/microservices';
 import { RpcException } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common/enums';
 import {
@@ -25,7 +25,7 @@ export class GetMarketplaceLoansHandler
     @Inject('LoanRepository')
     private readonly loanRepository: LoanRepository,
     @Inject(RmqService.INVESTMENT)
-    private readonly investmentClient: ClientProxy,
+    private readonly investmentClient: InvestmentClient,
   ) {}
 
   async execute(
@@ -54,13 +54,6 @@ export class GetMarketplaceLoansHandler
 
       // Get loans with pagination and sorting
       const loans = await this.loanRepository.findMarketplaceLoans({
-        where: whereClause,
-        page,
-        limit,
-        sortBy,
-        sortOrder,
-      });
-      this.loanRepository.findMarketplaceLoans({
         where: whereClause,
         page,
         limit,
@@ -117,7 +110,10 @@ export class GetMarketplaceLoansHandler
     const loanIds = loans.map((loan) => loan.id);
     this.logger.log('Enriching loans with investment data', loanIds);
     // Get investment data for all loans
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const investmentByLoanIds =
+      await this.investmentClient.getInvestmentsByLoans(loanIds);
+
+    this.logger.debug('Investment data', investmentByLoanIds);
     return [];
   }
 

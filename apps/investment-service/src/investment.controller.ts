@@ -54,6 +54,16 @@ export class InvestmentServiceController {
   }
 
   /**
+   * Get investments by loan ids
+   * @param payload - The loan ids
+   * @returns The investments
+   */
+  @MessagePattern({ cmd: MESSAGE_PATTERNS.INVESTMENT.GET_BY_LOANS })
+  async getInvestmentsByLoans(@Payload() payload: string[]) {
+    return await this.investmentService.getInvestmentsByLoanIds(payload);
+  }
+
+  /**
    * Update an investment
    * @param payload - The investment update payload
    * @returns The updated investment

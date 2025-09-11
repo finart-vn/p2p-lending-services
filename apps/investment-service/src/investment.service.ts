@@ -93,6 +93,21 @@ export class InvestmentService {
     }
   }
 
+  async getInvestmentsByLoanIds(@Payload() payload: string[]) {
+    try {
+      const investments = await this.prisma.investment.findMany({
+        where: { loanId: { in: payload } },
+      });
+      return investments;
+    } catch (error) {
+      this.logger.error(`Failed to get investments by loan ids: ${error}`);
+      throw new RpcException({
+        message: 'Failed to get investments by loan ids',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
   async updateInvestment(@Payload() payload: UpdateInvestmentRequest) {
     try {
       const investment = await this.prisma.investment.findUnique({
