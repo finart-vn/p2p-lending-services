@@ -9,20 +9,19 @@ import { RmqService } from '@p2p-lending/common/enums';
 export class InvestmentClient extends BaseClient {
   constructor(
     @Inject(RmqService.INVESTMENT)
-    private readonly investmentClient: ClientProxy,
+    protected readonly client: ClientProxy,
   ) {
-    super(investmentClient, RmqService.INVESTMENT);
+    super(client, RmqService.INVESTMENT);
   }
 
   async getInvestmentsByLoans(loanIds: string[]) {
     try {
-      this.logger.log(`Fetching investments for ${loanIds.length} loans`);
+      this.logger.debug(`Fetching investments for ${loanIds.length} loans`);
 
       return this.send<string[], Investment[]>(
-        { cmd: MESSAGE_PATTERNS.INVESTMENT.GET_BY_LOAN },
+        { cmd: MESSAGE_PATTERNS.INVESTMENT.GET_BY_LOANS },
         loanIds,
       );
-      this.logger.log('Get investments by LOANS');
     } catch (error) {
       this.logger.error(`Failed to fetch investments for loans:`, error);
       return [];

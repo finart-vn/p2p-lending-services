@@ -3,6 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { ClientsModule } from '@nestjs/microservices';
 import { RmqService } from '@p2p-lending/common';
 import { CONFIG_TOKENS, ConfigModule } from '@p2p-lending/common/config';
+import {
+  createInvestmentServiceConfig,
+  InvestmentServiceConfig,
+} from '@p2p-lending/common/config/services/investment-service.config';
 import { createLoanServiceConfig } from '@p2p-lending/common/config/services/loan-service.config';
 import { LoanServiceConfig } from '@p2p-lending/common/config/services/loan-service.config';
 
@@ -36,16 +40,20 @@ import { LoanServiceController } from './presentation/controllers/loan.controlle
 @Module({
   imports: [
     CqrsModule,
+    // Config modules
     ConfigModule.forService(
       createLoanServiceConfig,
       CONFIG_TOKENS.LOAN_SERVICE,
     ),
+    ConfigModule.forService(
+      createInvestmentServiceConfig,
+      CONFIG_TOKENS.INVESTMENT_SERVICE,
+    ),
+    // Clients modules
     ClientsModule.registerAsync([
       {
         name: RmqService.LOAN,
         useFactory: (config: LoanServiceConfig) => {
-          console.log(config.rabbitmq);
-
           if (!config.rabbitmq) {
             throw new Error(
               'RabbitMQ configuration is required for LOAN service',
@@ -57,7 +65,7 @@ import { LoanServiceController } from './presentation/controllers/loan.controlle
       },
       {
         name: RmqService.INVESTMENT,
-        useFactory: (config: LoanServiceConfig) => {
+        useFactory: (config: InvestmentServiceConfig) => {
           if (!config.rabbitmq) {
             throw new Error(
               'RabbitMQ configuration is required for INVESTMENT service',
@@ -65,7 +73,7 @@ import { LoanServiceController } from './presentation/controllers/loan.controlle
           }
           return config.rabbitmq;
         },
-        inject: [CONFIG_TOKENS.LOAN_SERVICE],
+        inject: [CONFIG_TOKENS.INVESTMENT_SERVICE],
       },
     ]),
   ],

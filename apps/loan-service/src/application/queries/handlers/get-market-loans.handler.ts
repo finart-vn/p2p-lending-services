@@ -5,7 +5,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
-import { RmqService } from '@p2p-lending/common/enums';
 import {
   MarketplaceLoan,
   MarketplaceSearchRequest,
@@ -24,7 +23,8 @@ export class GetMarketplaceLoansHandler
   constructor(
     @Inject('LoanRepository')
     private readonly loanRepository: LoanRepository,
-    @Inject(RmqService.INVESTMENT)
+
+    @Inject(InvestmentClient)
     private readonly investmentClient: InvestmentClient,
   ) {}
 

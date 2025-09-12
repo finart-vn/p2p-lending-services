@@ -95,6 +95,7 @@ export class InvestmentService {
 
   async getInvestmentsByLoanIds(@Payload() payload: string[]) {
     try {
+      this.logger.debug(`Getting investments by loan ids:`, payload);
       const investments = await this.prisma.investment.findMany({
         where: { loanId: { in: payload } },
       });
