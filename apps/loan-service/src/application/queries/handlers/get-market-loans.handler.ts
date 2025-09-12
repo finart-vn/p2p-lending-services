@@ -1,3 +1,4 @@
+import { Investment } from '@investment-service/prisma';
 import { InvestmentClient } from '@loan-service/infrastructure/clients/investment.client';
 import { LoanRepository } from '@loan-service/infrastructure/repositories/loan.repository';
 import { Loan, LoanStatus, Prisma } from '@loan-service/prisma';
@@ -6,6 +7,7 @@ import { HttpStatus } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
 import {
+  CreditRating,
   MarketplaceLoan,
   MarketplaceSearchRequest,
   MarketplaceSearchResponse,
@@ -110,11 +112,44 @@ export class GetMarketplaceLoansHandler
     const loanIds = loans.map((loan) => loan.id);
     this.logger.log('Enriching loans with investment data', loanIds);
     // Get investment data for all loans
-    const investmentByLoanIds =
+    const investments =
       await this.investmentClient.getInvestmentsByLoans(loanIds);
 
-    this.logger.debug('Investment data', investmentByLoanIds);
-    return [];
+    const marketplaceLoans = new Map<string, MarketplaceLoan>();
+    const investmentsHashMap = new Map<string, Investment[]>();
+    investments.forEach((investment) => {
+      if (investmentsHashMap.has(investment.loanId)) {
+        investmentsHashMap.get(investment.loanId)?.push(investment);
+      } else investmentsHashMap.set(investment.loanId, [investment]);
+    });
+
+    loans.forEach((loan) => {
+      if (investmentsHashMap.has(loan.id)) {
+        const investment = investmentsHashMap.get(loan.id);
+        marketplaceLoans.set(loan.id, {
+          id: loan.id,
+          borrowerName: 'Latter',
+          loanNumber: loan.loanNumber,
+          requestedAmount: loan.requestedAmount.toNumber(),
+          fundedAmount: loan.fundedAmount.toNumber(),
+          fundingProgress: 30,
+          interestRate: loan.interestRate.toNumber(),
+          termMonths: loan.termMonths,
+          monthlyPayment: loan.monthlyPayment.toNumber(),
+          purpose: loan.purpose,
+          description: loan.description,
+          status: loan.status,
+          listingDate: loan.listingDate,
+          fundingDeadline: loan.fundingDeadline,
+          creditRating: CreditRating.A_PLUS,
+          daysRemaining: new Date().getTime() / (1000 * 60 * 60 * 24),
+          investorCount: investment?.length || 0,
+          expectedReturn: loan.interestRate.toNumber() + 2,
+        });
+      }
+    });
+    this.logger.debug(investmentsHashMap);
+    return Array.from(marketplaceLoans.values());
   }
 
   getMarketplaceFilters() {
