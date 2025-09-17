@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\" \"seeder/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start auth-service --watch",
     "start:dev:api-gateway": "nest start api-gateway --watch",
@@ -43,7 +43,15 @@
     "prisma:investment:generate": "cd apps/investment-service && prisma generate --schema=src/prisma/schema.prisma",
     "prisma:investment:migrate": "cd apps/investment-service && prisma migrate dev --schema=src/prisma/schema.prisma",
     "prisma:investment:studio": "cd apps/investment-service && prisma studio --schema=src/prisma/schema.prisma",
-    "prisma:investment:push": "cd apps/investment-service && prisma db push --schema=src/prisma/schema.prisma"
+    "prisma:investment:push": "cd apps/investment-service && prisma db push --schema=src/prisma/schema.prisma",
+    "seed": "ts-node seeder/index.ts",
+    "seed:clear": "ts-node seeder/index.ts --clear",
+    "seed:users": "ts-node seeder/index.ts --users-only",
+    "seed:auth": "ts-node seeder/index.ts --auth-only",
+    "seed:loans": "ts-node seeder/index.ts --loans-only",
+    "seed:investments": "ts-node seeder/index.ts --investments-only",
+    "seed:help": "ts-node seeder/index.ts --help",
+    "seed:test": "ts-node seeder/test-seeder.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

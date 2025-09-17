@@ -111,18 +111,20 @@ export class GetMarketplaceLoansHandler
   ): Promise<MarketplaceLoan[]> {
     const loanIds = loans.map((loan) => loan.id);
     this.logger.log('Enriching loans with investment data', loanIds);
-    // Get investment data for all loans
+    // 1. Get investment data for all loans
     const investments =
       await this.investmentClient.getInvestmentsByLoans(loanIds);
-
+    // 2. Create hashmap of investments by loan id
     const marketplaceLoans = new Map<string, MarketplaceLoan>();
     const investmentsHashMap = new Map<string, Investment[]>();
+
     investments.forEach((investment) => {
       if (investmentsHashMap.has(investment.loanId)) {
         investmentsHashMap.get(investment.loanId)?.push(investment);
       } else investmentsHashMap.set(investment.loanId, [investment]);
     });
 
+    // 3. Enrich loans with investment data
     loans.forEach((loan) => {
       if (investmentsHashMap.has(loan.id)) {
         const investment = investmentsHashMap.get(loan.id);

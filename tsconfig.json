@@ -50,7 +50,8 @@
   "include": [
     "apps/**/*",
     "libs/**/*",
-    "test/**/*"
+    "test/**/*",
+    "seeder/**/*"
   ],
   "exclude": [
     "node_modules",
