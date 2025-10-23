@@ -12,7 +12,7 @@ import { Prisma, PrismaClient } from '../../generated/prisma';
 export class PrismaService
   extends PrismaClient<
     Prisma.PrismaClientOptions,
-    'query' | 'error' | 'info' | 'warn'
+    'query' | 'error'
   >
   implements OnModuleInit, OnModuleDestroy
 {
