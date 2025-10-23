@@ -17,7 +17,7 @@ import { PrismaService } from './prisma/prisma.service';
     ),
     ClientsModule.registerAsync([
       {
-        name: RmqService.INVESTMENT,
+        name: RmqService.INVESTMENT
         useFactory: (config: InvestmentServiceConfig) => {
           console.log(config.rabbitmq);
 
